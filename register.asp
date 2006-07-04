@@ -161,20 +161,27 @@ sub search_results {
 	} elsif ((length($first_name) > 0) or (length($last_name) > 0)) {
 		my $like_clause = '';
 		if (length($first_name = &func::hex_encode(uc($first_name)))) {
-			$like_clause = "upper(first_name) like '%$first_name%'";
+			# $like_clause = "upper(first_name) like '%$first_name%'";
+			$like_clause = "upper(first_name) like ?";
 		}
 		if (length($last_name = &func::hex_encode(uc($last_name)))) {
 			if ($like_clause) {
 				$like_clause .= ' and ';
 			}
-			$like_clause .= "upper(last_name) like '%$last_name%'";
+			$like_clause .= "upper(last_name) like ?";
 		}
 
 		$last_name = &func::hex_encode($last_name);
 		$dbh = &func::dbh_connect(1) || die "unable to connect to database";
 		$selstmt = "select cid, first_name, middle_name, last_name, email from person where $like_clause";
 		$sth = $dbh->prepare($selstmt) || die 'prepare failed with ' . $selstmt;
-		$sth->execute() || die 'execute failed with ' . $selstmt;
+		if ((length($first_name) > 0) and (length($last_name) > 0)) {
+			$sth->execute("\%$first_name\%", "\%$last_name\%") || die 'execute failed with ' . $selstmt;
+		} elsif (length($first_name) > 0) {
+			$sth->execute("\%$first_name\%") || die 'execute failed with ' . $selstmt;
+		} else {
+			$sth->execute("\%$last_name\%") || die 'execute failed with ' . $selstmt;
+		}
 		while ($rs = $sth->fetchrow_hashref()) {
 			if (length ($rs->{'EMAIL'}) > 0) {
 				$email_hash{$rs->{'CID'}} = {
