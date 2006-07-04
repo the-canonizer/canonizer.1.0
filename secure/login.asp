@@ -48,13 +48,12 @@ sub do_login {
 		my $dbh = &func::dbh_connect(1);
 		if ($dbh) {
 
-			my $enc_email = &func::hex_encode($email);
-			my $enc_password = &func::encrypt($password);
+			my $enc_password = &func::canon_encode($password);
 
-			my $selstmt = "select cid from person where email = '$enc_email' and password = '$enc_password'";
+			my $selstmt = 'select cid from person where email = ? and password = ?';
 
 			my $sth = $dbh->prepare($selstmt) || die $selstmt;
-			$sth->execute() || die $selstmt;
+			$sth->execute($email, $enc_password) || die $selstmt;
 
 			my $rs;
 			if ($rs = $sth->fetch()) { # log them in
