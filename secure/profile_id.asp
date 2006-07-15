@@ -38,6 +38,18 @@ sub format_success {
 
 sub save_values {
 
+	my $cid;
+	if($Session->{'takeover_cid'}) {
+		$cid = $Session->{'takeover_cid'};
+	} else {
+		$cid = $Session->{'cid'};
+	}
+
+	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+
+	my $selstmt;
+	my $sth;
+
 	if (length($form_state{'first_name'} = $Request->Form('first_name')) < 1) {
 		$message .= &format_error("First Name is required.");
 	}
@@ -47,6 +59,17 @@ sub save_values {
 	}
 	if (length($form_state{'email'} = $Request->Form('email')) < 1) {
 		$message .= &format_error("e-mail is required.");
+	} else { # check for unique e-mail
+		$selstmt = 'select cid from person where email = ?';
+		if ($cid) {
+			$selstmt .= " and not cid = $cid";
+		}
+		$sth = $dbh->prepare($selstmt) || die "Failed to prepare " . $selstmt;
+		$sth->execute($form_state{'email'}) || die "Failed to prepare " . $selstmt;
+		if ($sth->fetch()) {
+			$message .= &format_error("Duplicate e-mail and or duplicate identities are not allowed.");
+		}
+		$sth->finish();
 	}
 
 	if (length($form_state{'address_1'} = $Request->Form('address_1')) < 1) {
@@ -66,84 +89,153 @@ sub save_values {
 		$message .= &format_error("Country is required.");
 	}
 
-	my $cid;
-	if($Session->{'takeover_cid'}) {
-		$cid = $Session->{'takeover_cid'};
-	} else {
-		$cid = $Session->{'cid'};
-	}
-
-	my $pass_key = '';
 	my $pass_val = '';
 	my $password = $Request->Form('password');
 	if (length($password) > 0) {
 		if ($password ne $Request->Form('password_confirm') ) {
 			$message .= &format_error('Password and Confirmation Password did not match.');
 		}
-		$pass_key = 'password,';
-		$pass_val = "'" . &func::encrypt($password) . "', ";
+		$pass_val = &func::canon_encode($password);
 	} elsif (! $Session->{'cid'}) {
 		$message .= &format_error('Password is required when registering.');
 	}
 
+	my $new_nick_name = $Request->Form('new_nick_name');
+	if (length($new_nick_name) > 0) {
+		$form_state{'new_nick_name'} = $new_nick_name;
+		$selstmt = 'select nick_name_id from nick_name where nick_name = ?';
+		$sth = $dbh->prepare($selstmt) || die "Failed to prepare " . $selstmt;
+		$sth->execute($new_nick_name) || die "Failed to execute " . $selstmt;
+		if ($sth->fetch()) {
+			$message .= &format_error("The nick name '$new_nick_name' is already taken.");
+		}
+		$sth->finish();
+	}
+
 	if ($message) {return()};
 
-	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
-
-	my $selstmt;
-
- 	if (! $cid) { # create new entry and log them in.
+	if (! $cid) { # create new entry and log them in.
 		$selstmt = 'select cid_seq.nextval from dual';
-		my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
+		$sth = $dbh->prepare($selstmt) || die "Failed to prepare " . $selstmt;
 		$sth->execute() || die "Failed to execute " . $selstmt;
 		my $rs = $sth->fetch() || die "Failed to fetch with " . $selstmt;
 		$cid = $rs->[0];
 		$sth->finish();
 
-		$selstmt = "insert into person (cid, first_name, middle_name, last_name, email, $pass_key address_1, address_2, city, state, postal_code, country, create_time, join_time) values ($cid, '" . &func::hex_encode($form_state{'first_name'}) . "', '" . &func::hex_encode($form_state{'middle_name'}) . "', '" . &func::hex_encode($form_state{'last_name'}) . "', '" . &func::hex_encode($form_state{'email'}) . "', " . $pass_val . "'" . &func::hex_encode($form_state{'address_1'}) . "', '" . &func::hex_encode($form_state{'address_2'}) . "', '" . &func::hex_encode($form_state{'city'}) . "', '" . &func::hex_encode($form_state{'state'}) . "', '" . &func::hex_encode($form_state{'postal_code'}) . "', '" . &func::hex_encode($form_state{'country'}) . "', sysdate, sysdate)";
+		$selstmt = "insert into person (cid, first_name, middle_name, last_name, email, password, address_1, address_2, city, state, postal_code, country, create_time, join_time) values ($cid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, sysdate, sysdate)";
 
 # 		$dbh->do($sestmt) || die "Failed to create new record with " . $selstmt;
-		my $sth = $dbh->prepare($selstmt) || die $selstmt;
-		$sth->execute() || die "execute error: " . $selstmt;
-		$sth->finish();
 #????  Why does this work and the do doesn't ????
-		if ($Session->{'gid'}) { # got a cid so free the guest id if not already cleared
-			&free_gid($Session->{'gid'});
-			$Session->{'gid'} = 0;
-		}
-		$Session->{'cid'} = $cid;
-		$Session->{'email'} = $form_state{'email'};
-		$Session->{'logged_in'} = 1;
-		$Response->{Cookies}{canonizer} = {
-			Value   => {
-				cid => $cid,
-			},
-			Expires => "Fri, 1 Jan 2010 00:00:00 GMT",
-			Domain  => 'canonizer.com',
-			Path    => '/'
-		};
+		$sth = $dbh->prepare($selstmt) || die $selstmt;
 
-		$message .= &format_success("Registration Completed.");
+		if ($sth->execute(
+				$form_state{'first_name'},
+				$form_state{'middle_name'},
+				$form_state{'last_name'},
+				$form_state{'email'},
+				$pass_val,
+				$form_state{'address_1'},
+				$form_state{'address_2'},
+				$form_state{'city'},
+				$form_state{'state'},
+				$form_state{'postal_code'},
+				$form_state{'country'}      )) {
+
+			if ($Session->{'gid'}) { # got a cid so free the guest id if not already cleared
+				&free_gid($Session->{'gid'});
+				$Session->{'gid'} = 0;
+			}
+			$Session->{'cid'} = $cid;
+			$Session->{'email'} = $form_state{'email'};
+			$Session->{'logged_in'} = 1;
+			$Response->{Cookies}{canonizer} = {
+				Value   => {
+					cid => $cid,
+				},
+				Expires => "Fri, 1 Jan 2010 00:00:00 GMT",
+				Domain  => 'canonizer.com',
+				Path    => '/'
+			};
+			$message .= &format_success("Registration Completed.");
+		} else {
+			$message .= &format_error("DB Insert Failed.<br>\n");
+		}
+
+		$sth->finish();
 
 	} else { # update existing entry
 
-		my $pass_clause = '';
-		if ($password) {
-			$pass_clause =  "password = '" . &func::encrypt($password) . "', ";
+		if (length($password) > 0) {
+			$selstmt = 'update person set password = ? where cid = ' . $cid;
+# why does do never work???
+#			if (! $dbh->do($selstmt, &func::canon_encode($password))) {
+			$sth = $dbh->prepare($selstmt);
+			if (! $sth->execute(&func::canon_encode($password)) ) {
+				$message .= &format_error("Sorry, the database is currently having problems.");
+			}
 		}
 
-		$selstmt = "update person set first_name = '" . &func::hex_encode($form_state{'first_name'}) . "', middle_name = '" . &func::hex_encode($form_state{'middle_name'}) . "', last_name = '" . &func::hex_encode($form_state{'last_name'}) . "', email = '" . &func::hex_encode($form_state{'email'}) . "', " . $pass_clause . "address_1 = '" . &func::hex_encode($form_state{'address_1'}) . "', address_2 = '" . &func::hex_encode($form_state{'address_2'}) . "', city = '" . &func::hex_encode($form_state{'city'}) . "', state = '" . &func::hex_encode($form_state{'state'}) . "', postal_code = '" . &func::hex_encode($form_state{'postal_code'}) . "', country = '" . &func::hex_encode($form_state{'country'}) . "' where cid = $cid";
-		$dbh->do($selstmt) || die "Failed to update record with " . $selstmt;
+		if (!$message) {
 
-		$message .= &format_success("Update Completed.");
+			$selstmt = "update person set first_name = ?, middle_name = ?, last_name = ?, email = ?, address_1 = ?, address_2 = ?, city = ?, state = ?, postal_code = ?, country = ? where cid = $cid";
+
+# do doesn't work!!
+#			if ($dbh->do($selstmt,
+
+			$sth = $dbh->prepare($selstmt);
+
+			if ($sth->execute(
+					$form_state{'first_name'},
+					$form_state{'middle_name'},
+					$form_state{'last_name'},
+					$form_state{'email'},
+					$form_state{'address_1'},
+					$form_state{'address_2'},
+					$form_state{'city'},
+					$form_state{'state'},
+					$form_state{'postal_code'},
+					$form_state{'country'}      )) {
+
+				$Session->{'email'} = $form_state{'email'};
+				$message .= &format_success("Update Completed.");
+			} else {
+				$message .= &format_error("Sorry, the database is currently having problems.");
+			}
+		}
+	}
+
+	if (length($new_nick_name) > 0) {
+		$selstmt = 'select nick_name_seq.nextval from dual';
+		$sth = $dbh->prepare($selstmt) || die "Failed to prepare " . $selstmt;
+		$sth->execute() || die "Failed to execute " . $selstmt;
+		$rs = $sth->fetch() || die "Failed to fetch with " . $selstmt;
+		my $nick_name_id = $rs->[0];
+		$sth->finish();
+
+		$owner_code = &func::canon_encode($cid);
+
+		$selstmt = "insert into nick_name (nick_name_id, owner_code, nick_name, create_time) values ($nick_name_id, '$owner_code', ?, sysdate)";
+
+# doesn't work?	if (! $dbh->do($selstmt, $nick_name)) {
+		$sth = $dbh->prepare($selstmt);
+		if($sth->execute($new_nick_name)) {
+			$form_state{'new_nick_name'} = ''; # can't submit this value again.
+		} else {
+			$message .= &format_error("Sorry, the database is currently having problems.");
+		}
+		$sth->finish();
 	}
 }
 
 
 sub profile_id {
 
+	my $dbh = &func::dbh_connect(1);
+	my $sth;
+	my $rs;
+
 	my $spacer = 30;
-	my $cid;
+	my $cid = 0;
 	if ($Session->{'takeover_cid'}) {
 		$cid = $Session->{'takeover_cid'};
 	} else {
@@ -153,31 +245,31 @@ sub profile_id {
 
 	if ($cid and (length($form_state{'email'}) < 1)) {
 
-		my $dbh = &func::dbh_connect(1);
 		if ($dbh) {
 			my $selstmt = "select first_name, middle_name, last_name, email, address_1, address_2, city, state, postal_code, country from person where cid = $cid";
 
-			my $sth = $dbh->prepare($selstmt) || die $selstmt;
+			$sth = $dbh->prepare($selstmt) || die $selstmt;
 			$sth->execute() || die $selstmt;
 
-			my $rs = $sth->fetchrow_hashref;
+			$rs = $sth->fetchrow_hashref;
 
 			if ($rs) {
-				$form_state{'first_name'} = &func::hex_decode($rs->{'FIRST_NAME'});
-				$form_state{'middle_name'} = &func::hex_decode($rs->{'MIDDLE_NAME'});
-				$form_state{'last_name'} = &func::hex_decode($rs->{'LAST_NAME'});
-				$form_state{'email'} = &func::hex_decode($rs->{'EMAIL'});
-				$form_state{'address_1'} = &func::hex_decode($rs->{'ADDRESS_1'});
-				$form_state{'address_2'} = &func::hex_decode($rs->{'ADDRESS_2'});
-				$form_state{'city'} = &func::hex_decode($rs->{'CITY'});
-				$form_state{'state'} = &func::hex_decode($rs->{'STATE'});
-				$form_state{'postal_code'} = &func::hex_decode($rs->{'POSTAL_CODE'});
-				$form_state{'country'} = &func::hex_decode($rs->{'COUNTRY'});
+				$form_state{'first_name'}  = $rs->{'FIRST_NAME'};
+				$form_state{'middle_name'} = $rs->{'MIDDLE_NAME'};
+				$form_state{'last_name'}   = $rs->{'LAST_NAME'};
+				$form_state{'email'}       = $rs->{'EMAIL'};
+				$form_state{'address_1'}   = $rs->{'ADDRESS_1'};
+				$form_state{'address_2'}   = $rs->{'ADDRESS_2'};
+				$form_state{'city'}        = $rs->{'CITY'};
+				$form_state{'state'}       = $rs->{'STATE'};
+				$form_state{'postal_code'} = $rs->{'POSTAL_CODE'};
+				$form_state{'country'}     = $rs->{'COUNTRY'};
 			} else {
 				$Response->Write("<h2>For some reason we can't look up your cid.  Please contact <a href=\"mailto:support\@canonizer.com\">support\@canonizer.com</a></h2>\n");
 				return();
 			}
 			$sth->finish();
+
 		} else {
 			$Response->Write("<h2>A database error occurred, please try again latter.</h2>\n");
 			return();
@@ -193,7 +285,28 @@ sub profile_id {
 		$pass_comment = '<font color = red>*</font>';
 	}
 
+	my @nick_names = ();
+
+	if ($cid) {
+		my $ownder_code = &func::canon_encode($cid);
+
+		$selstmt = "select nick_name from nick_name where owner_code = '$ownder_code' order by nick_name_id";
+
+		$sth = $dbh->prepare($selstmt) || die $selstmt;
+		$sth->execute() || die $selstmt;
+
+		while ($rs = $sth->fetch()) {
+			if ($rs->[0]) {
+				push(@nick_names, $rs->[0]);
+			}
+		}
+		$sth->finish();
+	}
+
+
 %>
+
+<br>
 
 <%=$message%>
 
@@ -213,13 +326,6 @@ sub profile_id {
 
 <tr height = <%=$spacer%>><td colspan = 2></td></tr>
 
-<tr><td colspan = 2><b>Nick Names:</b> Used (anonymously if desired)
-	for comunication and participation attribution.</td></tr>
-<tr><td>Nick Name 1:</td><td><input type = string name = nick_name_1 value = "Brent_Allsop"></td></td></tr>
-<tr><td>Nick Name 2:</td><td><input type = string name = nick_name_2 value = ""></td></td></tr>
-
-<tr height = <%=$spacer%>><td colspan = 2></td></tr>
-
 <tr><td colspan = 2><b>Address: <font color = red>*</font> </b> Checks will be mailed to this address.</td></tr>
 <tr><td>Address 1: <font color = red>*</font> </td><td><input type = string name = address_1 value = "<%=$form_state{'address_1'}%>"></td></td></tr>
 <tr><td>Address 2:</td><td><input type = string name = address_2 value = "<%=$form_state{'address_2'}%>"></td></td></tr>
@@ -230,7 +336,32 @@ sub profile_id {
 
 <tr height = <%=$spacer%>><td colspan = 2></td></tr>
 
-<tr><td colspan = 2 align = center><input type=reset value="Reset">&nbsp; &nbsp; &nbsp;<input type = submit name = submit value = "<%=$submit_value%>"></td></tr>
+<tr><td colspan = 2><b>Permanent Nick Names:</b> Used (anonymously if desired)
+	for comunication and participation attribution.</td></tr>
+
+<%
+if ($#nick_names >= 0) {
+	my $idx;
+	for ($idx = 0; $idx <= $#nick_names; $idx++) {
+		%>
+		<tr><td>&nbsp;</td><td><b><%=$nick_names[$idx]%></b></td></td></tr>
+		<%
+	}
+} else {
+	%>
+	<tr><td>&nbsp;<td>No Nick Names Specified Yet.</td></tr>
+	<%
+}
+%>
+
+<tr height = <%=$spacer%>><td colspan = 2></td></tr>
+
+<tr><td nowrap>Add New Permanent Nick Name:</td><td><input type = string name = new_nick_name maxlength=25 size=25 value="<%=$form_state{'new_nick_name'}%>">
+	<button name=nick_name_check>Check Nick Name</button> </td></td></tr>
+
+<tr height = <%=$spacer%>><td colspan = 2></td></tr>
+
+<tr><td colspan = 2 align = center><input type=reset value="Reset Form">&nbsp; &nbsp; &nbsp;<input type = submit name = submit value = "<%=$submit_value%>"></td></tr>
 </table>
 </form>
 
@@ -271,7 +402,7 @@ if ($Session->{'cid'} and ! $Session->{'logged_in'}) {
 	&display_page('CANONIZER', 'Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
 } else {
 %>
-	<h1>How did you get here anyway???</h1>
+	<h1>How did you get here anyway?</h1>
 <%
 }
 %>
