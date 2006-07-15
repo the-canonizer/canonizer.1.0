@@ -19,7 +19,7 @@ sub main_ctl {
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href = '/index.asp'>Main (Top 10)</a></td></tr>
+	    <tr><td><a href = 'http://<%=&func::get_host()%>/index.asp'>Main (Top 10)</a></td></tr>
 	    <%
 	}
 
@@ -40,7 +40,7 @@ sub main_ctl {
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href = '/what_is.asp'>What Is Canonizer</a></td></tr>
+	    <tr><td><a href = 'http://<%=&func::get_host()%>/what_is.asp'>What Is Canonizer</a></td></tr>
 	    <%
 	}
 	%>
@@ -54,11 +54,10 @@ sub main_ctl {
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href = '/topic.asp'>Create New Topic</a></td></tr>
+	    <tr><td><a href = 'https://<%=&func::get_host()%>/secure/new_topic.asp'>Create New Topic</a></td></tr>
 	    <%
 	}
 	%>
-
 
 	<tr><td><a href = "">Organizations</a></td></tr>
 	<tr><td><a href = "">Personal Pages</a></td></tr>
