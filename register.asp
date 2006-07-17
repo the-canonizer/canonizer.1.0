@@ -244,15 +244,18 @@ if ($found_str) {
 
 <p>Or if none of the found identities represent you and you are sure there are no identities on the system
 that do represent you, you can go onto the registration page.</p>
-
+<form action="https://<%=&func::get_host()%>/secure/profile_id.asp">
 <p><a href = "https://<%=&func::get_host()%>/secure/profile_id.asp"><input type = button value = register></a></p>
-
+<form>
 <br>
 
 <p>And as always, if there is a problem please contact <a href = 
 "mailto:support@canonizer.com">support@canonzier.com</a>.</p>
 
 <%
+
+#????  I've got to do something to fix the register button for msie.!!!!
+
 }
 
 
