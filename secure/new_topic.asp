@@ -1,9 +1,19 @@
-
+<%
+if(!$ENV{"HTTPS"}){
+	my $qs = '';
+	if ($ENV{'QUERY_STRING'}) {
+		$qs = '?' . $ENV{'QUERY_STRING'};
+	}
+        $Response->Redirect("https://" . $ENV{"SERVER_NAME"} . $ENV{"SCRIPT_NAME"} . $qs);
+}
+%>
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
+
+
 
 <%
 
@@ -38,8 +48,8 @@ sub save_topic {
 		$message .= "<h2><font color=red>A Note is required.</font></h2>\n";
 	}
 
-	if ($Request->Form{'number'}) {
-		$form_state{'num'} = $Request->Form{'number'};
+	if ($Request->Form('number')) {
+		$form_state{'num'} = $Request->Form('number');
 	}
 
 	$form_state{'submitter'} = int($Request->Form('submitter'));
@@ -61,12 +71,13 @@ sub save_topic {
 
 		my $num;
 		my $proposed;
+		my $now_time = time;
 		my $go_live_time;
 
 		if ($copy_record_id) {
 			$num = $form_state{'num'} = $Request->Form('number');
 			$proposed = 1;
-			$go_live_time = "sysdate + interval '7' day";
+			$go_live_time = $now_time + (60 * 60 * 24 * 7); # 7 days.
 		} else {
 			$selstmt = 'select max(num) from topic';
 			$sth = $dbh->prepare($selstmt) || die $selstmt;
@@ -76,10 +87,10 @@ sub save_topic {
 			$sth->finish();
 			$form_state{'num'} = $num;
 			$proposed = 0;
-			$go_live_time = 'sysdate';
+			$go_live_time = $now_time;
 		}
 
-		$selstmt = "insert into topic (record_id, num, name, namespace, one_line, key_words, note, submitter, submit_time, go_live_time, proposed) values ($new_record_id, $num, ?, ?, ?, ?, ?, ?, sysdate, $go_live_time, $proposed)";
+		$selstmt = "insert into topic (record_id, num, name, namespace, one_line, key_words, note, submitter, submit_time, go_live_time, proposed) values ($new_record_id, $num, ?, ?, ?, ?, ?, ?, $now_time, $go_live_time, $proposed)";
 		# why doesn't the do work?
 # 		$dbh->do($sestmt, $form_state{'namespace'}, $form_state{'one_line'}, $form_state{'key_words'}, $form_state{'note'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
 		$sth = $dbh->prepare($selstmt) || die $selstmt;
@@ -96,7 +107,7 @@ sub lookup_topic {
 	my $copy_record_id = $_[1];
 
 	my %form_state = ();
-	my $selstmt = "select num, name, namespace, one_line, key_words from topic where record_id = $copy_record_id";
+	my $selstmt = "select num, name, namespace, one_line, key_words, note from topic where record_id = $copy_record_id";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
@@ -109,6 +120,7 @@ sub lookup_topic {
 
 	$form_state{'num'} = &func::hex_decode($rs->{'NUM'});
 	$form_state{'topic_name'} = &func::hex_decode($rs->{'NAME'});
+	$form_state{'note'} = &func::hex_decode($rs->{'NOTE'});
 	$form_state{'namespace'} = &func::hex_decode($rs->{'NAMESPACE'});
 	$form_state{'one_line'} = &func::hex_decode($rs->{'ONE_LINE'});
 	$form_state{'key_words'} = &func::hex_decode($rs->{'KEY_WORDS'});
@@ -210,7 +222,7 @@ sub new_topic_form {
   <tr height = 20></tr>
 
   <td><b>Note: <font color = red>*</font> </b></td><td>Reason for submission. Maximum 65 characters.<br>
-	<input type=string name=note value="<%=$form_state{'note'}%>" maxlength=65 size=65></td></tr>
+	<input type=string name=note value="" maxlength=65 size=65></td></tr>
 
   <tr height = 20></tr>
 
@@ -220,7 +232,7 @@ sub new_topic_form {
 	<%
 	my $id;
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
-		if ($id == $form_state{'nick_name'}) {
+		if ($id == $form_state{'submitter'}) {
 			%>
 			<option value=<%=$id%> selected><%=$nick_names{$id}%>
 			<%
