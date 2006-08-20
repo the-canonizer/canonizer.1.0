@@ -1,3 +1,12 @@
+<%
+if(!$ENV{"HTTPS"}){
+	my $qs = '';
+	if ($ENV{'QUERY_STRING'}) {
+		$qs = '?' . $ENV{'QUERY_STRING'};
+	}
+        $Response->Redirect('https://' . &func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
+}
+%>
 
 <!--#include file = "includes/default/page.asp"-->
 
