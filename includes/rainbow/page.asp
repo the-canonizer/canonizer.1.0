@@ -2,17 +2,21 @@
 <%
 
 sub display_page {
-	my $title	 = $_[0];
-	my $subtitle	 = $_[1];
-	my $bar_subs	 = $_[2];
-	my $content_subs = $_[3];
-	my $tab_sub	 = $_[4];
+	my $header	 = $_[0];
+	my $bar_subs	 = $_[1];
+	my $content_subs = $_[2];
+	my $tab_sub	 = $_[3];
+
+
+my $title = $header;
+$title =~ s|\<[^\>]*\>||g;
+
 %>
 
 
 <html>
 <head>
-<title><%=$title%> : <%=$subtitle%></title>
+<title>CANONIZER: <%=$title%></title>
 
 </script>
 
@@ -20,13 +24,13 @@ sub display_page {
 <body bgcolor = white border = 0>
 <table border = 0 cellspacing = 0 cellpadding = 0>
 <tr>
-  <td background = images/cp_t_l.jpg width = 200 height = 200></td>
+  <!-- td background = images/cp_t_l.jpg width = 200 height = 200></td -->
+  <td><img src=images/cp_t_l.jpg width=200 height=200></td>
   <td background = images/cp_t.jpg width = 500 height = 200 align = center valign = bottom>
 	<center>
 	<font face = arial size = 7><b>
-	<%=$title%></b></font><br>
-	<font face = arial size = 5><b>
-	<%=$subtitle%></b></font><br><br>
+	<%=$header%></b></font><br>
+	<br><br>
 	<%
 	if ($tab_sub) {
 		&$tab_sub();
@@ -66,8 +70,11 @@ sub display_page {
 <tr>
   <td><img src = images/cp_b_l.jpg width = 200 height = 200></td>
   <td background = images/cp_b.jpg width = 500 height = 200 align = center>
+
+    <font face = arial size = 5><b>CANONIZER</b></font><br>
+
     Comments: <a href = "mailto:support@canonizer.com">support@canonizer.com</a><br>
-    <font face = arial size = 1>eCANONIZER is a trademark of CANONIZER DBA</font>
+    <font face = arial size = 1>Copyright Canonizer LLC 2006</font>
 </td>
   <td><img src = images/cp_b_r.jpg width = 200 height = 200></td>
 </tr>

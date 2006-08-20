@@ -36,7 +36,9 @@ sub top_10 {
 # main #
 ########
 
-&display_page('CANONIZER', 'Top 10', [\&identity, \&search, \&main_ctl], [\&top_10]);
+my $header = 'CANONIZER <br><font size=5>Top 10</font>';
+
+&display_page($header, [\&identity, \&search, \&main_ctl], [\&top_10]);
 
 %>
 
