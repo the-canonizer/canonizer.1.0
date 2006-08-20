@@ -23,6 +23,8 @@ sub profile_prefs {
 <form>
 <table border = 0>
 
+<br>
+
 <tr><th>This is where you set your preferences, such as what canonizers you'd like to use</th></tr>
 
 </table>
@@ -35,6 +37,6 @@ sub profile_prefs {
 # main #
 ########
 
-&display_page('CANONIZER', 'Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_prefs], \&profile_tabs);
+&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_prefs], \&profile_tabs);
 
 %>
