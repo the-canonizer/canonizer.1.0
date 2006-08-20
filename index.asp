@@ -10,7 +10,8 @@
 
 sub top_10 {
 
-%>
+	%>
+
       <ol>
 	<li>Canonizer Colors
 	  <oL>
@@ -27,10 +28,9 @@ sub top_10 {
 	</li>
       </ol>
 
-<%
+	<%
 }
 
-$Session->{'storage'} .= ($Session->{SessionID} . "<br>\n");
 
 ########
 # main #
