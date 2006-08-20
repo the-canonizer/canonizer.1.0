@@ -1,4 +1,3 @@
-
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
@@ -10,12 +9,6 @@
 
 use history_class;
 
-
-sub error_page {
-	%>
-	<h1>Error: Unkown topic_id: <%=$topic_id%>.</h1>
-	<%
-}
 
 sub unknown_num_page {
 
@@ -54,7 +47,7 @@ if ($Request->Form('number')) {
 
 
 if (!$num) {
-	&display_page('CANONIZER', 'Manage Topic: '. $num, [\&identity, \&search, \&main_ctl], [\&unknown_num_page]);
+	&display_page('<font size=5>Manage Topic:</font><br>'. $num, [\&identity, \&search, \&main_ctl], [\&unknown_num_page]);
 	$Response->End();
 }
 
@@ -63,12 +56,12 @@ local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 local $history = history_class->new($dbh, 'topic_class', $num);
 
 if ($history->{active} == 0) {
-	&display_page('CANONIZER', 'Manage Topic: ' . $history->{active}, [\&identity, \&search, \&main_ctl], [\&unknown_num_page]);
+	&display_page('<font size=5>Manage Topic:</font><br>' . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&unknown_num_page]);
 	$Response->End();
 }
 
 
-&display_page('CANONIZER', 'Topic: ' . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&manage_topic], \&topic_tabs);
+&display_page('<font size=5>Manage Topic:</font><br>' . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&manage_topic], \&topic_tabs);
 
 
 
