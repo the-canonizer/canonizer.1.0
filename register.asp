@@ -264,9 +264,9 @@ that do represent you, you can go onto the registration page.</p>
 ########
 
 if ($Request->Form("submit") eq "Do Search") {
-	&display_page('CANONIZER', 'Identity Search Results', [\&identity, \&search, \&main_ctl], [\&search_results]);
+	&display_page('Identity Search Results', [\&identity, \&search, \&main_ctl], [\&search_results]);
 } else {
-	&display_page('CANONIZER', 'Registration', [\&identity, \&search, \&main_ctl], [\&register_warning]);
+	&display_page('Registration', [\&identity, \&search, \&main_ctl], [\&register_warning]);
 }
 %>
 
