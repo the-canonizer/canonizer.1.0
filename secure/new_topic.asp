@@ -285,7 +285,7 @@ if ($Request->Form('record_id')) {
 }
 
 if ($Request->Form('submit')) {
-	%form_state = &save_topic($dbh); # ???? rewrite this.
+	%form_state = &save_topic($dbh);
 	if (! $message) {
 		$Response->Redirect('http://' . &func::get_host() . '/topic_manage.asp?number=' . $form_state{'num'});
 		$Response->End();
@@ -297,7 +297,6 @@ if ($Request->Form('submit')) {
 	}
 }
 
-# ???? rewrite form ?
 &display_page('CANONIZER', $subtitle, [\&identity, \&search, \&main_ctl], [\&new_topic_form]);
 
 %>
