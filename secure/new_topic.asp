@@ -287,11 +287,7 @@ if ($Request->Form('record_id')) {
 if ($Request->Form('submit')) {
 	%form_state = &save_topic($dbh); # ???? rewrite this.
 	if (! $message) {
-		%>
-		<h1>Topic Saved (will redirect???)</h1>
-		<%
 		$Response->Redirect('http://' . &func::get_host() . '/topic_manage.asp?number=' . $form_state{'num'});
-		print(STDERR "Did I get this message ????\n");
 		$Response->End();
 	}
 } else {
