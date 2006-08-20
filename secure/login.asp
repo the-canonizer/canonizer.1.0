@@ -1,3 +1,13 @@
+<%
+if(!$ENV{"HTTPS"}){
+	my $qs = '';
+	if ($ENV{'QUERY_STRING'}) {
+		$qs = '?' . $ENV{'QUERY_STRING'};
+	}
+        $Response->Redirect('https://' . &func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
+}
+%>
+
 
 <!--#include file = "includes/default/page.asp"-->
 
@@ -123,7 +133,7 @@ if ($Request->Form('submit')) {
 	&do_login();
 }
 
-&display_page('CANONIZER', 'Login', [], [\&login_form]);
+&display_page('Login', [], [\&login_form]);
 
 %>
 
