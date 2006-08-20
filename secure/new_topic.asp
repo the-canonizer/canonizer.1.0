@@ -113,7 +113,7 @@ sub lookup_topic {
 	my $rs;
 	if (!($rs = $sth->fetchrow_hashref())) {
 		$topic_name = 'invalid';
-		&display_page('CANONIZER', 'Topic: '. $topic_name, [\&identity, \&search, \&main_ctl], [\&error_page]);
+		&display_page('Topic: '. $topic_name, [\&identity, \&search, \&main_ctl], [\&error_page]);
 		$Response->End();
 	}
 
@@ -264,7 +264,7 @@ sub new_topic_form {
 ########
 
 if (!$Session->{'logged_in'}) {
-	&display_page('CANONIZER', 'New Topic', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	&display_page('New Topic', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -296,7 +296,7 @@ if ($Request->Form('submit')) {
 	}
 }
 
-&display_page('CANONIZER', $subtitle, [\&identity, \&search, \&main_ctl], [\&new_topic_form]);
+&display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&new_topic_form]);
 
 %>
 
