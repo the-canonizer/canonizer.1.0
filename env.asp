@@ -72,7 +72,7 @@ sub env {
 # main #
 ########
 
-&display_page('CANONIZER', 'Env and State info', [\&identity, \&search, \&main_ctl], [\&env]);
+&display_page('Env and State info', [\&identity, \&search, \&main_ctl], [\&env]);
 
 %>
 
