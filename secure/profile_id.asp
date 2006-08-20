@@ -404,12 +404,12 @@ if ($Request->QueryString('takeover_cid')) {
 if ($Session->{'cid'} and ! $Session->{'logged_in'}) {
 	$Response->Redirect("login.asp?destination=/secure/profile_id.asp");
 } elsif (!$Session->{'did_warning_search'} and ! $Session->{'logged_in'}) {
-	&display_page('CANONIZER', 'Personal Info', [\&identity, \&search, \&main_ctl], [\&must_search_first], \&profile_tabs);
+	&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&must_search_first], \&profile_tabs);
 } elsif ($Session->{'logged_in'} or $Session->{'did_warning_search'}) {
 	if ($Request->Form('submit')) {
 		&save_values();
 	}
-	&display_page('CANONIZER', 'Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
+	&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
 } else {
 %>
 	<h1>How did you get here anyway?</h1>
