@@ -15,52 +15,58 @@ sub main_ctl {
 	<%
 	if (($uri eq '/') || ($uri =~ 'index.asp')) {
 	    %>
-	    <tr><td bgcolor = white>Main (Top 10)</td></tr>
+	    <tr><td bgcolor=white>Main (Top 10)</td></tr>
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href = 'http://<%=&func::get_host()%>/index.asp'>Main (Top 10)</a></td></tr>
+	    <tr><td><a href='http://<%=&func::get_host()%>/'>Main (Top 10)</a></td></tr>
 	    <%
 	}
 
 	if ($uri =~ '/secure/profile_') {
 	    %>
-	    <tr><td bgcolor = white>Personal Info</td></tr>
+	    <tr><td bgcolor=white>Personal Info</td></tr>
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href = 'https://<%=&func::get_host()%>/secure/profile_prefs.asp'>Personal Info</a></td></tr>
+	    <tr><td><a href='https://<%=&func::get_host()%>/secure/profile_prefs.asp'>Personal Info</a></td></tr>
 	    <%
 	}
 
 
 	if ($uri =~ 'what_is.asp') {
 	    %>
-	    <tr><td bgcolor = white>What Is Canonizer</td></tr>
+	    <tr><td bgcolor=white>What Is Canonizer</td></tr>
 	    <%
 	} else {
 	    %>
 	    <tr><td><a href = 'http://<%=&func::get_host()%>/what_is.asp'>What Is Canonizer</a></td></tr>
 	    <%
 	}
-	%>
 
-	<tr><td><a href = "">Browse Categories</a></td></tr>
+	if ($uri =~ m|^/browse.asp|) {
+		%>
+		<tr><td bgcolor=white>Browse</td></tr>
+		<%
+	} else {
+		%>
+		<tr><td><a href = "http://<%=func::get_host()%>/browse.asp">Browse</a></td></tr>
+		<%
+	}
 
-	<%
 	if ($uri =~ 'new_topic.asp') {
 	    %>
-	    <tr><td bgcolor = white>Create New Topic</td></tr>
+	    <tr><td bgcolor=white>Create New Topic</td></tr>
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href = 'https://<%=&func::get_host()%>/secure/new_topic.asp'>Create New Topic</a></td></tr>
+	    <tr><td><a href='https://<%=&func::get_host()%>/secure/new_topic.asp'>Create New Topic</a></td></tr>
 	    <%
 	}
 	%>
 
-	<tr><td><a href = "">Organizations</a></td></tr>
-	<tr><td><a href = "">Personal Pages</a></td></tr>
+	<tr><td><a href="">Organizations</a></td></tr>
+	<tr><td><a href="">Personal Pages</a></td></tr>
 
     </table>
   </td></tr>
