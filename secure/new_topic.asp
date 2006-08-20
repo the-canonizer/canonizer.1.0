@@ -14,7 +14,6 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/main_ctl.asp"-->
 
 
-
 <%
 
 
