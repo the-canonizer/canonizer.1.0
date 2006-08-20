@@ -57,7 +57,7 @@ sub env {
 
 	<%
 
-	foreach my $key (keys %ENV) {
+	foreach my $key (sort (keys %ENV)) {
 	%>
 		<tr><td><%=$key%></td><td><%=$ENV{$key}%></td></tr>
 	<%
