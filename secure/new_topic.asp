@@ -1,4 +1,14 @@
 <%
+
+#######################
+#
+# new_topic.asp creates both a new topic record and a new statement record.
+#	(Each topic must have at least one "agreement" statement.)
+# to create a new version of a topic or create a statement (new version or within an already
+# existing topic) alone, use edit_topic.asp or edit_statement.asp
+#
+#######################
+
 if(!$ENV{"HTTPS"}){
 	my $qs = '';
 	if ($ENV{'QUERY_STRING'}) {
@@ -12,7 +22,6 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
-
 
 <%
 
@@ -42,15 +51,6 @@ sub save_topic {
 
 	$form_state{'key_words'} = $Request->Form('key_words');
 
-	$form_state{'note'} = $Request->Form('note');
-	if (length($form_state{'note'}) < 1) {
-		$message .= "<h2><font color=red>A Note is required.</font></h2>\n";
-	}
-
-	if ($Request->Form('number')) {
-		$form_state{'num'} = $Request->Form('number');
-	}
-
 	$form_state{'submitter'} = int($Request->Form('submitter'));
 	# should validate submitter nick name here!!!!
 
@@ -60,73 +60,33 @@ sub save_topic {
 
 	if (!$message) {
 
-		# ???? I probably want to drop the topic_id_seq until I convert these????
-		$selstmt = 'select max(record_id) from topic';
-		$sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
-		$sth->execute() || die "Failed to execute " . $selstmt;
-		$rs = $sth->fetch() || die "Failed to fetch with " . $selstmt;
-		my $new_record_id = $rs->[0] + 1;
-		$sth->finish();
-
-		my $num;
-		my $proposed;
+		$new_num = &func::get_next_id($dbh, 'topic', 'num');
+		my $new_topic_id = &func::get_next_id($dbh, 'topic', 'record_id');
+		my $new_statement_num = 1; # first one (agreement statement) is always 1.
+		my $new_statement_id = &func::get_next_id($dbh, 'statement', 'record_id');
+		my $proposed = 0; # first one goes live immediately.
 		my $now_time = time;
-		my $go_live_time;
+		my $go_live_time = $now_time;
 
-		if ($copy_record_id) {
-			$num = $form_state{'num'} = $Request->Form('number');
-			$proposed = 1;
-			$go_live_time = $now_time + (60 * 60 * 24 * 7); # 7 days.
-		} else {
-			$selstmt = 'select max(num) from topic';
-			$sth = $dbh->prepare($selstmt) || die $selstmt;
-			$sth->execute() || die "can't get topic num.\n";
-			$rs = $sth->fetch() || die "can't fetch topic num.\n";
-			$num = $rs->[0] + 1;
-			$sth->finish();
-			$form_state{'num'} = $num;
-			$proposed = 0;
-			$go_live_time = $now_time;
-		}
-
-		$selstmt = "insert into topic (record_id, num, name, namespace, one_line, key_words, note, submitter, submit_time, go_live_time, proposed) values ($new_record_id, $num, ?, ?, ?, ?, ?, ?, $now_time, $go_live_time, $proposed)";
+		$selstmt = "insert into topic (record_id, num, name, namespace, note, submitter, submit_time, go_live_time, proposed) values ($new_topic_id, $new_num, ?, ?, 'First Version of Topic', ?, $now_time, $go_live_time, $proposed)";
+		# print(STDERR "topic selstmt: $selstmt.\n");
 		# why doesn't the do work?
-# 		$dbh->do($sestmt, $form_state{'namespace'}, $form_state{'one_line'}, $form_state{'key_words'}, $form_state{'note'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
+		# $dbh->do($sestmt, $form_state{'namespace'}, $form_state{'one_line'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
 		$sth = $dbh->prepare($selstmt) || die $selstmt;
-		$sth->execute($form_state{'topic_name'}, $form_state{'namespace'}, $form_state{'one_line'}, $form_state{'key_words'}, $form_state{'note'}, $form_state{'submitter'} );
-		$sth->finish();
+		$sth->execute($form_state{'topic_name'}, $form_state{'namespace'}, $form_state{'submitter'} );
+
+		$selstmt = "insert into statement (topic_num, name, one_line, key_words, record_id, num, note, submitter, submit_time, go_live_time, proposed) values ($new_num, 'Agreement', ?, ?, $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', ?, $now_time, $go_live_time, $proposed)";
+		# print(STDERR "statement selstmt: $selstmt.\n");
+		# why doesn't the do work?
+		# $dbh->do($sestmt, $form_state{'one_line'}, $form_state{'key_words'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
+		$sth = $dbh->prepare($selstmt) || die $selstmt;
+		$sth->execute($form_state{'one_line'}, $form_state{'key_words'}, $form_state{'submitter'} );
 #		$message .= "selstmt: ($selstmt)[" . $form_state{'submitter'} . "]<br>\n";
+
+		$sth->finish();
 	}
 
 	return(%form_state);
-}
-
-sub lookup_topic {
-	my $dbh = $_[0];
-	my $copy_record_id = $_[1];
-
-	my %form_state = ();
-	my $selstmt = "select num, name, namespace, one_line, key_words, note from topic where record_id = $copy_record_id";
-
-	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
-	$sth->execute() || die "Failed to execute " . $selstmt;
-	my $rs;
-	if (!($rs = $sth->fetchrow_hashref())) {
-		$topic_name = 'invalid';
-		&display_page('Topic: '. $topic_name, [\&identity, \&search, \&main_ctl], [\&error_page]);
-		$Response->End();
-	}
-
-	$form_state{'num'} = &func::hex_decode($rs->{'NUM'});
-	$form_state{'topic_name'} = &func::hex_decode($rs->{'NAME'});
-	$form_state{'note'} = &func::hex_decode($rs->{'NOTE'});
-	$form_state{'namespace'} = &func::hex_decode($rs->{'NAMESPACE'});
-	$form_state{'one_line'} = &func::hex_decode($rs->{'ONE_LINE'});
-	$form_state{'key_words'} = &func::hex_decode($rs->{'KEY_WORDS'});
-
-	$sth->finish();
-	return(%form_state);
-
 }
 
 sub must_login {
@@ -148,11 +108,6 @@ sub must_login {
 
 
 sub new_topic_form {
-
-	my $submit_value = 'Create Topic';
-	if ($copy_record_id) {
-		$submit_value = 'Propose Topic Modification';
-	}
 
 	my %nick_names = ();
 	my $no_nick_name = 1;
@@ -177,10 +132,6 @@ sub new_topic_form {
 		return();
 	}
 
-	if (!$form_state{'num'}) { # new topic (with no copy) case
-		$form_state{'num'} = 0;
-	}
-
 %>
 
 <br>
@@ -188,8 +139,6 @@ sub new_topic_form {
 <br>
 
 <form method=post>
-<input type=hidden name=record_id value=<%=$copy_record_id%>>
-<input type=hidden name=number value=<%=$form_state{'num'}%>>
 
 <table>
 <tr>
@@ -198,9 +147,11 @@ sub new_topic_form {
 
   <tr height = 20></tr>
 
-  <td><b>Namespace:</b></td><td>Nothing for main default namespace.  Begins and Ends with '/'.  Maximum 65 characters.<br>
+  <td><b>Namespace:</b></td><td>Nothing for main default namespace.  Path that begins, seperated by, and ends with '/'.  Maximum 65 characters.<br>
 	<input type=string name=namespace value="<%=$form_state{'namespace'}%>" maxlength=65 size=65></td></tr>
 
+  <tr height = 20></tr>
+  <tr height = 20><td colspan=2><hr><p><font color=blue>Agreement Statement Values:</font></p></td></tr>
   <tr height = 20></tr>
 
 <%
@@ -210,6 +161,7 @@ sub new_topic_form {
 #  <tr height = 20></tr>
 %>
 
+
   <td><b>One Line Description: <font color = red>*</font> </b></td><td>Maximum 65 characters.<br>
 	<input type=string name=one_line value="<%=$form_state{'one_line'}%>" maxlength=65 size=65></td></tr>
 
@@ -217,11 +169,6 @@ sub new_topic_form {
 
   <td><b>Key Words:</b></td><td>Maximum 65 characters, comma seperated.<br>
 	<input type=string name=key_words value="<%=$form_state{'key_words'}%>" maxlength=65 size=65></td></tr>
-
-  <tr height = 20></tr>
-
-  <td><b>Note: <font color = red>*</font> </b></td><td>Reason for submission. Maximum 65 characters.<br>
-	<input type=string name=note value="" maxlength=65 size=65></td></tr>
 
   <tr height = 20></tr>
 
@@ -250,7 +197,7 @@ sub new_topic_form {
 </table>
 
 <input type=reset value="Reset">
-<input type=submit name=submit value="<%=$submit_value%>">
+<input type=submit name=submit value="Create Topic">
 
 </form>
 
@@ -272,27 +219,17 @@ local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 local %form_state = ();
 
+local $new_num = 0;
+
 local $message = '';
-local $copy_record_id = 0;
 
 my $subtitle = 'Create New Topic';
 
-if ($Request->Form('record_id')) {
-	$copy_record_id = $Request->Form('record_id');
-} elsif ($Request->QueryString('record_id')) {
-	$copy_record_id = $Request->QueryString('record_id');
-}
-
 if ($Request->Form('submit')) {
 	%form_state = &save_topic($dbh);
-	if (! $message) {
-		$Response->Redirect('http://' . &func::get_host() . '/topic_manage.asp?number=' . $form_state{'num'});
+	if (!$message) {
+		$Response->Redirect('http://' . &func::get_host() . '/topic.asp?topic_number=' . $new_num);
 		$Response->End();
-	}
-} else {
-	if ($copy_record_id) {
-		%form_state = &lookup_topic($dbh, $copy_record_id);
-		$subtitle = 'Propose Topic Modification';
 	}
 }
 
