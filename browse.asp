@@ -37,13 +37,15 @@ sub browse {
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
-	my $selstmt = 'select namespace, name, one_line, num from topic where proposed = 0 and replacement is null order by namespace, name';
+	my $selstmt = "select t.namespace, t.name, s.one_line, t.num from topic t, statement s where t.replacement is null and t.proposed = 0 and s.replacement is null and t.num = s.topic_num";
+;
+#	my $selstmt = 'select namespace, name, one_line, num from topic where proposed = 0 and replacement is null order by namespace, name';
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
 	my $rs;
 	while ($rs = $sth->fetch()) {
-		print('<li><a href="/topic.asp?number=' . $rs->[3] . '">', $rs->[0], $rs->[1], '</a><br>', $rs->[2], "</li>\n");
+		print('<li><a href="/topic.asp?topic_num=' . $rs->[3] . '">', $rs->[0], $rs->[1], '</a><br>', $rs->[2], "</li>\n");
 	}
 	%>
 	</ol>

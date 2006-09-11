@@ -4,84 +4,140 @@
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
-<!--#include file = "includes/topic_tabs.asp"-->
 
 <%
 
 #
-#	present a topic
+#	present a topic with a statement (default agreement statement)
+#	?topic_num=#[&statement_num=#]
+#
+#	optional specification of long/short text:
+#	&long_short=#
+#		0	short only (default)
+#		1	long only
+#		2	both long and short
 #
 
 sub error_page {
 	%>
-	<h1>Error: Unkown Topic number: <%=$num%>.</h1>
+	<h1>Error: Unkown Topic Reference (<%=$topic_num%>:<%=$statement_num%>).</h1>
 	<%
 }
 
-sub lookup_topic {
-	my $dbh = $_[0];
+sub lookup_topic_data {
+	my $topic_num = $_[0];
+	my $statement_num = $_[1];
 
-	my %form_state = ();
-	my $selstmt = "select name, namespace, submitter, one_line, key_words, submit_time from topic where topic_id = $topic_id";
+	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+	my $selstmt = "select t.name, t.namespace, t.submitter, s.name, s.one_line, s.key_words, s.submitter from topic t, statement s where t.replacement is null and t.proposed = 0 and s.replacement is null and t.num = $topic_num and s.topic_num = $topic_num and s.num = $statement_num";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
+
 	$sth->execute() || die "Failed to execute " . $selstmt;
-	my $rs;
-	if (!($rs = $sth->fetchrow_hashref())) {
-		$topic_name = 'invalid';
-		&display_page('<font size=5>Topic:</font><br>'. $topic_name, [\&identity, \&search, \&main_ctl], [\&error_page]);
-		$Response->End();
-	}
 
-	$form_state{'topic_name'} = &func::hex_decode($rs->{'NAME'});
-	$form_state{'namespace'} = &func::hex_decode($rs->{'NAMESPACE'});
-	$form_state{'one_line'} = &func::hex_decode($rs->{'ONE_LINE'});
-	$form_state{'key_words'} = &func::hex_decode($rs->{'KEY_WORDS'});
-	$form_state{'submit_time'} = $rs->{'key_words'};
+	my $rs = $sth->fetch() || return(0); # unknown topic
 
+	my $topic_data = {
+		't.name'	=> $rs->[0],
+		't.namespace'	=> $rs->[1],
+		't.submitter'	=> $rs->[2],
+		's.name'	=> $rs->[3],
+		's.one_line'	=> $rs->[4],
+		's.key_words'	=> $rs->[5],
+		't.submitter'	=> $rs->[6]
+	} ;
 	$sth->finish();
-	return(%form_state);
 
-}
 
-sub must_login {
+	$dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
-	my $login_url = 'https://' . &func::get_host() . '/secure/login.asp?destination=/topic.asp';
-	my $present_url = 'topic.asp';
-	if (my $query_string = $ENV{'QUERY_STRING'}) {
-		$login_url .= ('?' . $query_string);
-		$query_string =~ s|&?mode=manage||gi;
-		$present_url .= ('?' . $query_string);
+
+	$selstmt = "select value, text_size from statement_text where topic_num=$topic_num and statement_num=$statement_num and proposed = 0 and replacement is null";
+
+	$sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
+
+	$sth->execute() || die "Failed to execute " . $selstmt;
+
+	while ($rs = $sth->fetch()) {
+		if ($rs->[1] == 1) { # long text
+			if ($topic_data->{'long_text'}) {
+				print(STDERR "Warning evidently topic $topic_num and statement $statement_num has more than one active long text record.\n")
+			}
+			$toipc_data->{'long_text'} = $_[0];
+		} else { # short text
+			if ($topic_data->{'short_text'}) {
+				print(STDERR "Warning evidently topic $topic_num and statement $statement_num has more than one active short text record.\n")
+			}
+			$toipc_data->{'short_text'} = $_[0];
+		}
 	}
 
-%>
-
-	<br>
-
-	<h2>You must register and or login before you can manage topics.</h2>
-	<center>
-	<h2><a href=register.asp>Register</a><h2>
-	<h2><a href="<%=$login_url%>">Login</a><h2>
-	<h2><a href="<%=$present_url%>">Return to topic presentation page</a></h2>
-	</center>
-<%
+	return($topic_data);
 }
-
 
 sub present_topic {
 
-%>
+	my $short_sel_str = '';
+	my $long_sel_str = '';
+	my $long_short_sel_str = '';
 
-<br>
+	if ($long_short == 0) {
+		$short_sel_str = 'selected';
+	} elsif ($long_short == 1) {
+		$long_sel_str = 'selected';
+	} elsif ($long_short == 2) {
+		$long_short_sel_str = 'selected';
+	}
 
-One Line Descriton:<br>
-<font size=4><%=$topic_rec{'one_line'}%></font>
+	%>
 
-<h2>Agreement Statement:</h2>
+	<script language:javascript>
+	function change_long_short(val) {
+		var location_str = "topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>";
+		if (val == 2) {
+			location_str += "&long_short=2";
+		} else if (val == 1) {
+			location_str += "&long_short=1";
+		}
+		window.location = location_str;
+	}
+	</script>
 
-<h2>Canonizer Sorted Postion (POV) Statements:</h2>
+	<br>
 
-<%
+	Name Space: <font size=4><%=$topic_data->{'t.namespace'}%></font><br>
+
+	One Line Description:<br>
+	<font size=4><%=$topic_data->{'s.one_line'}%></font>
+	<br><br>
+
+	<%
+	if ($long_short == 0 || $long_short == 2) {
+		%>
+
+		<a href="https://<%=&func::get_host()%>/secure/edit_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add <%=$topic_data->{'s.name'}%> statement text</a>.
+		<br><br>
+		<%
+	}
+	if ($long_short == 1 || $long_short == 2) {
+		%>
+		<a href="https://<%=&func::get_host()%>/secure/edit_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add <%=$topic_data->{'s.name'}%> statement long text.</a> For additional data that doesn't fit on the one page statement page (not recomended.)
+		<br><br>
+		<%
+	}
+	%>
+
+	<select name="long_short" onchange=javascript:change_long_short(value)>
+		<option value=0 <%=$short_sel_str%>>Short Statement Only
+		<option value=1 <%=$long_sel_str%>>Long Statement Only
+		<option value=2 <%=$long_short_sel_str%>>Long and Short Statement
+	</select>
+
+
+	<h2>Canonizer Sorted Postion (POV) Statement tree:</h2>
+
+	<%
+
 }
 
 
@@ -90,43 +146,40 @@ One Line Descriton:<br>
 # main #
 ########
 
-local $topic_name = '';
-
-local $num = 0;
-if ($Request->Form('number')) {
-	$num = int($Request->Form('number'));
-} elsif ($Request->QueryString('number')) {
-	$num = int($Request->QueryString('number'));
+local $topic_num = 0;
+if ($Request->Form('topic_num')) {
+	$topic_num = int($Request->Form('topic_num'));
+} elsif ($Request->QueryString('topic_num')) {
+	$topic_num = int($Request->QueryString('topic_num'));
 }
 
-local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+local $statement_num = 1; # 1 is the default ageement statement;
+if ($Request->Form('statement_num')) {
+	$statement_num = int($Request->Form('statement_num'));
+} elsif ($Request->QueryString('statement_num')) {
+	$statement_num = int($Request->QueryString('statement_num'));
+}
 
+local $long_short = 0;
+if ($Request->Form('long_short')) {
+	$long_short = int($Request->Form('long_short'));
+} elsif ($Request->QueryString('long_short')) {
+	$long_short = int($Request->QueryString('long_short'));
+}
 
-my $selstmt = 'select name, namespace, one_line, submitter, go_live_time, replacement, objector, object_time, object_reason from topic where replacement is null and proposed = 0 and num = ' . $num;
+local $topic_data = &lookup_topic_data($topic_num, $statement_num);
 
-my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
+my $statement_name;
+if ($statement_num eq 1) {
+	$statement_name = 'Agreement Statement';
+} else {
+	$statement_name = 'POV Statement: ' . $topic_data->{'s.name'};
+}
 
-$sth->execute() || die "Failed to execute " . $selstmt;
-
-my $rs = $sth->fetchrow_hashref();
-
-local %topic_rec;
-
-if (! $rs) {
+if ($topic_data == 0) {
 	&display_page('Unknown Topic Number', [\&identity, \&search, \&main_ctl], [\&error_page]);
 } else {
-
-	$topic_rec{'name'} = $rs->{'NAME'};
-	$topic_rec{'namespace'} = $rs->{'NAMESPACE'};
-	$topic_rec{'one_line'} = $rs->{'ONE_LINE'};
-	$topic_rec{'submitter'} = $rs->{'SUBMITTER'};
-	$topic_rec{'go_live_time'} = $rs->{'GO_LIVE_TIME'};
-	$topic_rec{'replacement'} = $rs->{'REPLACEMENT'};
-	$topic_rec{'objector'} = $rs->{'OBJECTOR'};
-	$topic_rec{'object_time'} = $rs->{'OBJECT_TIME'};
-	$topic_rec{'object_reason'} = $rs->{'OBJECT_REASON'};
-
-	&display_page('<font size=5>Topic:</font><br>' . $topic_rec{'name'}, [\&identity, \&search, \&main_ctl], [\&present_topic], \&topic_tabs);
+	&display_page('<font size=5>Topic: ' . $topic_data->{'t.name'} . '</font><br><font size=4>' . $statement_name . '</font>', [\&identity, \&search, \&main_ctl], [\&present_topic]);
 }
 
 %>

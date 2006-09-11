@@ -19,14 +19,26 @@ sub top_10 {
 	    <li><font size = -1>It's to gay.</font></li>
 	  </ol>
 	</li><br>
-	<li>Is there a God?
+	<li>God
 	  <ol>
-	    <li><font size = -1>Yes.</font></li>
-	    <li><font size = -1>No.</font></li>
-	    <li><font size = -1>God is Everything.</font></li>
+	    <li><font size = -1>LDS</font></li>
+	    <li><font size = -1>Catholic</font></li>
+	    <li><font size = -1>Atheist</font></li>
+	    <li><font size = -1>Extropian</font></li>
 	  </ol>
 	</li>
+	<br>
+
+	<li>Qualia
+	  <ol>
+	    <li><font size = -1>Are Phenomenal Properties of Matter</font></li>
+	    <li><font size = -1>Do Not Exist (It just seems that they do.)</font></li>
+	  </ol>
+	</li>
+
       </ol>
+
+
 
 	<%
 }
