@@ -1,3 +1,7 @@
+
+
+This file is now manage_topic.asp, move it to the attick.
+
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
