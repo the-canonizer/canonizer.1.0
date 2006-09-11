@@ -71,7 +71,7 @@ $title =~ s|\<[^\>]*\>||g;
   <td><img src = images/cp_b_l.jpg width = 200 height = 200></td>
   <td background = images/cp_b.jpg width = 500 height = 200 align = center>
 
-    <font face = arial size = 5><b>CANONIZER</b></font><br>
+    <font face = arial size = 6><b>CANONIZER</b></font><br>
 
     Comments: <a href = "mailto:support@canonizer.com">support@canonizer.com</a><br>
     <font face = arial size = 1>Copyright Canonizer LLC 2006</font>
