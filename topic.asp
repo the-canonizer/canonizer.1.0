@@ -62,16 +62,17 @@ sub lookup_topic_data {
 	$sth->execute() || die "Failed to execute " . $selstmt;
 
 	while ($rs = $sth->fetch()) {
+
 		if ($rs->[1] == 1) { # long text
 			if ($topic_data->{'long_text'}) {
-				print(STDERR "Warning evidently topic $topic_num and statement $statement_num has more than one active long text record.\n")
+				print(STDERR "Warning evidently topic $topic_num and statement $statement_num has more than one active long text record.\n");
 			}
-			$toipc_data->{'long_text'} = $_[0];
+			$topic_data->{'long_text'} = $rs->[0];
 		} else { # short text
 			if ($topic_data->{'short_text'}) {
-				print(STDERR "Warning evidently topic $topic_num and statement $statement_num has more than one active short text record.\n")
+				print(STDERR "Warning evidently topic $topic_num and statement $statement_num has more than one active short text record.\n");
 			}
-			$toipc_data->{'short_text'} = $_[0];
+			$topic_data->{'short_text'} = $rs->[0];
 		}
 	}
 
@@ -110,23 +111,49 @@ sub present_topic {
 
 	Name Space: <font size=4><%=$topic_data->{'t.namespace'}%></font><br>
 
+	<a href=http://<%=&func::get_host()%>/manage_topic.asp?topic_num=<%=$topic_num%>">Manage Topic</a> (Topic Name and Namespace).<br><br>
+
 	One Line Description:<br>
-	<font size=4><%=$topic_data->{'s.one_line'}%></font>
+	<font size=4><%=$topic_data->{'s.one_line'}%></font><br>
+
+	<a href=http://<%=&func::get_host()%>/manage_statement.asp?topic_num=<%=$topic_num%>">Manage Statement</a> (Statement Name, Key Words, and One Line Description).<br><br>
+
+
 	<br><br>
 
 	<%
+	# short text:
 	if ($long_short == 0 || $long_short == 2) {
-		%>
-
-		<a href="https://<%=&func::get_host()%>/secure/edit_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add <%=$topic_data->{'s.name'}%> statement text</a>.
-		<br><br>
-		<%
+		if (length($topic_data->{'short_text'}) > 0) {
+			%>
+			<%=$topic_data->{'short_text'}%>
+			<br>
+			<a href=http://<%=&func::get_host()%>/manage_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> statement text</a>.
+			<br><br>
+			<%
+		} else {
+			%>
+			<a href="https://<%=&func::get_host()%>/secure/edit_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add <%=$topic_data->{'s.name'}%> statement text</a>.
+			<br><br>
+			<%
+		}
 	}
+
+	# long text:
 	if ($long_short == 1 || $long_short == 2) {
-		%>
-		<a href="https://<%=&func::get_host()%>/secure/edit_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add <%=$topic_data->{'s.name'}%> statement long text.</a> For additional data that doesn't fit on the one page statement page (not recomended.)
-		<br><br>
-		<%
+		if (length($topic_data->{'long_text'}) > 0) {
+			%>
+			<%=$topic_data->{'long_text'}%>
+			<br>
+			<a href=http://<%=&func::get_host()%>/manage_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> long statement text</a>.
+			<br><br>
+			<%
+		} else {
+			%>
+			<a href="https://<%=&func::get_host()%>/secure/edit_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add <%=$topic_data->{'s.name'}%> statement long text.</a> For additional data that doesn't fit on the one page statement page (not recomended.)
+			<br><br>
+			<%
+		}
 	}
 	%>
 
