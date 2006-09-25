@@ -44,12 +44,12 @@ responsibility not to have multiple identities on the system.</p>
 
 <form method = post>
 
-<table border = 0>
-<tr><td>Legal First Name:</td><td><input type = text name = first_name></td></tr>
-<tr><td>Legal Last Name:</td><td><input type = text name = last_name></td></tr>
-<tr><th colspan = 2 align = center>Or</th></tr>
-<tr><td>Canonizer ID Number:</td><td><input type = text name = cid></td></tr>
-<tr><td colspan = 2 align = center><input type = submit name = submit value = "Do Search"></td></tr>
+<table border=0>
+<tr><td>Legal First Name:</td><td><input type=text name=first_name></td></tr>
+<tr><td>Legal Last Name:</td><td><input type=text name=last_name></td></tr>
+<tr><th colspan=2 align=center>Or</th></tr>
+<tr><td>Canonizer ID Number:</td><td><input type=text name=search_cid></td></tr>
+<tr><td colspan=2 align=center><input type=submit name=submit value="Do Search"></td></tr>
 </table>
 
 </form>
@@ -121,7 +121,7 @@ sub search_results {
 	# Can't register until this is set.
 	$Session->{'did_warning_search'} = 1;
 
-	my $cid = int($Request->Form('cid'));
+	my $cid = int($Request->Form('search_cid'));
 	my $first_name = $Request->Form('first_name');
 	my $last_name = $Request->Form('last_name');
 
@@ -137,7 +137,7 @@ sub search_results {
 
 	if ($cid) {
 		$dbh = &func::dbh_connect(1) || die "unable to connect to database";
-		$selstmt = "select first_name, middle_name, last_name, email from person where cid = $cid";
+		$selstmt = "select first_name, middle_name, last_name, email from persons where cid = $cid";
 		$sth = $dbh->prepare($selstmt) || die 'prepare failed with ' . $selstmt;
 		$sth->execute() || die 'execute failed with ' . $selstmt;
 		$rs = $sth->fetchrow_hashref();
@@ -173,7 +173,7 @@ sub search_results {
 
 		$last_name = &func::hex_encode($last_name);
 		$dbh = &func::dbh_connect(1) || die "unable to connect to database";
-		$selstmt = "select cid, first_name, middle_name, last_name, email from person where $like_clause";
+		$selstmt = "select cid, first_name, middle_name, last_name, email from persons where $like_clause";
 		$sth = $dbh->prepare($selstmt) || die 'prepare failed with ' . $selstmt;
 		if ((length($first_name) > 0) and (length($last_name) > 0)) {
 			$sth->execute("\%$first_name\%", "\%$last_name\%") || die 'execute failed with ' . $selstmt;
@@ -233,7 +233,7 @@ if ($found_str) {
 <tr><td>Legal First Name:</td><td><input type = text name = first_name></td></tr>
 <tr><td>Legal Last Name:</td><td><input type = text name = last_name></td></tr>
 <tr><th colspan = 2 align = center>Or</th></tr>
-<tr><td>Canonizer ID Number:</td><td><input type = text name = cid></td></tr>
+<tr><td>Canonizer ID Number:</td><td><input type = text name = search_cid></td></tr>
 <tr><td colspan = 2 align = center><input type = submit name = submit value = "Do Search"></td></tr>
 </table>
 
