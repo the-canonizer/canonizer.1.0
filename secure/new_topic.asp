@@ -60,22 +60,22 @@ sub save_topic {
 
 	if (!$message) {
 
-		$new_num = &func::get_next_id($dbh, 'topic', 'num');
-		my $new_topic_id = &func::get_next_id($dbh, 'topic', 'record_id');
+		$new_num = &func::get_next_id($dbh, 'topics', 'num');
+		my $new_topic_id = &func::get_next_id($dbh, 'topics', 'record_id');
 		my $new_statement_num = 1; # first one (agreement statement) is always 1.
-		my $new_statement_id = &func::get_next_id($dbh, 'statement', 'record_id');
+		my $new_statement_id = &func::get_next_id($dbh, 'statements', 'record_id');
 		my $proposed = 0; # first one goes live immediately.
 		my $now_time = time;
 		my $go_live_time = $now_time;
 
-		$selstmt = "insert into topic (record_id, num, name, namespace, note, submitter, submit_time, go_live_time, proposed) values ($new_topic_id, $new_num, ?, ?, 'First Version of Topic', ?, $now_time, $go_live_time, $proposed)";
+		$selstmt = "insert into topics (record_id, num, name, namespace, note, submitter, submit_time, go_live_time, proposed) values ($new_topic_id, $new_num, ?, ?, 'First Version of Topic', ?, $now_time, $go_live_time, $proposed)";
 		# print(STDERR "topic selstmt: $selstmt.\n");
 		# why doesn't the do work?
 		# $dbh->do($sestmt, $form_state{'namespace'}, $form_state{'one_line'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
 		$sth = $dbh->prepare($selstmt) || die $selstmt;
 		$sth->execute($form_state{'topic_name'}, $form_state{'namespace'}, $form_state{'submitter'} );
 
-		$selstmt = "insert into statement (topic_num, name, one_line, key_words, record_id, num, note, submitter, submit_time, go_live_time, proposed) values ($new_num, 'Agreement', ?, ?, $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', ?, $now_time, $go_live_time, $proposed)";
+		$selstmt = "insert into statements (topic_num, name, one_line, key_words, record_id, num, note, submitter, submit_time, go_live_time, proposed) values ($new_num, 'Agreement', ?, ?, $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', ?, $now_time, $go_live_time, $proposed)";
 		# print(STDERR "statement selstmt: $selstmt.\n");
 		# why doesn't the do work?
 		# $dbh->do($sestmt, $form_state{'one_line'}, $form_state{'key_words'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
@@ -112,7 +112,7 @@ sub new_topic_form {
 	my %nick_names = ();
 	my $no_nick_name = 1;
 	my $owner_code = &func::canon_encode($Session->{'cid'});
-	my $selstmt = "select nick_name_id, nick_name from nick_name where owner_code = '$owner_code'";
+	my $selstmt = "select nick_name_id, nick_name from nick_names where owner_code = '$owner_code'";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
