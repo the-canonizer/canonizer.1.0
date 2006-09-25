@@ -65,7 +65,7 @@ sub object_form_message {
 	my %nick_names = ();
 	my $no_nick_name = 1;
 	my $owner_code = &func::canon_encode($Session->{'cid'});
-	my $selstmt = "select nick_name_id, nick_name from nick_name where owner_code = '$owner_code'";
+	my $selstmt = "select nick_name_id, nick_name from nick_names where owner_code = '$owner_code'";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
@@ -100,9 +100,9 @@ sub object_form_message {
 	<p>Reason for objection: <font color = red>*</font><br>
 	<input type=string name=object_reason maxlength=65 size=65></p>
 
-	<input type=hidden name=topic_number value=$topic_number>
+	<input type=hidden name=topic_num value=$num>
 	<input type=submit name=submit value=\"Yes, I want to object.\">
-	<input type=button value=\"No, take me back to the topic manager.\" onClick='location=\"http://" . &func::get_host() . "/topic_manage.asp?number=" . $record->{num} . "\"'>
+	<input type=button value=\"No, take me back to the topic manager.\" onClick='location=\"http://" . &func::get_host() . "/topic_manage.asp?num=" . $record->{num} . "\"'>
 
 	</form>
 
@@ -143,11 +143,11 @@ sub do_object {
 	}
 
 	if (! $message) {
-		my $selstmt = "update topic set objector = $objector, object_time = " . time . ", object_reason = ? where record_id = $record_id";
+		my $selstmt = "update topics set objector = $objector, object_time = " . time . ", object_reason = ? where record_id = $record_id";
 		# what a pain!! if ($dbh->do($selstmt, $object_reason)) {
 		my $sth = $dbh->prepare($selstmt);
 		if ($sth->execute($object_reason)) {
-			$Response->Redirect('http://' . &func::get_host() . '/topic_manage.asp?number=' . $num);
+			$Response->Redirect('http://' . &func::get_host() . '/topic_manage.asp?num=' . $num);
 		} else {
 			$message = "Failed to update for some reason.\n";
 		}
@@ -187,7 +187,7 @@ local $message = '';
 
 local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
-my $selstmt = "select * from topic where record_id = $record_id";
+my $selstmt = "select * from topics where record_id = $record_id";
 my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 $sth->execute() || die "Failed to prepair " . $selstmt;
 my $rs;
