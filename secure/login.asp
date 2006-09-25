@@ -60,7 +60,7 @@ sub do_login {
 
 			my $enc_password = &func::canon_encode($password);
 
-			my $selstmt = 'select cid from person where email = ? and password = ?';
+			my $selstmt = 'select cid from persons where email = ? and password = ?';
 
 			my $sth = $dbh->prepare($selstmt) || die $selstmt;
 			$sth->execute($email, $enc_password) || die $selstmt;

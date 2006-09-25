@@ -70,7 +70,7 @@ sub save_record {
 	my $sth;
 	my $rs;
 
-	$record_state->{'new_record_id'} = &func::get_next_id($dbh, 'STATEMENT_TEXT', 'RECORD_ID');
+	$record_state->{'new_record_id'} = &func::get_next_id($dbh, 'statement_texts', 'record_id');
 
 	my $proposed;
 	my $now_time = time;
@@ -80,12 +80,12 @@ sub save_record {
 		$proposed = 1;
 		$go_live_time = $now_time + (60 * 60 * 24 * 7); # 7 days.
 	} else {
-		$record_state->{'record_num'} = &func::get_next_id($dbh, 'STATEMENT_TEXT', 'NUM');
+		$record_state->{'record_num'} = &func::get_next_id($dbh, 'statement_texts', 'num');
 		$proposed = 0;
 		$go_live_time = $now_time;
 	}
 
-	$selstmt = "insert into statement_text  (value, text_size,               topic_num,                    statement_num,                    record_id,                        num,                           note,                    submit_time, submitter,                    go_live_time,  proposed) " .
+	$selstmt = "insert into statement_texts  (value, text_size,               topic_num,                    statement_num,                    record_id,                        num,                           note,                    submit_time, submitter,                    go_live_time,  proposed) " .
 					"values (?,     $record_state->{'long'}, $record_state->{'topic_num'}, $record_state->{'statement_num'}, $record_state->{'new_record_id'}, $record_state->{'record_num'}, ?, $now_time,   $record_state->{'submitter'}, $go_live_time, $proposed)";
 
 	# why does this 'do' not work?
@@ -103,7 +103,7 @@ sub lookup_topic {
 	my $dbh = $_[0];
 	my $record_state = $_[1];
 
-	my $selstmt = "select num, name, namespace, one_line, key_words, note from topic where record_id = $record_state->{'copy_record_id'}";
+	my $selstmt = "select num, name, namespace, one_line, key_words, note from topics where record_id = $record_state->{'copy_record_id'}";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
@@ -146,7 +146,7 @@ sub new_record_form {
 	my %nick_names = ();
 	my $no_nick_name = 1;
 	my $owner_code = &func::canon_encode($Session->{'cid'});
-	my $selstmt = "select nick_name_id, nick_name from nick_name where owner_code = '$owner_code'";
+	my $selstmt = "select nick_name_id, nick_name from nick_names where owner_code = '$owner_code'";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
@@ -292,7 +292,7 @@ if ($message) {
 		if (&save_record($dbh, $record_state)) {
 
 			if ($record_state->{'copy_record_id'}) {
-				# ???? $Response->Redirect('http://' . &func::get_host() . '/manage_text.asp?number=' . $record_state{'num'});
+				# ???? $Response->Redirect('http://' . &func::get_host() . '/manage_text.asp?num=' . $record_state{'num'});
 			} else {
 				$Response->Redirect('http://' . &func::get_host() . '/topic.asp?topic_num=' . $record_state->{'topic_num'} . '&statement_num=' . $record_state->{'statement_num'});
 			}

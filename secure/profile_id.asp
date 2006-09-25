@@ -1,5 +1,5 @@
 <%
-if(!$ENV{"HTTPS"}){
+if(!$ENV{"HTTPS"}) {
 	my $qs = '';
 	if ($ENV{'QUERY_STRING'}) {
 		$qs = '?' . $ENV{'QUERY_STRING'};
@@ -70,7 +70,7 @@ sub save_values {
 	if (length($form_state{'email'} = $Request->Form('email')) < 1) {
 		$message .= &format_error("e-mail is required.");
 	} else { # check for unique e-mail
-		$selstmt = 'select cid from person where email = ?';
+		$selstmt = 'select cid from persons where email = ?';
 		if ($cid) {
 			$selstmt .= " and not cid = $cid";
 		}
@@ -113,7 +113,7 @@ sub save_values {
 	my $new_nick_name = $Request->Form('new_nick_name');
 	if (length($new_nick_name) > 0) {
 		$form_state{'new_nick_name'} = $new_nick_name;
-		$selstmt = 'select nick_name_id from nick_name where nick_name = ?';
+		$selstmt = 'select nick_name_id from nick_names where nick_name = ?';
 		$sth = $dbh->prepare($selstmt) || die "Failed to prepare " . $selstmt;
 		$sth->execute($new_nick_name) || die "Failed to execute " . $selstmt;
 		if ($sth->fetch()) {
@@ -125,14 +125,12 @@ sub save_values {
 	if ($message) {return()};
 
 	if (! $cid) { # create new entry and log them in.
-		$selstmt = 'select cid_seq.nextval from dual';
-		$sth = $dbh->prepare($selstmt) || die "Failed to prepare " . $selstmt;
-		$sth->execute() || die "Failed to execute " . $selstmt;
-		my $rs = $sth->fetch() || die "Failed to fetch with " . $selstmt;
-		$cid = $rs->[0];
-		$sth->finish();
 
-		$selstmt = "insert into person (cid, first_name, middle_name, last_name, email, password, address_1, address_2, city, state, postal_code, country, create_time, join_time) values ($cid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, sysdate, sysdate)";
+		$cid = &func::get_next_id($dbh, 'persons', 'cid');
+
+		my $now_time = time;
+
+		$selstmt = "insert into persons (cid, first_name, middle_name, last_name, email, password, address_1, address_2, city, state, postal_code, country, create_time, join_time) values ($cid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $now_time, $now_time)";
 
 # 		$dbh->do($sestmt) || die "Failed to create new record with " . $selstmt;
 #????  Why does this work and the do doesn't ????
@@ -176,7 +174,7 @@ sub save_values {
 	} else { # update existing entry
 
 		if (length($password) > 0) {
-			$selstmt = 'update person set password = ? where cid = ' . $cid;
+			$selstmt = 'update persons set password = ? where cid = ' . $cid;
 # why does do never work???
 #			if (! $dbh->do($selstmt, &func::canon_encode($password))) {
 			$sth = $dbh->prepare($selstmt);
@@ -187,7 +185,7 @@ sub save_values {
 
 		if (!$message) {
 
-			$selstmt = "update person set first_name = ?, middle_name = ?, last_name = ?, email = ?, address_1 = ?, address_2 = ?, city = ?, state = ?, postal_code = ?, country = ? where cid = $cid";
+			$selstmt = "update persons set first_name = ?, middle_name = ?, last_name = ?, email = ?, address_1 = ?, address_2 = ?, city = ?, state = ?, postal_code = ?, country = ? where cid = $cid";
 
 # do doesn't work!!
 #			if ($dbh->do($selstmt,
@@ -215,16 +213,14 @@ sub save_values {
 	}
 
 	if (length($new_nick_name) > 0) {
-		$selstmt = 'select nick_name_seq.nextval from dual';
-		$sth = $dbh->prepare($selstmt) || die "Failed to prepare " . $selstmt;
-		$sth->execute() || die "Failed to execute " . $selstmt;
-		$rs = $sth->fetch() || die "Failed to fetch with " . $selstmt;
-		my $nick_name_id = $rs->[0];
-		$sth->finish();
+
+		my $nick_name_id = &func::get_next_id($dbh, 'nick_names', 'nick_name_id');
 
 		$owner_code = &func::canon_encode($cid);
 
-		$selstmt = "insert into nick_name (nick_name_id, owner_code, nick_name, create_time) values ($nick_name_id, '$owner_code', ?, sysdate)";
+		my $now_time = time;
+
+		$selstmt = "insert into nick_names (nick_name_id, owner_code, nick_name, create_time) values ($nick_name_id, '$owner_code', ?, $now_time)";
 
 # doesn't work?	if (! $dbh->do($selstmt, $nick_name)) {
 		$sth = $dbh->prepare($selstmt);
@@ -256,7 +252,7 @@ sub profile_id {
 	if ($cid and (length($form_state{'email'}) < 1)) {
 
 		if ($dbh) {
-			my $selstmt = "select first_name, middle_name, last_name, email, address_1, address_2, city, state, postal_code, country from person where cid = $cid";
+			my $selstmt = "select first_name, middle_name, last_name, email, address_1, address_2, city, state, postal_code, country from persons where cid = $cid";
 
 			$sth = $dbh->prepare($selstmt) || die $selstmt;
 			$sth->execute() || die $selstmt;
@@ -300,7 +296,7 @@ sub profile_id {
 	if ($cid) {
 		my $ownder_code = &func::canon_encode($cid);
 
-		$selstmt = "select nick_name from nick_name where owner_code = '$ownder_code' order by nick_name_id";
+		$selstmt = "select nick_name from nick_names where owner_code = '$ownder_code' order by nick_name_id";
 
 		$sth = $dbh->prepare($selstmt) || die $selstmt;
 		$sth->execute() || die $selstmt;
@@ -382,18 +378,17 @@ if ($#nick_names >= 0) {
 # main #
 ########
 
-# there are several cases comming into this page:
+# there are several cases leading into this page:
 # logged in - setting personal information
 # cid but not logged in - must go to login with this page as destination.
 # click on the page after going to registration/search page. (searched flag set)
 #	But could get here after session expires  (display must_search_first page)
 # Go hear as guest from profile_prefs
-#
-# when we visit this page as a guest from another prefs page
-# we want an advertizement page saying:
-#	This is where you go to edit your personal identity data
-#	or to enter it the first time when you do register.
-#	But before that can take place, you must
+# 	when we visit this page as a guest from another prefs page
+# 	we want an advertizement page saying:
+#		This is where you go to edit your personal identity data
+#		or to enter it the first time when you do register.
+#		But before that can take place, you must register.
 #
 
 if ($Request->QueryString('takeover_cid')) {
