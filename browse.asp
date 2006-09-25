@@ -37,9 +37,9 @@ sub browse {
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
-	my $selstmt = "select t.namespace, t.name, s.one_line, t.num from topic t, statement s where t.replacement is null and t.proposed = 0 and s.replacement is null and t.num = s.topic_num";
+	my $selstmt = "select t.namespace, t.name, s.one_line, t.num from topics t, statements s where t.replacement is null and t.proposed = 0 and s.replacement is null and t.num = s.topic_num";
 ;
-#	my $selstmt = 'select namespace, name, one_line, num from topic where proposed = 0 and replacement is null order by namespace, name';
+#	my $selstmt = 'select namespace, name, one_line, num from topics where proposed = 0 and replacement is null order by namespace, name';
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
