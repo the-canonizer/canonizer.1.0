@@ -18,6 +18,11 @@
 #		2	both long and short
 #
 
+# use PurpleWiki::Config;
+use PurpleWiki::Parser::WikiText;
+use PurpleWiki::View::wikihtml;
+
+
 sub error_page {
 	%>
 	<h1>Error: Unkown Topic Reference (<%=$topic_num%>:<%=$statement_num%>).</h1>
@@ -29,7 +34,9 @@ sub lookup_topic_data {
 	my $statement_num = $_[1];
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
-	my $selstmt = "select t.name, t.namespace, t.submitter, s.name, s.one_line, s.key_words, s.submitter from topic t, statement s where t.replacement is null and t.proposed = 0 and s.replacement is null and t.num = $topic_num and s.topic_num = $topic_num and s.num = $statement_num";
+	my $selstmt = "select t.name, t.namespace, t.submitter, s.name, s.one_line, s.key_words, s.submitter from topics t, statements s where t.replacement is null and t.proposed = 0 and s.replacement is null and t.num = $topic_num and s.topic_num = $topic_num and s.num = $statement_num";
+
+print(STDERR "???? selstmt: $selstmt.\n");
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 
@@ -52,7 +59,7 @@ sub lookup_topic_data {
 	$dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
 
-	$selstmt = "select value, text_size from statement_text where topic_num=$topic_num and statement_num=$statement_num and proposed = 0 and replacement is null";
+	$selstmt = "select value, text_size from statement_texts where topic_num=$topic_num and statement_num=$statement_num and proposed = 0 and replacement is null";
 
 	$sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 
@@ -116,14 +123,27 @@ sub present_topic {
 	<a href=http://<%=&func::get_host()%>/manage_statement.asp?topic_num=<%=$topic_num%>">Manage Statement</a> (Statement Name, Key Words, and One Line Description).<br><br>
 
 
-	<br><br>
+	<br>
 
 	<%
+
+	my $config = PurpleWiki::Config->new('/var/www/wikidb');
+	my $parser = PurpleWiki::Parser::WikiText->new;
+	my $viewer = PurpleWiki::View::wikihtml->new(url => '', pageName => '', css_file => '');
+	my $wikiTree;
+	my $html_text;
+
 	# short text:
 	if ($long_short == 0 || $long_short == 2) {
 		if (length($topic_data->{'short_text'}) > 0) {
+
+			$wikiTree = $parser->parse($topic_data->{'short_text'});
+			$html_text = $viewer->view($wikiTree);
+
 			%>
-			<%=$topic_data->{'short_text'}%>
+			<hr>
+			<%=$html_text%>
+			<hr>
 			<br>
 			<a href=http://<%=&func::get_host()%>/manage_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> statement text</a>.
 			<br><br>
@@ -139,8 +159,12 @@ sub present_topic {
 	# long text:
 	if ($long_short == 1 || $long_short == 2) {
 		if (length($topic_data->{'long_text'}) > 0) {
+
+			$wikiTree = $parser->parse($topic_data->{'long_text'});
+			$html_text = $viewer->view($wikiTree);
+
 			%>
-			<%=$topic_data->{'long_text'}%>
+			<%=$html_text%>
 			<br>
 			<a href=http://<%=&func::get_host()%>/manage_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> long statement text</a>.
 			<br><br>

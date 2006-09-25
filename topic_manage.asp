@@ -43,10 +43,10 @@ sub manage_topic {
 ########
 
 local $num = '';
-if ($Request->Form('number')) {
-	$num = int($Request->Form('number'));
-} elsif ($Request->QueryString('number')) {
-	$num = int($Request->QueryString('number'));
+if ($Request->Form('num')) {
+	$num = int($Request->Form('num'));
+} elsif ($Request->QueryString('num')) {
+	$num = int($Request->QueryString('num'));
 }
 
 
