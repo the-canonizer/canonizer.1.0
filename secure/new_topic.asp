@@ -60,7 +60,7 @@ sub save_topic {
 
 	if (!$message) {
 
-		$new_num = &func::get_next_id($dbh, 'topics', 'num');
+		$new_topic_num = &func::get_next_id($dbh, 'topics', 'topic_num');
 		my $new_topic_id = &func::get_next_id($dbh, 'topics', 'record_id');
 		my $new_statement_num = 1; # first one (agreement statement) is always 1.
 		my $new_statement_id = &func::get_next_id($dbh, 'statements', 'record_id');
@@ -68,14 +68,14 @@ sub save_topic {
 		my $now_time = time;
 		my $go_live_time = $now_time;
 
-		$selstmt = "insert into topics (record_id, num, name, namespace, note, submitter, submit_time, go_live_time, proposed) values ($new_topic_id, $new_num, ?, ?, 'First Version of Topic', ?, $now_time, $go_live_time, $proposed)";
+		$selstmt = "insert into topics (record_id, topic_num, name, namespace, note, submitter, submit_time, go_live_time, proposed) values ($new_topic_id, $new_topic_num, ?, ?, 'First Version of Topic', ?, $now_time, $go_live_time, $proposed)";
 		# print(STDERR "topic selstmt: $selstmt.\n");
 		# why doesn't the do work?
 		# $dbh->do($sestmt, $form_state{'namespace'}, $form_state{'one_line'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
 		$sth = $dbh->prepare($selstmt) || die $selstmt;
 		$sth->execute($form_state{'topic_name'}, $form_state{'namespace'}, $form_state{'submitter'} );
 
-		$selstmt = "insert into statements (topic_num, name, one_line, key_words, record_id, num, note, submitter, submit_time, go_live_time, proposed) values ($new_num, 'Agreement', ?, ?, $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', ?, $now_time, $go_live_time, $proposed)";
+		$selstmt = "insert into statements (topic_num, name, one_line, key_words, record_id, statement_num, note, submitter, submit_time, go_live_time, proposed) values ($new_topic_num, 'Agreement', ?, ?, $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', ?, $now_time, $go_live_time, $proposed)";
 		# print(STDERR "statement selstmt: $selstmt.\n");
 		# why doesn't the do work?
 		# $dbh->do($sestmt, $form_state{'one_line'}, $form_state{'key_words'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
@@ -134,15 +134,18 @@ sub new_topic_form {
 
 %>
 
-<br>
 <%=$message%>
 <br>
 
 <form method=post>
 
 <table>
+
+  <tr height = 20><td colspan=2><hr><p><font color=blue>Topic Values:</font></p></td></tr>
+  <tr height = 20></tr>
+
 <tr>
-  <td><b>Topic Name: <font color = red>*</font> </b></td><td>Mazimum 25 characters.<br>
+  <td><b>Name: <font color = red>*</font> </b></td><td>Mazimum 25 characters.<br>
 	<input type=string name=topic_name value="<%=$form_state{'topic_name'}%>" maxlength=25 size=25></td></tr>
 
   <tr height = 20></tr>
@@ -171,6 +174,7 @@ sub new_topic_form {
 	<input type=string name=key_words value="<%=$form_state{'key_words'}%>" maxlength=65 size=65></td></tr>
 
   <tr height = 20></tr>
+  <tr height = 20><td colspan=2><hr></td></tr>
 
   <td><b>Attribution Nick Name:</b></td>
   <td>
@@ -219,7 +223,7 @@ local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 local %form_state = ();
 
-local $new_num = 0;
+local $new_topic_num = 0;
 
 local $message = '';
 
@@ -228,7 +232,7 @@ my $subtitle = 'Create New Topic';
 if ($Request->Form('submit')) {
 	%form_state = &save_topic($dbh);
 	if (!$message) {
-		$Response->Redirect('http://' . &func::get_host() . '/topic.asp?topic_number=' . $new_num);
+		$Response->Redirect('http://' . &func::get_host() . '/topic.asp?topic_num=' . $new_topic_num);
 		$Response->End();
 	}
 }

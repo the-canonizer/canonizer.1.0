@@ -29,7 +29,7 @@ sub lookup_topic_data {
 	my $statement_num = $_[1];
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
-	my $selstmt = "select t.name, t.namespace, t.submitter, s.name, s.one_line, s.key_words, s.submitter from topics t, statements s where t.replacement is null and t.proposed = 0 and s.replacement is null and t.num = $topic_num and s.topic_num = $topic_num and s.num = $statement_num";
+	my $selstmt = "select t.name, t.namespace, t.submitter, s.name, s.one_line, s.key_words, s.submitter from topic t, statement s where t.replacement is null and t.proposed = 0 and s.replacement is null and t.topic_num = $topic_num and s.topic_num = $topic_num and s.statement_num = $statement_num";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 
@@ -52,7 +52,7 @@ sub lookup_topic_data {
 	$dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
 
-	$selstmt = "select value, text_size from statement_texts where topic_num=$topic_num and statement_num=$statement_num and proposed = 0 and replacement is null";
+	$selstmt = "select value, text_size from text where topic_num=$topic_num and statement_num=$statement_num and proposed = 0 and replacement is null";
 
 	$sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 
@@ -108,16 +108,18 @@ sub present_topic {
 
 	Name Space: <font size=4><%=$topic_data->{'t.namespace'}%></font><br>
 
-	<a href=http://<%=&func::get_host()%>/manage_topic.asp?topic_num=<%=$topic_num%>">Manage Topic</a> (Topic Name and Namespace).<br><br>
+	<a href="http://<%=&func::get_host()%>/manage_topic.asp?topic_num=<%=$topic_num%>">Manage Topic</a> (Topic Name and Namespace).<br><br>
 
 	One Line Description:<br>
 	<font size=4><%=$topic_data->{'s.one_line'}%></font><br>
 
-	<a href=http://<%=&func::get_host()%>/manage_statement.asp?topic_num=<%=$topic_num%>">Manage Statement</a> (Statement Name, Key Words, and One Line Description).<br><br>
+	<a href="http://<%=&func::get_host()%>/manage_statement.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement</a> (Statement Name, Key Words, and One Line Description).<br><br>
 
 	<br>
 
 	<%
+
+	my $html_text;
 
 	# short text:
 	if ($long_short == 0 || $long_short == 2) {
@@ -130,7 +132,7 @@ sub present_topic {
 			<%=$html_text%>
 			<hr>
 			<br>
-			<a href=http://<%=&func::get_host()%>/manage_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> statement text</a>.
+			<a href="http://<%=&func::get_host()%>/manage_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> statement text</a>.
 			<br><br>
 			<%
 		} else {
