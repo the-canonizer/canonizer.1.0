@@ -12,31 +12,12 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
-
+<!--#include file = "includes/error_page.asp"-->
 
 <%
 
-use topic_class;
-
-
-sub error_page {
-	%>
-	<h1><%=$error_message%></h1>
-	<%
-}
-
-sub bad_class {
-	my $class = $_[0];
-
-	if ($class eq 'topic_class') {
-		return(0);
-	} elsif ($class eq 'statement_class') {
-		return(0);
-	} elsif ($class eq 'text_class') {
-		return(0);
-	}
-	return(1);
-}
+use managed_record;
+use topic;
 
 
 sub must_login {
@@ -139,37 +120,6 @@ sub display_topic_form {
 }
 
 
-sub get_nick_name_hash {
-
-	my %nick_names = ();
-	my $no_nick_name = 1;
-	my $owner_code = &func::canon_encode($Session->{'cid'});
-	my $selstmt = "select nick_name_id, nick_name from nick_names where owner_code = '$owner_code'";
-
-	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
-	$sth->execute() || die "Failed to execute " . $selstmt;
-	my $rs;
-	while($rs = $sth->fetch()) {
-		$no_nick_name = 0;
-		$nick_names{$rs->[0]} = $rs->[1];
-	}
-	$sth->finish();
-
-	my $profile_id_url = 'https://' . &func::get_host() . '/secure/profile_id.asp';
-
-	if ($no_nick_name) {
-		$error_message .= 
-"		<h2>You must have a Nick Name before you can contribute.</h2>
-		<h3>You can create a Nick Name on the <a href = \"$profile_id_url\">
-		Personal Info Identity Page</a>.</h3>
-";
-		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
-		$Response->End();
-	}
-
-	return(%nick_names);
-}
-
 
 
 ########
@@ -199,7 +149,7 @@ if ($Request->Form('class')) {
 	$class = $Request->QueryString('class');
 }
 
-if (&bad_class($class)) {
+if (&managed_record::bad_managed_class($class)) {
 	$error_message = "Error: '$class' is an invalid edit class.<br>\n";
 	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
@@ -218,7 +168,9 @@ if ($Request->Form('submit')) {
 		$error_message = $record->{error_message};
 	} else {
 		$record->save($dbh);
-		$Response->Redirect('http://' . &func::get_host() . '/manage_topic.asp?topic_num=' . $record->{topic_num});
+		#???? this will change alon with the mange "_topic" stuff.
+		my $any_record = $record;
+		$Response->Redirect('http://' . &func::get_host() . '/manage_topic.asp?topic_num=' . $any_record->{topic_num});
 		$Response->End();
 	}
 } elsif ($copy_record_id) {
@@ -235,7 +187,15 @@ if ($Request->Form('submit')) {
 	# finish this up some day ????
 }
 
-local %nick_names = get_nick_name_hash($dbh);
+local %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
+
+if ($nick_names{'error_message'}) {
+	$error_message = $nick_names{'error_message'};
+	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
+}
+
+
 
 &display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&display_form]);
 
