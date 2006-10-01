@@ -13,16 +13,16 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
+<!--#include file = "includes/error_page.asp"-->
 
 <%
 
 use history_class;
-use topic_class;
+use topic;
 
 
 sub must_login {
-
-	my $login_url = 'https://' . &func::get_host() . '/secure/login.asp?destination=/secure/object_topic.asp';
+	my $login_url = 'https://' . &func::get_host() . '/secure/login.asp?destination=/secure/object.asp';
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$login_url .= ('?' . $query_string);
 	}
@@ -61,19 +61,11 @@ sub after_go_live_message {
 
 sub object_form_message {
 
-	my %nick_names = ();
-	my $no_nick_name = 1;
-	my $owner_code = &func::canon_encode($Session->{'cid'});
-	my $selstmt = "select nick_name_id, nick_name from nick_names where owner_code = '$owner_code'";
+	my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
 
-	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
-	$sth->execute() || die "Failed to execute " . $selstmt;
-	my $rs;
-	while($rs = $sth->fetch()) {
-		$no_nick_name = 0;
-		$nick_names{$rs->[0]} = $rs->[1];
+	if ($nick_names{'error_message'}) {
+		return($nick_names{'error_message'});
 	}
-	$sth->finish();
 
 	my $ret_val =
 "	<center>
@@ -99,9 +91,11 @@ sub object_form_message {
 	<p>Reason for objection: <font color = red>*</font><br>
 	<input type=string name=object_reason maxlength=65 size=65></p>
 
-	<input type=hidden name=topic_num value=$topic_num>
+	<input type=hidden name=topic_num value=" . $record->{topic_num} . ">
+	<input type=hidden name=record_id value=" . $record->{record_id} . ">
+
 	<input type=submit name=submit value=\"Yes, I want to object.\">
-	<input type=button value=\"No, take me back to the topic manager.\" onClick='location=\"http://" . &func::get_host() . "/topic_manage.asp?topic_num=" . $record->{topic_num} . "\"'>
+	<input type=button value=\"No, take me back to the topic manager.\" onClick='location=\"http://" . &func::get_host() . "/manage_topic.asp?topic_num=" . $record->{topic_num} . "\"'>
 
 	</form>
 
@@ -126,7 +120,9 @@ sub object_to_topic_page {
 
 
 sub do_object {
-	my $dbh = $_[0];
+	my $dbh       = $_[0];
+	my $record_id = $_[1];
+	my $class     = $_[2];
 
 	my $message = '';
 
@@ -142,11 +138,12 @@ sub do_object {
 	}
 
 	if (! $message) {
-		my $selstmt = "update topics set objector = $objector, object_time = " . time . ", object_reason = ? where record_id = $record_id";
-		# what a pain!! if ($dbh->do($selstmt, $object_reason)) {
+		my $selstmt = "update $class set objector = $objector, object_time = " . time . ", object_reason = ? where record_id = $record_id";
+		# what a pain!! if ($dbh->do($selstmt, $object_reason))
 		my $sth = $dbh->prepare($selstmt);
 		if ($sth->execute($object_reason)) {
-			$Response->Redirect('http://' . &func::get_host() . '/topic_manage.asp?topic_num=' . $topic_num);
+			# ???? fix manage_topic.asp...
+			$Response->Redirect('http://' . &func::get_host() . '/manage_topic.asp?topic_num=' . $record->{topic_num});
 		} else {
 			$message = "Failed to update for some reason.\n";
 		}
@@ -160,16 +157,30 @@ sub do_object {
 # main #
 ########
 
+local $error_message = '';
+
 if (!$Session->{'logged_in'}) {
 	&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
-local $record_id = '';
+my $class;
+if ($Request->Form('class')) {
+	$class = $Request->Form('class');
+} elsif ($Request->QueryString('class')) {
+	$class = $Request->QueryString('class');
+}
 
+if (&managed_record::bad_managed_class($class)) {
+	$error_message = "Error: '$class' is an invalid edit class.<br>\n";
+	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
+}
+
+local $record_id = '';
 my $submit = 0;
 
-if ($Request->Form('record_id')) {
+if ($Request->Form('submit') eq 'Yes, I want to object.') {
 	$record_id = int($Request->Form('record_id'));
 	$submit = 1;
 } elsif ($Request->QueryString('record_id')) {
@@ -177,38 +188,32 @@ if ($Request->Form('record_id')) {
 }
 
 
+local $message = '';
+
+local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+
 if (!$record_id) {
 	&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&unknown_record_page]);
 	$Response->End();
 }
 
-local $message = '';
+local $record = new_record_id $class ($record_id, $dbh);
 
-local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
-
-my $selstmt = "select * from topics where record_id = $record_id";
-my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
-$sth->execute() || die "Failed to prepair " . $selstmt;
-my $rs;
-
-local $record;
-
-local $topic_num;
-
-if ($rs = $sth->fetchrow_hashref()) {
-	$record = new_rs topic_class ($rs);
-	$topic_num = $record->{topic_num};
-	if (time > $record->{go_live_time}) {
-		$message = &after_go_live_message();
-	} elsif ($Request->Form('submit') eq 'Yes, I want to object.') {
-		$message = &do_object($dbh, $record_id); # does not return (redirects) if successful.
-	} else {
-		$message = &object_form_message();
-	}
-} else {
-	&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&unknown_record_page]);
+if ($record->{error_message}) {
+	$error_message = $record->{error_message};
+	&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
+
+
+if (time > $record->{go_live_time}) {
+	$message = &after_go_live_message();
+} elsif ($submit) {
+	$message = &do_object($dbh, $record_id, $class); # does not return (redirects) if successful.
+} else {
+	$message = &object_form_message();
+}
+
 
 
 &display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&object_to_topic_page]);
