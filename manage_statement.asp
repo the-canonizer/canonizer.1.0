@@ -3,19 +3,21 @@
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
-<!--#include file = "includes/topic_tabs.asp"-->
 
 <%
+
+use topic_class;
+use statement_class;
 
 use history_class;
 
 
-sub unknown_num_page {
+sub unknown_topic_num_page {
 
-	if ($num) {
+	if ($topic_num) {
 		%>
 		<br>
-		<h1>Unknown Topic Number:&nbsp;<%=$num%>.</h1>
+		<h1>Unknown Topic Number:&nbsp;<%=$topic_num%>.</h1>
 		<%
 	} else {
 		%>
@@ -26,10 +28,8 @@ sub unknown_num_page {
 }
 
 
-sub manage_topic {
-
+sub manage_record {
 	$history->print_history($dbh);
-
 }
 
 
@@ -38,31 +38,39 @@ sub manage_topic {
 # main #
 ########
 
-local $num = '';
+local $topic_num = '';
 if ($Request->Form('topic_num')) {
-	$num = int($Request->Form('topic_num'));
+	$topic_num = int($Request->Form('topic_num'));
 } elsif ($Request->QueryString('topic_num')) {
-	$num = int($Request->QueryString('topic_num'));
+	$topic_num = int($Request->QueryString('topic_num'));
 }
 
 
-if (!$num) {
-	&display_page('<font size=5>Manage Topic:</font><br>'. $num, [\&identity, \&search, \&main_ctl], [\&unknown_num_page]);
+if (!$topic_num) {
+	&display_page('<font size=5>Manage Statement:</font><br>'. $topic_num, [\&identity, \&search, \&main_ctl], [\&unknown_topic_num_page]);
 	$Response->End();
 }
+
+local $statement_num = 1; # default statement value
+if ($Request->Form('statement_num')) {
+	$statement_num = int($Request->Form('statement_num'));
+} elsif ($Request->QueryString('statement_num')) {
+	$statement_num = int($Request->QueryString('statement_num'));
+}
+
+
 
 local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
-local $history = history_class->new($dbh, 'topic_class', $num);
+local $history = history_class->new($dbh, 'statement_class', {'topic_num' => $topic_num, 'statement_num' => $statement_num});
 
 if ($history->{active} == 0) {
-	&display_page('<font size=5>Manage Topic:</font><br>' . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&unknown_num_page]);
+	&display_page('<font size=5>Manage Statement:</font><br>' . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&unknown_topic_num_page]);
 	$Response->End();
 }
 
 
-&display_page('<font size=5>Manage Topic:</font><br>' . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&manage_topic], \&topic_tabs);
-
+&display_page('<font size=5>Manage Statement:</font><br>' . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&manage_record]);
 
 
 %>
