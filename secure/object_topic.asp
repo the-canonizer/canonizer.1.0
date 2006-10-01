@@ -13,7 +13,6 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
-<!--#include file = "includes/topic_tabs.asp"-->
 
 <%
 
@@ -79,7 +78,7 @@ sub object_form_message {
 	my $ret_val =
 "	<center>
 	<form method=post>
-	<p><b>If anyone objects to a change, it will not go live.</b></p>
+	<p><b>If anyone objects to a change the change will not go live.</b></p>
 	<p><b>Are you sure you want to object to this proposed change?</b></p>
 
 	<p>Objector Attribution Nick Name:
@@ -100,9 +99,9 @@ sub object_form_message {
 	<p>Reason for objection: <font color = red>*</font><br>
 	<input type=string name=object_reason maxlength=65 size=65></p>
 
-	<input type=hidden name=topic_num value=$num>
+	<input type=hidden name=topic_num value=$topic_num>
 	<input type=submit name=submit value=\"Yes, I want to object.\">
-	<input type=button value=\"No, take me back to the topic manager.\" onClick='location=\"http://" . &func::get_host() . "/topic_manage.asp?num=" . $record->{num} . "\"'>
+	<input type=button value=\"No, take me back to the topic manager.\" onClick='location=\"http://" . &func::get_host() . "/topic_manage.asp?topic_num=" . $record->{topic_num} . "\"'>
 
 	</form>
 
@@ -147,7 +146,7 @@ sub do_object {
 		# what a pain!! if ($dbh->do($selstmt, $object_reason)) {
 		my $sth = $dbh->prepare($selstmt);
 		if ($sth->execute($object_reason)) {
-			$Response->Redirect('http://' . &func::get_host() . '/topic_manage.asp?num=' . $num);
+			$Response->Redirect('http://' . &func::get_host() . '/topic_manage.asp?topic_num=' . $topic_num);
 		} else {
 			$message = "Failed to update for some reason.\n";
 		}
@@ -194,11 +193,11 @@ my $rs;
 
 local $record;
 
-local $num;
+local $topic_num;
 
 if ($rs = $sth->fetchrow_hashref()) {
-	$record = new topic_class ($rs);
-	$num = $record->{num};
+	$record = new_rs topic_class ($rs);
+	$topic_num = $record->{topic_num};
 	if (time > $record->{go_live_time}) {
 		$message = &after_go_live_message();
 	} elsif ($Request->Form('submit') eq 'Yes, I want to object.') {
@@ -212,7 +211,7 @@ if ($rs = $sth->fetchrow_hashref()) {
 }
 
 
-&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&object_to_topic_page], \&topic_tabs);
+&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&object_to_topic_page]);
 
 %>
 
