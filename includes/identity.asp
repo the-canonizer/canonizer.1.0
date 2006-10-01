@@ -57,7 +57,7 @@ sub identity {
 		if (! length($Session->{'email'})) { # reload browsing values into session and validate cid.
 			my $dbh = &func::dbh_connect(1);
 			if ($dbh) {
-				my $selstmt = "select email from persons where cid = $cid";
+				my $selstmt = "select email from person where cid = $cid";
 				my $sth = $dbh->prepare($selstmt) || die $selstmt;
 				$sth->execute() || die $selstmt;
 				my $rs = $sth->fetch();
