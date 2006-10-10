@@ -18,7 +18,10 @@ if(!$ENV{"HTTPS"}){
 <%
 
 use history_class;
+use managed_record;
 use topic;
+use statement;
+use text;
 
 
 sub must_login {
@@ -60,6 +63,8 @@ sub after_go_live_message {
 
 
 sub object_form_message {
+	my $record = $_[0];
+	my $class  = $_[1];
 
 	my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
 
@@ -95,7 +100,7 @@ sub object_form_message {
 	<input type=hidden name=record_id value=" . $record->{record_id} . ">
 
 	<input type=submit name=submit value=\"Yes, I want to object.\">
-	<input type=button value=\"No, take me back to the topic manager.\" onClick='location=\"http://" . &func::get_host() . "/manage_topic.asp?topic_num=" . $record->{topic_num} . "\"'>
+	<input type=button value=\"No, take me back to the topic manager.\" onClick='location=\"" . &make_manage_url($record, $class) . "\"'>
 
 	</form>
 
@@ -120,9 +125,9 @@ sub object_to_topic_page {
 
 
 sub do_object {
-	my $dbh       = $_[0];
-	my $record_id = $_[1];
-	my $class     = $_[2];
+	my $dbh    = $_[0];
+	my $record = $_[1];
+	my $class  = $_[2];
 
 	my $message = '';
 
@@ -138,19 +143,34 @@ sub do_object {
 	}
 
 	if (! $message) {
-		my $selstmt = "update $class set objector = $objector, object_time = " . time . ", object_reason = ? where record_id = $record_id";
+		my $selstmt = "update $class set objector = $objector, object_time = " . time . ", object_reason = ? where record_id = " . $record->{record_id};
 		# what a pain!! if ($dbh->do($selstmt, $object_reason))
 		my $sth = $dbh->prepare($selstmt);
 		if ($sth->execute($object_reason)) {
-			# ???? fix manage_topic.asp...
-			$Response->Redirect('http://' . &func::get_host() . '/manage_topic.asp?topic_num=' . $record->{topic_num});
+			$Response->Redirect(&make_manage_url($record, $class));
 		} else {
 			$message = "Failed to update for some reason.\n";
 		}
 	}
-	return ($message . &object_form_message());
+	return ($message . &object_form_message($record, $class));
 }
 
+
+sub make_manage_url {
+	my $record = $_[0];
+	my $class  = $_[1];
+
+	my $url = 'http://' . &func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $record->{topic_num};
+	if ($class eq 'statement') {
+		$url .= '&statement_num=' . $record->{statement_num};
+	} elsif ($class eq 'text') {
+		$url .= '&statement_num=' . $record->{statement_num};
+		if ($record->{text_size}) {
+			$url .= '&long=' . $record->{text_size};
+		}
+	}
+	return($url);
+}
 
 
 ########
@@ -209,11 +229,10 @@ if ($record->{error_message}) {
 if (time > $record->{go_live_time}) {
 	$message = &after_go_live_message();
 } elsif ($submit) {
-	$message = &do_object($dbh, $record_id, $class); # does not return (redirects) if successful.
+	$message = &do_object($dbh, $record, $class); # does not return (redirects) if successful.
 } else {
-	$message = &object_form_message();
+	$message = &object_form_message($record, $class);
 }
-
 
 
 &display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&object_to_topic_page]);

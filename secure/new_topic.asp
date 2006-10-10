@@ -22,15 +22,9 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
-
+<!--#include file = "includes/error_page.asp"-->
 <%
 
-
-sub error_page {
-	%>
-	<h1>Error: Unkown topic_id: <%=$copy_topic_id%>.</h1>
-	<%
-}
 
 sub save_topic {
 	my $dbh = $_[0];
@@ -60,30 +54,27 @@ sub save_topic {
 
 	if (!$message) {
 
-		$new_topic_num = &func::get_next_id($dbh, 'topics', 'topic_num');
-		my $new_topic_id = &func::get_next_id($dbh, 'topics', 'record_id');
+		$new_topic_num = &func::get_next_id($dbh, 'topic', 'topic_num');
+		my $new_topic_id = &func::get_next_id($dbh, 'topic', 'record_id');
 		my $new_statement_num = 1; # first one (agreement statement) is always 1.
-		my $new_statement_id = &func::get_next_id($dbh, 'statements', 'record_id');
+		my $new_statement_id = &func::get_next_id($dbh, 'statement', 'record_id');
 		my $proposed = 0; # first one goes live immediately.
 		my $now_time = time;
 		my $go_live_time = $now_time;
 
-		$selstmt = "insert into topics (record_id, topic_num, name, namespace, note, submitter, submit_time, go_live_time, proposed) values ($new_topic_id, $new_topic_num, ?, ?, 'First Version of Topic', ?, $now_time, $go_live_time, $proposed)";
-		# print(STDERR "topic selstmt: $selstmt.\n");
-		# why doesn't the do work?
-		# $dbh->do($sestmt, $form_state{'namespace'}, $form_state{'one_line'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
-		$sth = $dbh->prepare($selstmt) || die $selstmt;
-		$sth->execute($form_state{'topic_name'}, $form_state{'namespace'}, $form_state{'submitter'} );
 
-		$selstmt = "insert into statements (topic_num, name, one_line, key_words, record_id, statement_num, note, submitter, submit_time, go_live_time, proposed) values ($new_topic_num, 'Agreement', ?, ?, $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', ?, $now_time, $go_live_time, $proposed)";
-		# print(STDERR "statement selstmt: $selstmt.\n");
-		# why doesn't the do work?
-		# $dbh->do($sestmt, $form_state{'one_line'}, $form_state{'key_words'}, $form_state{'submitter'} ) || die "Failed to create new record with " . $selstmt;
-		$sth = $dbh->prepare($selstmt) || die $selstmt;
-		$sth->execute($form_state{'one_line'}, $form_state{'key_words'}, $form_state{'submitter'} );
-#		$message .= "selstmt: ($selstmt)[" . $form_state{'submitter'} . "]<br>\n";
+		$selstmt = "insert into topic (record_id,     topic_num,      name, namespace, note,                     submitter,                submit_time, go_live_time,  proposed) values " .
+					     "($new_topic_id, $new_topic_num, ?,    ?,         'First Version of Topic', $form_state{'submitter'}, $now_time,   $go_live_time, $proposed)";
 
-		$sth->finish();
+		$dbh->do($selstmt, \{}, $form_state{'topic_name'}, $form_state{'namespace'}) || die "Failed to create new record with " . $selstmt;
+
+
+		$selstmt = "insert into statement (topic_num,      name,        one_line, key_words, record_id,         statement_num,      note,                                   submitter,                submit_time, go_live_time,  proposed) values " .
+						 "($new_topic_num, 'Agreement', ?,        ?,         $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', $form_state{'submitter'}, $now_time,   $go_live_time, $proposed)";
+
+		$dbh->do($selstmt, \{}, $form_state{'one_line'}, $form_state{'key_words'} ) || die "Failed to create new record with " . $selstmt;
+
+
 	}
 
 	return(%form_state);
@@ -108,29 +99,6 @@ sub must_login {
 
 
 sub new_topic_form {
-
-	my %nick_names = ();
-	my $no_nick_name = 1;
-	my $owner_code = &func::canon_encode($Session->{'cid'});
-	my $selstmt = "select nick_name_id, nick_name from nick_names where owner_code = '$owner_code'";
-
-	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
-	$sth->execute() || die "Failed to execute " . $selstmt;
-	my $rs;
-	while($rs = $sth->fetch()) {
-		$no_nick_name = 0;
-		$nick_names{$rs->[0]} = $rs->[1];
-	}
-	$sth->finish();
-
-	if ($no_nick_name) {
-		%>
-		<h2>You must have a Nick Name before you can contribute.</h2>
-		<h3>You can create a Nick Name on the <a href = "https://<%=&func::get_host()%>/secure/profile_id.asp">
-		Personal Info Identity Page</a>.</h3>
-		<%
-		return();
-	}
 
 %>
 
@@ -235,6 +203,14 @@ if ($Request->Form('submit')) {
 		$Response->Redirect('http://' . &func::get_host() . '/topic.asp?topic_num=' . $new_topic_num);
 		$Response->End();
 	}
+}
+
+local %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
+
+if ($nick_names{'error_message'}) {
+	$error_message = $nick_names{'error_message'};
+	&display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
 }
 
 &display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&new_topic_form]);
