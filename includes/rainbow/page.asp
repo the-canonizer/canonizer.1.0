@@ -35,9 +35,6 @@ $title =~ s|\<[^\>]*\>||g;
 	if ($tab_sub) {
 		&$tab_sub();
 	} else {
-		%>
-		<br>
-		<%
 	}
 	%>
 	</center>
