@@ -108,12 +108,12 @@ sub present_topic {
 
 	Name Space: <font size=4><%=$topic_data->{'t.namespace'}%></font><br>
 
-	<a href="http://<%=&func::get_host()%>/manage_topic.asp?topic_num=<%=$topic_num%>">Manage Topic</a> (Topic Name and Namespace).<br><br>
+	<a href="http://<%=&func::get_host()%>/manage.asp?class=topic&topic_num=<%=$topic_num%>">Manage Topic</a> (Topic Name and Namespace).<br><br>
 
 	One Line Description:<br>
 	<font size=4><%=$topic_data->{'s.one_line'}%></font><br>
 
-	<a href="http://<%=&func::get_host()%>/manage_statement.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement</a> (Statement Name, Key Words, and One Line Description).<br><br>
+	<a href="http://<%=&func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement</a> (Statement Name, Key Words, and One Line Description).<br><br>
 
 	<br>
 
@@ -132,12 +132,12 @@ sub present_topic {
 			<%=$html_text%>
 			<hr>
 			<br>
-			<a href="http://<%=&func::get_host()%>/manage_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> statement text</a>.
+			<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> statement text</a>.
 			<br><br>
 			<%
 		} else {
 			%>
-			<a href="https://<%=&func::get_host()%>/secure/edit_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add <%=$topic_data->{'s.name'}%> statement text</a>.
+			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add <%=$topic_data->{'s.name'}%> statement text</a>.
 			<br><br>
 			<%
 		}
@@ -152,12 +152,12 @@ sub present_topic {
 			%>
 			<%=$html_text%>
 			<br>
-			<a href=http://<%=&func::get_host()%>/manage_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> long statement text</a>.
+			<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage <%=$topic_data->{'s.name'}%> long statement text</a>.
 			<br><br>
 			<%
 		} else {
 			%>
-			<a href="https://<%=&func::get_host()%>/secure/edit_text.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add <%=$topic_data->{'s.name'}%> statement long text.</a> For additional data that doesn't fit on the one page statement page (not recomended.)
+			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add <%=$topic_data->{'s.name'}%> statement long text.</a> For additional data that doesn't fit on the one page statement page (not recomended.)
 			<br><br>
 			<%
 		}

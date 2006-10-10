@@ -16,9 +16,19 @@ if(!$ENV{"HTTPS"}){
 
 <%
 
+#
+# query string cases:
+#	(copy) record_id=#
+#	new record cases:
+#		case=statement&topic_num=#&parent_statement_num=$
+#		case=text&topic_num=#&statement_num=#[&long=1]
+# else $Request->Form('submit');
+#
+
 use managed_record;
 use topic;
-
+use statement;
+use text;
 
 sub must_login {
 
@@ -28,7 +38,7 @@ sub must_login {
 	}
 %>
 	<br>
-	<h2>You must register and or login before you can edit topics.</h2>
+	<h2>You must register and or login before you can edit.</h2>
 	<center>
 	<h2><a href="http://<%=&func::get_host()%>/register.asp">Register</a><h2>
 	<h2><a href="<%=$login_url%>">Login</a><h2>
@@ -37,16 +47,22 @@ sub must_login {
 }
 
 
-#???? can't I do without this and call it directly????
+# it would be nice to object orient this, but alas, we must have asp ability to do html.
 sub display_form {
-	$record->display_form();
+	if ($class eq 'text') {
+		&display_text_form();
+	} elsif ($class eq 'statement') {
+		&display_statement_form();
+	} else {
+		&display_topic_form();
+	}
 }
 
 
 sub display_topic_form {
 
 	my $submit_value = 'Create Topic';
-	if ($submit->{proposed}) {
+	if ($record->{proposed}) {
 		$submit_value = 'Propose Topic Modification';
 	}
 
@@ -120,6 +136,154 @@ sub display_topic_form {
 }
 
 
+sub display_statement_form {
+
+	my $submit_value = 'Create Statement';
+	if ($record->{proposed}) {
+		$submit_value = 'Propose Statement Modification';
+	}
+
+	my $agreement_disable_str = '';
+	if ($record->{statement_num} == 1) {
+		$agreement_disable_str = 'disabled';
+	}
+
+%>
+
+<br>
+<%=$error_message%>
+<br>
+
+<form method=post>
+<input type=hidden name=record_id value=<%=$copy_record_id%>>
+<input type=hidden name=topic_num value=<%=$record->{'topic_num'}%>>
+<input type=hidden name=parent_statement_num value=<%=$record->{'parent_statement_num'}%>>
+<input type=hidden name=proposed value=<%=$record->{proposed}%>>
+
+<table>
+<tr>
+  <td><b>Statement Name: <font color = red>*</font> </b></td><td>Mazimum 25 characters.<br>
+	<input type=string name=name value="<%=$record->{'name'}%>" maxlength=25 size=25 <%=$agreement_disable_str%>></td></tr>
+
+  <tr height = 20></tr>
+
+  <td><b>One Line Description: <font color = red>*</font> </b></td><td>Maximum 65 characters.<br>
+	<input type=string name=one_line value="<%=$record->{'one_line'}%>" maxlength=65 size=65></td></tr>
+
+  <tr height = 20></tr>
+
+  <td><b>Key Words:</b></td><td>Maximum 65 characters, comma seperated.<br>
+	<input type=string name=key_words value="<%=$record->{'key_words'}%>" maxlength=65 size=65></td></tr>
+
+  <tr height = 20></tr>
+
+  <td><b>Note: <font color = red>*</font> </b></td><td>Reason for submission. Maximum 65 characters.<br>
+	<input type=string name=note value="<%=$record->{note}%>" maxlength=65 size=65></td></tr>
+
+  <tr height = 20></tr>
+
+  <td><b>Attribution Nick Name:</b></td>
+  <td>
+	<select name="submitter">
+	<%
+	my $id;
+	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
+		if ($id == $record->{'submitter'}) {
+			%>
+			<option value=<%=$id%> selected><%=$nick_names{$id}%>
+			<%
+		} else {
+			%>
+			<option value=<%=$id%>><%=$nick_names{$id}%>
+			<%
+		}
+	}
+	%>
+	</select>
+</td></tr>
+
+  <tr height = 20></tr>
+
+</table>
+
+<input type=reset value="Reset">
+<input type=submit name=submit value="<%=$submit_value%>">
+
+</form>
+
+<%
+}
+
+sub display_text_form {
+
+	my $submit_value = 'Create Statement';
+	if ($record->{proposed}) {
+		$submit_value = 'Propose Statement Modification';
+	}
+
+	my $agreement_disable_str = '';
+	if ($record->{statement_num} == 1) {
+		$agreement_disable_str = 'disabled';
+	}
+
+%>
+
+	<br>
+	<%=$error_message%>
+	<br>
+
+	<form method=post>
+	<input type=hidden name=record_id value=<%=$copy_record_id%>>
+	<input type=hidden name=topic_num value=<%=$record->{'topic_num'}%>>
+	<input type=hidden name=statement_num value=<%=$record->{'statement_num'}%>>
+	<input type=hidden name=text_size value=<%=$record->{text_size}%>>
+	<input type=hidden name=proposed value=<%=$record->{proposed}%>>
+
+	<b>Text: <font color = red>*</font></b><br>
+
+	<textarea NAME="value" ROWS="30" COLS="60"><%=$record->{'value'}%></textarea>
+
+	<table>
+	<tr>
+	  <td><b>Edit Note: <font color = red>*</font> </b></td><td>Reason for submission. Maximum 65 characters.<br>
+	<input type=string name=note value="<%=$record->{'note'}%>" maxlength=65 size=65></td></tr>
+
+	<tr height = 20></tr>
+
+	<tr>
+	  <td><b>Attribution Nick Name:</b></td>
+	  <td>
+	    <select name="submitter">
+	    <%
+	    my $id;
+	    foreach $id (sort {$a <=> $b} (keys %nick_names)) {
+		if ($id == $record->{'submitter'}) {
+			%>
+			<option value=<%=$id%> selected><%=$nick_names{$id}%>
+			<%
+		} else {
+			%>
+			<option value=<%=$id%>><%=$nick_names{$id}%>
+			<%
+		}
+	    }
+	    %>
+	    </select>
+	</td></tr>
+
+	<tr height = 20></tr>
+
+	</table>
+
+	<input type=reset value="Reset">
+	<input type=submit name=submit value="<%=$submit_value%>">
+
+	</form>
+
+<%
+}
+
+
 
 
 ########
@@ -127,7 +291,7 @@ sub display_topic_form {
 ########
 
 if (!$Session->{'logged_in'}) {
-	&display_page('New Topic', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	&display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -140,9 +304,8 @@ local $record = null;
 local $message = '';
 local $copy_record_id = 0;
 
-my $subtitle = 'Create New Topic';
+local $class = '';
 
-my $class;
 if ($Request->Form('class')) {
 	$class = $Request->Form('class');
 } elsif ($Request->QueryString('class')) {
@@ -155,6 +318,8 @@ if (&managed_record::bad_managed_class($class)) {
 	$Response->End();
 }
 
+my $subtitle = "Create new $class";
+
 if ($Request->Form('record_id')) {
 	$copy_record_id = $Request->Form('record_id');
 } elsif ($Request->QueryString('record_id')) {
@@ -162,15 +327,25 @@ if ($Request->Form('record_id')) {
 }
 
 if ($Request->Form('submit')) {
+
 	$record = new_form $class ($Request);
 
 	if ($record->{error_message}) {
 		$error_message = $record->{error_message};
 	} else {
 		$record->save($dbh);
-		#???? this will change alon with the mange "_topic" stuff.
 		my $any_record = $record;
-		$Response->Redirect('http://' . &func::get_host() . '/manage_topic.asp?topic_num=' . $any_record->{topic_num});
+		my $url = 'http://' . &func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
+
+		if ($class eq 'statement' || $class eq 'text') {
+			$url .= ('&statement_num=' . $any_record->{'statement_num'});
+		}
+
+		if ($class eq 'text' && $any_record->{'text_size'}) {
+			$url .= ('&long=' . $any_record->{'text_size'});
+		}
+
+		$Response->Redirect($url);
 		$Response->End();
 	}
 } elsif ($copy_record_id) {
@@ -183,8 +358,43 @@ if ($Request->Form('submit')) {
 	$record->{proposed} = 1;
 	$record->{note} = ''; # we don't want to copy the old note.
 	$subtitle = 'Propose Topic Modification';
-} else { # new record with new num and data from querystring
-	# finish this up some day ????
+
+} else { # create a first version of a managed record (not a topic)
+
+	if (! $Request->QueryString('topic_num')) {
+		$error_message .= "Must have a topic_num in order to create a $class.<br>\n";
+	}
+
+	if ($class eq 'statement') {
+		if ($Request->QueryString('parent_statement_num')) {
+			$record = new_blank statement ();
+			$record->{statement_num} = 0; # a new one will be created on insert.
+			$record->{parent_statement_num} = $Request->QueryString('parent_statement_num');
+			$record->{note} = 'First Version';
+			$record->{proposed} = 0;
+		} else {
+			$error_message .= "Must have a prent_statement_num in order to create a new statement.<br>\n";
+		}
+	} else {  # I am assuming 'topic' class will never come through this create new block so this is 'text' case.
+		if ($Request->QueryString('statement_num')) {
+			$record = new_blank text ();
+			$record->{topic_num} = $Request->QueryString('topic_num');
+			$record->{statement_num} = $Request->QueryString('statement_num');
+			$record->{note} = 'First Version';
+			$record->{proposed} = 0;
+			if ($Request->QueryString('long')) {
+				$record->{text_size} = int($Request->QueryString('long'));
+			} else {
+				$record->{text_size} = 0; # default to small text size.
+			}
+		} else {
+			$error_message .= "Must have a statement_num in order to create a text record.<br>\n";
+		}
+	}
+	if ($error_message) {
+		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+		$Response->End();
+	}
 }
 
 local %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
@@ -194,8 +404,6 @@ if ($nick_names{'error_message'}) {
 	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
-
-
 
 &display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&display_form]);
 
