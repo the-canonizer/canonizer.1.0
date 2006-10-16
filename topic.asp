@@ -76,6 +76,7 @@ sub lookup_topic_data {
 	return($topic_data);
 }
 
+
 sub present_topic {
 
 	my $short_sel_str = '';
@@ -104,18 +105,7 @@ sub present_topic {
 	}
 	</script>
 
-	<br>
-
-	Name Space: <font size=4><%=$topic_data->{'t.namespace'}%></font><br>
-
-	<a href="http://<%=&func::get_host()%>/manage.asp?class=topic&topic_num=<%=$topic_num%>">Manage Topic</a> (Topic Name and Namespace).<br><br>
-
-	One Line Description:<br>
-	<font size=4><%=$topic_data->{'s.one_line'}%></font><br>
-
-	<a href="http://<%=&func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement</a> (Statement Name, Key Words, and One Line Description).<br><br>
-
-	<br>
+	<hr>
 
 	<%
 
@@ -128,17 +118,15 @@ sub present_topic {
 			$html_text = &func::wikitext_to_html($topic_data->{'short_text'});
 
 			%>
-			<hr>
 			<%=$html_text%>
 			<hr>
-			<br>
-			<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> statement text</a>.
-			<br><br>
+			<p align=right>
+			<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'s.name'}%> statement text</a></p>
 			<%
 		} else {
 			%>
 			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add <%=$topic_data->{'s.name'}%> statement text</a>.
-			<br><br>
+			<br>
 			<%
 		}
 	}
@@ -151,27 +139,43 @@ sub present_topic {
 
 			%>
 			<%=$html_text%>
-			<br>
-			<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage <%=$topic_data->{'s.name'}%> long statement text</a>.
-			<br><br>
+			<p align=right>
+			<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage <%=$topic_data->{'s.name'}%> long statement text</a></p>
 			<%
 		} else {
 			%>
 			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add <%=$topic_data->{'s.name'}%> statement long text.</a> For additional data that doesn't fit on the one page statement page (not recomended.)
-			<br><br>
+			<br>
 			<%
 		}
 	}
 	%>
 
+	<p align=right>
 	<select name="long_short" onchange=javascript:change_long_short(value)>
 		<option value=0 <%=$short_sel_str%>>Short Statement Only
 		<option value=1 <%=$long_sel_str%>>Long Statement Only
 		<option value=2 <%=$long_short_sel_str%>>Long and Short Statement
 	</select>
+	</p>
 
+	<hr>
 
-	<h2>Canonizer Sorted Postion (POV) Statement tree:</h2>
+	<p>Canonizer Sorted Postion (POV) Statement Tree:</p>
+
+	<p align=right><a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add new position statement.</p>
+
+	<hr>
+	<br>
+
+	Name Space: <font size=4><%=$topic_data->{'t.namespace'}%></font><br>
+
+	<a href="http://<%=&func::get_host()%>/manage.asp?class=topic&topic_num=<%=$topic_num%>">Manage Topic</a> (Topic Name and Namespace).<br><br>
+
+	One Line Description:<br>
+	<font size=4><%=$topic_data->{'s.one_line'}%></font><br>
+
+	<a href="http://<%=&func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement</a> (Statement Name, Key Words, and One Line Description).<br><br>
 
 	<%
 
