@@ -18,7 +18,7 @@ if(!$ENV{"HTTPS"}){
 
 #
 # query string cases:
-#	(copy) record_id=#
+#	(copy) record_id=# (proposed case)
 #	new record cases:
 #		case=statement&topic_num=#&parent_statement_num=$
 #		case=text&topic_num=#&statement_num=#[&long=1]
@@ -156,8 +156,9 @@ sub display_statement_form {
 
 <form method=post>
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
-<input type=hidden name=topic_num value=<%=$record->{'topic_num'}%>>
-<input type=hidden name=parent_statement_num value=<%=$record->{'parent_statement_num'}%>>
+<input type=hidden name=topic_num value=<%=$record->{topic_num}%>>
+<input type=hidden name=parent_statement_num value=<%=$record->{parent_statement_num}%>>
+<input type=hidden name=statement_num value=<%=$record->{statement_num}%>>
 <input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
 <table>
@@ -167,7 +168,7 @@ sub display_statement_form {
 
   <tr height = 20></tr>
 
-  <td><b>One Line Description: <font color = red>*</font> </b></td><td>Maximum 65 characters.<br>
+  <td><b>One Line Description: <font color = red>*</font> </b></td><td>Maximum 65 characters, end with period.<br>
 	<input type=string name=one_line value="<%=$record->{'one_line'}%>" maxlength=65 size=65></td></tr>
 
   <tr height = 20></tr>
@@ -361,13 +362,14 @@ if ($Request->Form('submit')) {
 
 } else { # create a first version of a managed record (not a topic)
 
-	if (! $Request->QueryString('topic_num')) {
+	if (! int($Request->QueryString('topic_num'))) {
 		$error_message .= "Must have a topic_num in order to create a $class.<br>\n";
 	}
 
 	if ($class eq 'statement') {
 		if ($Request->QueryString('parent_statement_num')) {
 			$record = new_blank statement ();
+			$record->{topic_num} = int($Request->QueryString('topic_num'));
 			$record->{statement_num} = 0; # a new one will be created on insert.
 			$record->{parent_statement_num} = $Request->QueryString('parent_statement_num');
 			$record->{note} = 'First Version';
