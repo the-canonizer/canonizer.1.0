@@ -189,7 +189,7 @@ sub present_topic {
 
 	<hr>
 	<table border=0>
-	<tr><td colspan=3><font size=6 face=arial>Topic:</font></td></tr>
+	<tr><td colspan=3><font face=arial><b>Topic:</b></font></td></tr>
 	<tr><td width=25></td><td width=100><font face=arial>Name:</font></td><td><font face=arial size=4><%=$topic_data->{'topic'}->{name}%></font></td></tr>
 	<tr><td></td><td><font face=arial>Name Space:</font></td><td><font face=arial size=4><%=$topic_data->{'topic'}->{namespace}%></font></td></tr>
 	</table>
@@ -199,7 +199,7 @@ sub present_topic {
 	<hr>
 
 	<table border=0>
-	<tr><td colspan=3><font size=6 face=arial>Statement:</font></td></tr>
+	<tr><td colspan=3><font face=arial><b>Statement:</b></font></td></tr>
 	<tr><td width=25></td><td width=100><font face=arial>Name:</font></td><td><font face=arial size=4><%=$topic_data->{'statement'}->{name}%></font></td></tr>
 	<tr><td></td><td><font face=arial>One Line:</font></td><td><font face=arial size=4><%=$topic_data->{'statement'}->{one_line}%></font></td></tr>
 	</table>
