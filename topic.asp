@@ -202,6 +202,7 @@ sub present_topic {
 	<tr><td colspan=3><font face=arial><b>Statement:</b></font></td></tr>
 	<tr><td width=25></td><td width=100><font face=arial>Name:</font></td><td><font face=arial size=4><%=$topic_data->{'statement'}->{name}%></font></td></tr>
 	<tr><td></td><td><font face=arial>One Line:</font></td><td><font face=arial size=4><%=$topic_data->{'statement'}->{one_line}%></font></td></tr>
+	<tr><td></td><td><font face=arial>Key Words:</font></td><td><font face=arial size=4><%=$topic_data->{'statement'}->{key_words}%></font></td></tr>
 	</table>
 
 	<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement.</a></font></p>
