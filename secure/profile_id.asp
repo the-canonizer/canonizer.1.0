@@ -70,7 +70,7 @@ sub save_values {
 	if (length($form_state{'email'} = $Request->Form('email')) < 1) {
 		$message .= &format_error("e-mail is required.");
 	} else { # check for unique e-mail
-		$selstmt = 'select cid from persons where email = ?';
+		$selstmt = 'select cid from person where email = ?';
 		if ($cid) {
 			$selstmt .= " and not cid = $cid";
 		}
@@ -113,7 +113,7 @@ sub save_values {
 	my $new_nick_name = $Request->Form('new_nick_name');
 	if (length($new_nick_name) > 0) {
 		$form_state{'new_nick_name'} = $new_nick_name;
-		$selstmt = 'select nick_name_id from nick_names where nick_name = ?';
+		$selstmt = 'select nick_name_id from nick_name where nick_name = ?';
 		$sth = $dbh->prepare($selstmt) || die "Failed to prepare " . $selstmt;
 		$sth->execute($new_nick_name) || die "Failed to execute " . $selstmt;
 		if ($sth->fetch()) {
@@ -126,11 +126,11 @@ sub save_values {
 
 	if (! $cid) { # create new entry and log them in.
 
-		$cid = &func::get_next_id($dbh, 'persons', 'cid');
+		$cid = &func::get_next_id($dbh, 'person', 'cid');
 
 		my $now_time = time;
 
-		$selstmt = "insert into persons (cid, first_name, middle_name, last_name, email, password, address_1, address_2, city, state, postal_code, country, create_time, join_time) values ($cid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $now_time, $now_time)";
+		$selstmt = "insert into person (cid, first_name, middle_name, last_name, email, password, address_1, address_2, city, state, postal_code, country, create_time, join_time) values ($cid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $now_time, $now_time)";
 
 # 		$dbh->do($sestmt) || die "Failed to create new record with " . $selstmt;
 #????  Why does this work and the do doesn't ????
@@ -174,7 +174,7 @@ sub save_values {
 	} else { # update existing entry
 
 		if (length($password) > 0) {
-			$selstmt = 'update persons set password = ? where cid = ' . $cid;
+			$selstmt = 'update person set password = ? where cid = ' . $cid;
 # why does do never work???
 #			if (! $dbh->do($selstmt, &func::canon_encode($password))) {
 			$sth = $dbh->prepare($selstmt);
@@ -185,7 +185,7 @@ sub save_values {
 
 		if (!$message) {
 
-			$selstmt = "update persons set first_name = ?, middle_name = ?, last_name = ?, email = ?, address_1 = ?, address_2 = ?, city = ?, state = ?, postal_code = ?, country = ? where cid = $cid";
+			$selstmt = "update person set first_name = ?, middle_name = ?, last_name = ?, email = ?, address_1 = ?, address_2 = ?, city = ?, state = ?, postal_code = ?, country = ? where cid = $cid";
 
 # do doesn't work!!
 #			if ($dbh->do($selstmt,
@@ -214,13 +214,13 @@ sub save_values {
 
 	if (length($new_nick_name) > 0) {
 
-		my $nick_name_id = &func::get_next_id($dbh, 'nick_names', 'nick_name_id');
+		my $nick_name_id = &func::get_next_id($dbh, 'nick_name', 'nick_name_id');
 
 		$owner_code = &func::canon_encode($cid);
 
 		my $now_time = time;
 
-		$selstmt = "insert into nick_names (nick_name_id, owner_code, nick_name, create_time) values ($nick_name_id, '$owner_code', ?, $now_time)";
+		$selstmt = "insert into nick_name (nick_name_id, owner_code, nick_name, create_time) values ($nick_name_id, '$owner_code', ?, $now_time)";
 
 # doesn't work?	if (! $dbh->do($selstmt, $nick_name)) {
 		$sth = $dbh->prepare($selstmt);
@@ -252,24 +252,27 @@ sub profile_id {
 	if ($cid and (length($form_state{'email'}) < 1)) {
 
 		if ($dbh) {
-			my $selstmt = "select first_name, middle_name, last_name, email, address_1, address_2, city, state, postal_code, country from persons where cid = $cid";
+			my $selstmt = "select first_name, middle_name, last_name, email, address_1, address_2, city, state, postal_code, country from person where cid = $cid";
 
 			$sth = $dbh->prepare($selstmt) || die $selstmt;
 			$sth->execute() || die $selstmt;
 
 			$rs = $sth->fetchrow_hashref;
 
+print(STDERR "???? first name: " . $rs->{'FIRST_NAME'} . ".\n");
+
+
 			if ($rs) {
-				$form_state{'first_name'}  = $rs->{'FIRST_NAME'};
-				$form_state{'middle_name'} = $rs->{'MIDDLE_NAME'};
-				$form_state{'last_name'}   = $rs->{'LAST_NAME'};
-				$form_state{'email'}       = $rs->{'EMAIL'};
-				$form_state{'address_1'}   = $rs->{'ADDRESS_1'};
-				$form_state{'address_2'}   = $rs->{'ADDRESS_2'};
-				$form_state{'city'}        = $rs->{'CITY'};
-				$form_state{'state'}       = $rs->{'STATE'};
-				$form_state{'postal_code'} = $rs->{'POSTAL_CODE'};
-				$form_state{'country'}     = $rs->{'COUNTRY'};
+				$form_state{'first_name'}  = $rs->{'first_name'};
+				$form_state{'middle_name'} = $rs->{'middle_name'};
+				$form_state{'last_name'}   = $rs->{'last_name'};
+				$form_state{'email'}       = $rs->{'email'};
+				$form_state{'address_1'}   = $rs->{'address_1'};
+				$form_state{'address_2'}   = $rs->{'address_2'};
+				$form_state{'city'}        = $rs->{'city'};
+				$form_state{'state'}       = $rs->{'state'};
+				$form_state{'postal_code'} = $rs->{'postal_code'};
+				$form_state{'country'}     = $rs->{'country'};
 			} else {
 				$Response->Write("<h2>For some reason we can't look up your cid.  Please contact <a href=\"mailto:support\@canonizer.com\">support\@canonizer.com</a></h2>\n");
 				return();
@@ -296,7 +299,7 @@ sub profile_id {
 	if ($cid) {
 		my $ownder_code = &func::canon_encode($cid);
 
-		$selstmt = "select nick_name from nick_names where owner_code = '$ownder_code' order by nick_name_id";
+		$selstmt = "select nick_name from nick_name where owner_code = '$ownder_code' order by nick_name_id";
 
 		$sth = $dbh->prepare($selstmt) || die $selstmt;
 		$sth->execute() || die $selstmt;
