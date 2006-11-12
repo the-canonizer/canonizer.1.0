@@ -350,7 +350,7 @@ if ($Request->Form('submit')) {
 		$Response->End();
 	}
 } elsif ($copy_record_id) {
-	$record = new_record_id $class ($copy_record_id, $dbh);
+	$record = new_record_id $class ($dbh, $copy_record_id);
 	if ($record->{error_message}) {
 		$error_message = $record->{error_message};
 		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);

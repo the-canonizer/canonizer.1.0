@@ -217,7 +217,7 @@ if (!$record_id) {
 	$Response->End();
 }
 
-local $record = new_record_id $class ($record_id, $dbh);
+local $record = new_record_id $class ($dbh, $record_id);
 
 if ($record->{error_message}) {
 	$error_message = $record->{error_message};
