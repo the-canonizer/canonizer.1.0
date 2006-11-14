@@ -3,66 +3,65 @@
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/mode.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 
 <%
 
+sub display_statement_tree {
+	my statement $statement = $_[0];
+
+	if ($statement->{children}) {
+		%>
+		<ol>
+		<%
+		my statement $child;
+		foreach $child (@{$statement->{children}}) {
+			%>
+			<li><a href="http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$child->{topic_num}%>&statement_num=<%=$child->{statement_num}%>"><%=$child->{name}%> (<%=$child->{one_line}%>)</a></li>
+			<%
+			&display_statement_tree($child);
+		}
+		%>
+		</ol>
+		<%
+		return(1);
+	}
+	return(0);
+}
+
+
 sub top_10 {
 
+	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+	my $selstmt = 'select topic_num, name from topic group by topic_num';
+	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
+	$sth->execute() || die "Failed to execute $selstmt";
+	my $rs;
+
 	%>
+	<ol>
+	<%
 
-      <ol>
-	<li><b>Canonizer Colors</b>
-	  <oL>
-	    <li><font size = -1>Represents inclusion of all.</font></li>
-	    <li><font size = -1>It's to gay.</font></li>
-	  </ol>
-	</li><br>
-
-	<li><b>God</b>
-	  <ol>
-	    <li><font size = -1>Theist</font>
-		<ol>
-		    <li><font size = -1>Monotheism</font>
-			<ol>
-			    <li><font size = -1>Christian</font>
-				<ol>
-				    <li><font size = -1>Catholic</font></li>
-				    <li><font size = -1>LDS</font>
-					<ol>
-						<li><font size = -1>Transhumanist</font>
-					</ol>
-				    </li>
-				</ol>
-			    </li>
-			    <li><font size = -1>Muslim</font></li>
-			    <li><font size = -1>Jewish</font></li>
-			</ol>
-		   </li>
-		    <li><font size = -1>Polytheism</font></li>
-		</ol>
-	    </li>
-	    <li><font size = -1>Atheist</font>
-		<ol>
-		    <li><font size = -1>Traditional</font></li>
-		    <li><font size = -1>Extropian</font></li>
-		</ol>
-	    </li>
-	  </ol>
-	</li>
-	<br>
-
-	<li><b>Qualia</b>
-	  <ol>
-	    <li><font size = -1>Are Phenomenal Properties of Matter</font></li>
-	    <li><font size = -1>Do Not Exist (It just seems that they do.)</font></li>
-	  </ol>
-	</li>
-
-      </ol>
-
-
+	my $topic_num;
+	my $topic_name;
+	my statement $statement;
+	while ($rs = $sth->fetch()) {
+		$topic_num = $rs->[0];
+		$topic_name = $rs->[1];
+		$statement = new_tree statement ($dbh, $topic_num, 1);
+		%>
+		<li><a href="http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$topic_num%>&statement_num=1"><b><%=$rs->[1]%></b> (<%=$statement->{one_line}%>)</a>
+		<%
+		&display_statement_tree($statement);
+		%>
+		<br><br>
+		<%
+	}
+	$sth->finish();
+	%>
+	</ol>
 
 	<%
 }
@@ -74,7 +73,7 @@ sub top_10 {
 
 my $header = 'CANONIZER <br><font size=5>Top 10</font>';
 
-&display_page($header, [\&identity, \&search, \&main_ctl], [\&top_10]);
+&display_page($header, [\&identity, \&mode, \&search, \&main_ctl], [\&top_10]);
 
 %>
 
