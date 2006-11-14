@@ -25,7 +25,7 @@ $title =~ s|\<[^\>]*\>||g;
 <table border = 0 cellspacing = 0 cellpadding = 0>
 <tr>
   <!-- td background = images/cp_t_l.jpg width = 200 height = 200></td -->
-  <td><img src=images/cp_t_l.jpg width=200 height=200></td>
+  <td valign=bottom><img src=images/cp_t_l.jpg width=200 height=200></td>
   <td background = images/cp_t.jpg width = 500 height = 200 align = center valign = bottom>
 	<center>
 	<font face = arial size = 7><b>
@@ -39,7 +39,7 @@ $title =~ s|\<[^\>]*\>||g;
 	%>
 	</center>
   </td>
-  <td><img src = images/cp_t_r.jpg width = 200 height = 200></td>
+  <td valign=bottom><img src = images/cp_t_r.jpg width = 200 height = 200></td>
 </tr>
 <tr>
   <td background = images/cp_l.jpg valign = top>
