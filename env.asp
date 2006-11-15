@@ -11,7 +11,7 @@ sub env {
 	# be sure the db is working by counting the number of members:
 	my $dbh = &func::dbh_connect(1);
 
-	my $selstmt = 'select count(*) from persons';
+	my $selstmt = 'select count(*) from person';
 	my $sth = $dbh->prepare($selstmt) || die $selstmt;
 	$sth->execute() || die $selstmt;
 
