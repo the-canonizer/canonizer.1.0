@@ -9,6 +9,9 @@
 
 <%
 
+use managed_record;
+use statement;
+
 sub display_statement_tree {
 	my statement $statement = $_[0];
 
