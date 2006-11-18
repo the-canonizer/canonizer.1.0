@@ -8,15 +8,16 @@
 my $query_string = $ENV{'QUERY_STRING'};
 
 $query_string =~ s|\&?destination=||;
-$query_string =~ s|\&?as_of=.*||;
+$query_string =~ s|\&?\??(as_of=.*)||;
+$as_of = $1;
 
 my $as_of_mode = 'default';
 my $as_of_date = '';
 
-if ($Request->QueryString('as_of') =~ m|(.*)/(\d\d)/(\d\d)/(\d\d)|) {
+if ($as_of =~ m|([^=]*)/(\d\d)/(\d\d)/(\d\d)|) {
 	$as_of_mode = $1;
 	$as_of_date = "$2/$3/$4";
-} elsif ($Request->QueryString('as_of') =~ m|(.*)/|) {
+} elsif ($as_of =~ m|([^=]*)/|) {
 	$as_of_mode = $1;
 	if ($as_of_mode eq 'as_of') { # don't allow as of with no date.
 		$as_of_mode = 'default';
@@ -31,6 +32,9 @@ $Response->Redirect($query_string);
 
 %>
 
+env: <%=$ENV{'QUERY_STRING'}%><br>
+Request->QueryString<%=$Request->QueryString('as_of')%><br>
+as_of: <%=$as_of%><br>
 as_of_mode: <%=$as_of_mode%>.<br>
 as_of_date: <%=$as_of_date%>.<br>
-<%=$query_string%>
+<%=$query_string%><br>
