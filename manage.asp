@@ -1,3 +1,12 @@
+<%
+
+use managed_record;
+use topic;
+use statement;
+use text;
+
+%>
+
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
@@ -7,11 +16,6 @@
 <!--#include file = "includes/error_page.asp"-->
 
 <%
-
-use managed_record;
-use topic;
-use statement;
-use text;
 
 use history_class;
 
