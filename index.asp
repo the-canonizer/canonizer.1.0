@@ -1,16 +1,18 @@
-
-
-<!--#include file = "includes/default/page.asp"-->
-
-<!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/mode.asp"-->
-<!--#include file = "includes/search.asp"-->
-<!--#include file = "includes/main_ctl.asp"-->
-
 <%
 
 use managed_record;
 use statement;
+
+%>
+
+<!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/as_of.asp"-->
+<!--#include file = "includes/search.asp"-->
+<!--#include file = "includes/main_ctl.asp"-->
+
+<%
 
 sub display_statement_tree {
 	my statement $statement = $_[0];
@@ -53,7 +55,10 @@ sub top_10 {
 	while ($rs = $sth->fetch()) {
 		$topic_num = $rs->[0];
 		$topic_name = $rs->[1];
-		$statement = new_tree statement ($dbh, $topic_num, 1);
+		$statement = new_tree statement ($dbh, $topic_num, 1, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
+		if (!$statement) {
+			next;
+		}
 		%>
 		<li><a href="http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$topic_num%>&statement_num=1"><b><%=$rs->[1]%></b> (<%=$statement->{one_line}%>)</a>
 		<%
@@ -63,9 +68,9 @@ sub top_10 {
 		<%
 	}
 	$sth->finish();
+
 	%>
 	</ol>
-
 	<%
 }
 
@@ -76,7 +81,7 @@ sub top_10 {
 
 my $header = 'CANONIZER <br><font size=5>Top 10</font>';
 
-&display_page($header, [\&identity, \&mode, \&search, \&main_ctl], [\&top_10]);
+&display_page($header, [\&identity, \&as_of, \&search, \&main_ctl], [\&top_10]);
 
 %>
 

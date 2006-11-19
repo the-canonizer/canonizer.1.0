@@ -1,11 +1,20 @@
+<%
+
+use Time::Local;
+use managed_record;
+use topic;
+use statement;
+use text;
+
+%>
 
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 <!--#include file = "includes/error_page.asp"-->
-
 <%
 
 #
@@ -18,12 +27,6 @@
 #		1	long only
 #		2	both long and short
 #
-
-use managed_record;
-use topic;
-use statement;
-use text;
-
 
 sub error_page {
 	%>
@@ -42,27 +45,27 @@ sub lookup_topic_data {
 	# ???? is this the right place for this?
 	$dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
-	my topic $topic = new_topic_num topic ($dbh, $topic_num);
+	my topic $topic = new_topic_num topic ($dbh, $topic_num, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 	if ($topic->{error_message}) {
 		$error_message .= $topic->{error_message};
 	}
 
-	my statement $statement = new_tree statement ($dbh, $topic_num, $statement_num);
+	my statement $statement = new_tree statement ($dbh, $topic_num, $statement_num, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 	if ($statement->{error_message}) {
 		$error_message .= $statement->{error_message};
 	}
 
 	my text $short_text = 0;
-	if ($long_short == 0 || $long_short == 2) {
-		$short_text = new_num text ($dbh, $topic_num, $statement_num, 0); # 0 -> short text;
+	if ($long_short == 0 || $long_short == 2) {			    # 0 -> short text;
+		$short_text = new_num text ($dbh, $topic_num, $statement_num, 0, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 		if ($short_text->{error_message}) {
 			$short_text = 0;
 		}
 	}
 
 	my text $long_text = 0;
-	if ($long_short == 1 || $long_short == 2) {
-		$long_text = new_num text ($dbh, $topic_num, $statement_num, 1); # 1 -> long text;
+	if ($long_short == 1 || $long_short == 2) {			   # 1 -> long text;
+		$long_text = new_num text ($dbh, $topic_num, $statement_num, 1, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 		if ($long_text->{error_message}) {
 			$long_text = 0;
 		}
@@ -231,7 +234,7 @@ sub display_statement_tree {
 		my statement $child;
 		foreach $child (@{$statement->{children}}) {
 			%>
-			<li><a href = "http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$child->{topic_num}%>&statement_num=<%=$child->{statement_num}%>"><%=$child->{name}%></a></li>
+			<li><a href = "http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$child->{topic_num}%>&statement_num=<%=$child->{statement_num}%>"><%=$child->{name}%> (<%=$child->{one_line}%>)</a></li>
 			<%
 			&display_statement_tree($child);
 		}
@@ -289,10 +292,10 @@ if ($Request->Form('long_short')) {
 local $topic_data = &lookup_topic_data($topic_num, $statement_num, $long_short);
 
 if ($error_message) {
-	&display_page('Unknown Topic Number', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Unknown Topic Number', [\&identity, &as_of, \&search, \&main_ctl], [\&error_page]);
 } else {
 	&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
-&make_statement_path($topic_data->{'statement'}) . '</font><br>', [\&identity, \&search, \&main_ctl], [\&present_topic]);
+&make_statement_path($topic_data->{'statement'}) . '</font><br>', [\&identity, \&as_of, \&search, \&main_ctl], [\&present_topic]);
 }
 
 %>
