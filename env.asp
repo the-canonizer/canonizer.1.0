@@ -1,6 +1,7 @@
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 
@@ -35,6 +36,8 @@ sub env {
 	<tr><td>Session->{'logged_in'}</td><td><%=$Session->{'logged_in'}%></td></tr>
 	<tr><td>Session->{'page_count'}</td><td><%=$Session->{'page_count'}%></td></tr>
 	<tr><td>Session->{'SessionID'}</td><td><%=$Session->{'SessionID'}%></td></tr>
+	<tr><td>Session->{'as_of_mode'}</td><td><%=$Session->{'as_of_mode'}%></td></tr>
+	<tr><td>Session->{'as_of_date'}</td><td><%=$Session->{'as_of_date'}%></td></tr>
 
 	<%
 	my $guests = $Application->{'guests'};
@@ -72,7 +75,7 @@ sub env {
 # main #
 ########
 
-&display_page('Env and State info', [\&identity, \&search, \&main_ctl], [\&env]);
+&display_page('Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&env]);
 
 %>
 
