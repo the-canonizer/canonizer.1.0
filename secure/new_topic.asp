@@ -20,6 +20,7 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 <!--#include file = "includes/error_page.asp"-->
@@ -183,7 +184,7 @@ sub new_topic_form {
 ########
 
 if (!$Session->{'logged_in'}) {
-	&display_page('New Topic', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	&display_page('New Topic', [\&identity, \&as_of, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -209,11 +210,11 @@ local %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
 
 if ($nick_names{'error_message'}) {
 	$error_message = $nick_names{'error_message'};
-	&display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page($subtitle, [\&identity, \&as_of, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
-&display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&new_topic_form]);
+&display_page($subtitle, [\&identity, \&as_of, \&search, \&main_ctl], [\&new_topic_form]);
 
 %>
 
