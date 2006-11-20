@@ -61,7 +61,7 @@ sub as_of {
     </tr>
     <tr>
 	<td><input type=radio value=as_of name=as_of <%=$as_of_checked%> onclick=javascript:change_as_of('as_of/'+document.as_of_form.as_of_date.value)></td><td>as of (yy/mm/dd):<br>
-		<input type=text name=as_of_date value='<%=$as_of_date_value%>' size=8 maxlength=8></td>
+		<input type=text name=as_of_date value='<%=$as_of_date_value%>' size=8 maxlength=8 onchange=javascript:change_as_of('as_of/'+document.as_of_form.as_of_date.value)></td>
     </tr>
   </table>
   </td></tr></form>
