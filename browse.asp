@@ -38,15 +38,24 @@ sub browse {
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
-	my $selstmt = "select t.namespace, t.name, s.one_line, t.topic_num from topic t, statement s where t.replacement is null and t.proposed = 0 and s.replacement is null and s.proposed = 0 and t.topic_num = s.topic_num and s.statement_num = 1";
-;
-#	my $selstmt = 'select namespace, name, one_line, topic_num from topic where proposed = 0 and replacement is null order by namespace, name';
+	my $as_of_mode = $Session->{'as_of_mode'};
+	my $as_of_clause = '';
+	if ($as_of_mode eq 'review') {
+		# no as_of_clause;
+	} elsif ($as_of_mode eq 'as_of') {
+		my $parsed_as_of_date = &func::parse_as_of_date($Session->{'as_of_date'});
+		$as_of_clause = "and go_live_time < $parsed_as_of_date";
+	} else {
+		$as_of_clause = 'and go_live_time < ' . time;
+	}
+
+	my $selstmt = "select t.topic_num, t.namespace, t.name, s.one_line from (select topic_num, namespace, name from topic where objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)) t, (select topic_num, one_line from statement where statement_num = 1 and objector is null $as_of_clause and go_live_time in (select max(go_live_time) from statement where statement_num = 1 and objector is null $as_of_clause group by topic_num)) s where t.topic_num = s.topic_num";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
 	my $rs;
 	while ($rs = $sth->fetch()) {
-		print('<li><a href="/topic.asp?topic_num=' . $rs->[3] . '">', $rs->[0], $rs->[1], '</a><br>', $rs->[2], "</li>\n");
+		print('<li><a href="/topic.asp?topic_num=' . $rs->[0] . '">', $rs->[1], $rs->[2], '</a><br>', $rs->[3], "</li>\n");
 	}
 	%>
 	</ol>
@@ -61,4 +70,3 @@ sub browse {
 &display_page('Browse', [\&identity, \&as_of, \&search, \&main_ctl], [\&browse]);
 
 %>
-
