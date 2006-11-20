@@ -62,7 +62,7 @@ sub display_form {
 sub display_topic_form {
 
 	my $submit_value = 'Create Topic';
-	if ($record->{proposed}) {
+	if ($record->{go_live_time} > time) {
 		$submit_value = 'Propose Topic Modification';
 	}
 
@@ -139,13 +139,19 @@ sub display_topic_form {
 sub display_statement_form {
 
 	my $submit_value = 'Create Statement';
-	if ($record->{proposed}) {
+	if ($record->{go_live_time} > time) {
 		$submit_value = 'Propose Statement Modification';
 	}
 
 	my $agreement_disable_str = '';
 	if ($record->{statement_num} == 1) {
 		$agreement_disable_str = 'disabled';
+	}
+
+	my $parent_hash_ref = 0;
+
+	if (($record->{proposed}) && ($record->{statement_num} > 1)) {
+		$parent_hash_ref = $record->get_parent_hash($dbh);
 	}
 
 %>
@@ -157,7 +163,13 @@ sub display_statement_form {
 <form method=post>
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
 <input type=hidden name=topic_num value=<%=$record->{topic_num}%>>
-<input type=hidden name=parent_statement_num value=<%=$record->{parent_statement_num}%>>
+<%
+if (!$parent_hash_ref) {
+	%>
+	<input type=hidden name=parent_statement_num value=<%=$record->{parent_statement_num}%>>
+	<%
+}
+%>
 <input type=hidden name=statement_num value=<%=$record->{statement_num}%>>
 <input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
@@ -168,22 +180,49 @@ sub display_statement_form {
 
   <tr height = 20></tr>
 
-  <td><b>One Line Description: <font color = red>*</font> </b></td><td>Maximum 65 characters, end with period.<br>
+  <tr><td><b>One Line Description: <font color = red>*</font> </b></td><td>Maximum 65 characters, end with period.<br>
 	<input type=string name=one_line value="<%=$record->{'one_line'}%>" maxlength=65 size=65></td></tr>
 
   <tr height = 20></tr>
 
-  <td><b>Key Words:</b></td><td>Maximum 65 characters, comma seperated.<br>
+  <tr><td><b>Key Words:</b></td><td>Maximum 65 characters, comma seperated.<br>
 	<input type=string name=key_words value="<%=$record->{'key_words'}%>" maxlength=65 size=65></td></tr>
 
   <tr height = 20></tr>
 
-  <td><b>Note: <font color = red>*</font> </b></td><td>Reason for submission. Maximum 65 characters.<br>
+<%
+if ($parent_hash_ref) {
+	%>
+	<tr><td><b>Parent:</b></td><td>
+	<select name="parent">
+	<%
+	my $num;
+	my $parent_num = $record->{'parent_statement_num'};
+	foreach $num (sort { lc($parent_hash_ref->{$a}) cmp lc($parent_hash_ref->{$b}) } keys %{$parent_hash_ref}) {
+		if ($num == $parent_num) {
+			%>
+			<option value=<%=$num%> selected><%=$parent_hash_ref->{$num}%>
+			<%
+		} else {
+			%>
+			<option value=<%=$num%>><%=$parent_hash_ref->{$num}%>
+			<%
+		}
+	}
+	%>
+	</select>
+	</td></tr>
+	<tr height = 20></tr>
+<%
+}
+%>
+
+  <tr><td><b>Note: <font color = red>*</font> </b></td><td>Reason for submission. Maximum 65 characters.<br>
 	<input type=string name=note value="<%=$record->{note}%>" maxlength=65 size=65></td></tr>
 
   <tr height = 20></tr>
 
-  <td><b>Attribution Nick Name:</b></td>
+  <tr><td><b>Attribution Nick Name:</b></td>
   <td>
 	<select name="submitter">
 	<%
@@ -218,7 +257,7 @@ sub display_statement_form {
 sub display_text_form {
 
 	my $submit_value = 'Create Statement';
-	if ($record->{proposed}) {
+	if ($record->{go_live_time} > time) {
 		$submit_value = 'Propose Statement Modification';
 	}
 
@@ -358,7 +397,7 @@ if ($Request->Form('submit')) {
 	}
 	$record->{proposed} = 1;
 	$record->{note} = ''; # we don't want to copy the old note.
-	$subtitle = 'Propose Topic Modification';
+	$subtitle = "Propose $class Modification";
 
 } else { # create a first version of a managed record (not a topic)
 
