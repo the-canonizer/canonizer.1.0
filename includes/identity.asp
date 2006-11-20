@@ -115,18 +115,6 @@ NO_CID:		my $gid = $Session->{'gid'};
   <table border = 1 width = 180>
     <tr>
       <td>
-	Canonizer:<br>
-	<select name = canonizer onchange = javascript:change_canonizer(value)>
-	  <option>Blind Popularity</option>
-	  <option>MTA</option>
-	  <option>Atheist Popularity</option>
-	  <option>LDS</option>
-	  <option>Canonizer Canonizer</option>
-	</select>
-      </td>
-    </tr>
-    <tr>
-      <td>
 	<%=$mode_prompt%> <b><%=$logged_in_as%></b><br>
 <%
 	if ($mode == 2) {
@@ -147,6 +135,19 @@ NO_CID:		my $gid = $Session->{'gid'};
 	}
 %>
 	</center>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+	Canonizer:<br>
+	<select name = canonizer onchange = javascript:change_canonizer(value)>
+	  <option>Blind Popularity</option>
+	  <option>MTA</option>
+	  <option>Atheist Popularity</option>
+	  <option>LDS</option>
+	  <option>Canonizer Canonizer</option>
+	</select>
       </td>
     </tr>
   </table>
