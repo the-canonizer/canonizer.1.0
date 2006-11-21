@@ -62,7 +62,7 @@ sub display_form {
 sub display_topic_form {
 
 	my $submit_value = 'Create Topic';
-	if ($record->{go_live_time} > time) {
+	if ($record->{proposed}) {
 		$submit_value = 'Propose Topic Modification';
 	}
 
@@ -136,10 +136,35 @@ sub display_topic_form {
 }
 
 
+sub print_parent_option {
+	my statement $statement_tree = $_[0];
+	my $selected                 = $_[1];
+	my $indent	             = $_[2];
+
+	my $num = $statement_tree->{statement_num};
+
+	if ($num == $selected) {
+		%>
+		<option value=<%=$num%> selected><%=$indent . $statement_tree->{name}%>
+		<%
+	} else {
+		%>
+		<option value=<%=$num%>><%=$indent . $statement_tree->{name}%>
+		<%
+	}
+
+	my $index;
+	my @children = @{$statement_tree->{children}};
+	for ($index = 0; $index <= $#children; $index++) {
+		&print_parent_option($children[$index], $selected, $indent . ' &nbsp; &nbsp; ');
+	}
+}
+
+
 sub display_statement_form {
 
 	my $submit_value = 'Create Statement';
-	if ($record->{go_live_time} > time) {
+	if ($record->{proposed}) {
 		$submit_value = 'Propose Statement Modification';
 	}
 
@@ -148,10 +173,10 @@ sub display_statement_form {
 		$agreement_disable_str = 'disabled';
 	}
 
-	my $parent_hash_ref = 0;
+	my statement $statement_tree;
 
 	if (($record->{proposed}) && ($record->{statement_num} > 1)) {
-		$parent_hash_ref = $record->get_parent_hash($dbh);
+		$statement_tree = new_tree statement ($dbh, $record->{topic_num}, 1);
 	}
 
 %>
@@ -164,7 +189,7 @@ sub display_statement_form {
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
 <input type=hidden name=topic_num value=<%=$record->{topic_num}%>>
 <%
-if (!$parent_hash_ref) {
+if (!$statement_tree) {
 	%>
 	<input type=hidden name=parent_statement_num value=<%=$record->{parent_statement_num}%>>
 	<%
@@ -191,24 +216,12 @@ if (!$parent_hash_ref) {
   <tr height = 20></tr>
 
 <%
-if ($parent_hash_ref) {
+if ($statement_tree) {
 	%>
 	<tr><td><b>Parent:</b></td><td>
-	<select name="parent">
+	<select name="parent_statement_num">
 	<%
-	my $num;
-	my $parent_num = $record->{'parent_statement_num'};
-	foreach $num (sort { lc($parent_hash_ref->{$a}) cmp lc($parent_hash_ref->{$b}) } keys %{$parent_hash_ref}) {
-		if ($num == $parent_num) {
-			%>
-			<option value=<%=$num%> selected><%=$parent_hash_ref->{$num}%>
-			<%
-		} else {
-			%>
-			<option value=<%=$num%>><%=$parent_hash_ref->{$num}%>
-			<%
-		}
-	}
+	&print_parent_option($statement_tree, $record->{'parent_statement_num'}, '');
 	%>
 	</select>
 	</td></tr>
@@ -257,7 +270,7 @@ if ($parent_hash_ref) {
 sub display_text_form {
 
 	my $submit_value = 'Create Statement';
-	if ($record->{go_live_time} > time) {
+	if ($record->{proposed}) {
 		$submit_value = 'Propose Statement Modification';
 	}
 
