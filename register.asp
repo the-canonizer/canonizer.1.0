@@ -137,7 +137,7 @@ sub search_results {
 
 	if ($cid) {
 		$dbh = &func::dbh_connect(1) || die "unable to connect to database";
-		$selstmt = "select first_name, middle_name, last_name, email from persons where cid = $cid";
+		$selstmt = "select first_name, middle_name, last_name, email from person where cid = $cid";
 		$sth = $dbh->prepare($selstmt) || die 'prepare failed with ' . $selstmt;
 		$sth->execute() || die 'execute failed with ' . $selstmt;
 		$rs = $sth->fetchrow_hashref();
@@ -173,7 +173,7 @@ sub search_results {
 
 		$last_name = &func::hex_encode($last_name);
 		$dbh = &func::dbh_connect(1) || die "unable to connect to database";
-		$selstmt = "select cid, first_name, middle_name, last_name, email from persons where $like_clause";
+		$selstmt = "select cid, first_name, middle_name, last_name, email from person where $like_clause";
 		$sth = $dbh->prepare($selstmt) || die 'prepare failed with ' . $selstmt;
 		if ((length($first_name) > 0) and (length($last_name) > 0)) {
 			$sth->execute("\%$first_name\%", "\%$last_name\%") || die 'execute failed with ' . $selstmt;
