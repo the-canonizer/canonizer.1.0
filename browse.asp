@@ -3,6 +3,7 @@
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/canonizer.asp"-->
 <!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
@@ -67,6 +68,6 @@ sub browse {
 # main #
 ########
 
-&display_page('Browse', [\&identity, \&as_of, \&search, \&main_ctl], [\&browse]);
+&display_page('Browse', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&browse]);
 
 %>
