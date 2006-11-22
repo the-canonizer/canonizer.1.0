@@ -55,9 +55,18 @@ sub browse {
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
 	my $rs;
+	my $no_data = 1;
 	while ($rs = $sth->fetch()) {
+		$no_data = 0;
 		print('<li><a href="/topic.asp?topic_num=' . $rs->[0] . '">', $rs->[1], $rs->[2], '</a><br>', $rs->[3], "</li>\n");
 	}
+
+	if ($no_data) {
+		%>
+		<h2>No topics YET.</h2>
+		<%
+	}
+
 	%>
 	</ol>
 	<%

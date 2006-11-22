@@ -41,7 +41,19 @@ sub display_statement_tree {
 sub top_10 {
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
-	my $selstmt = 'select topic_num, name from topic group by topic_num';
+
+	my $as_of_mode = $Session->{'as_of_mode'};
+	my $as_of_date = $Session->{'date'};
+	my $as_of_clause = '';
+	if ($as_of_mode eq 'review') {
+		# no as_of_clause;
+	} elsif ($as_of_mode eq 'as_of') {
+		$as_of_clause = 'where go_live_time < ' . &func::parse_as_of_date($as_of_date);
+	} else {
+		$as_of_clause = 'where go_live_time < ' . time;
+	}
+
+	my $selstmt = "select topic_num, name from topic $as_of_clause group by topic_num";
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
 	$sth->execute() || die "Failed to execute $selstmt";
 	my $rs;
@@ -53,7 +65,9 @@ sub top_10 {
 	my $topic_num;
 	my $topic_name;
 	my statement $statement;
+	my $no_data = 1;
 	while ($rs = $sth->fetch()) {
+		$no_data = 0;
 		$topic_num = $rs->[0];
 		$topic_name = $rs->[1];
 		$statement = new_tree statement ($dbh, $topic_num, 1, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
@@ -69,6 +83,12 @@ sub top_10 {
 		<%
 	}
 	$sth->finish();
+
+	if ($no_data) {
+		%>
+		<h2>No topics YET.</h2>
+		<%
+	}
 
 	%>
 	</ol>
