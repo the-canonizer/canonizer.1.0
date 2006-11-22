@@ -11,7 +11,6 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 <!--#include file = "includes/profile_tabs.asp"-->
@@ -111,11 +110,11 @@ not be given to anyone except through the canonizers anonymously.
 ########
 
 if (! $Session->{'cid'}) { # browsing as guest.
-	&display_page('Personal Info', [\&identity, \&as_of, \&search, \&main_ctl], [\&advert_for_guest], \&profile_tabs);
+	&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&advert_for_guest], \&profile_tabs);
 } elsif (! $Session->{'logged_in'}) { # must login to validate before going to this secure page.
 	$Response->Redirect("login.asp?destination=/secure/profile_attrib.asp");
 } else {
-	&display_page('Personal Info', [\&identity, \&as_of, \&search, \&main_ctl], [\&profile_attrib], \&profile_tabs);
+	&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_attrib], \&profile_tabs);
 }
 
 %>

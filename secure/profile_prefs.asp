@@ -11,7 +11,6 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 <!--#include file = "includes/profile_tabs.asp"-->
@@ -38,6 +37,6 @@ sub profile_prefs {
 # main #
 ########
 
-&display_page('Personal Info', [\&identity, \&as_of, \&search, \&main_ctl], [\&profile_prefs], \&profile_tabs);
+&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_prefs], \&profile_tabs);
 
 %>

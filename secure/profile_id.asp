@@ -11,7 +11,6 @@ if(!$ENV{"HTTPS"}) {
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 <!--#include file = "includes/profile_tabs.asp"-->
@@ -260,9 +259,6 @@ sub profile_id {
 
 			$rs = $sth->fetchrow_hashref;
 
-print(STDERR "???? first name: " . $rs->{'FIRST_NAME'} . ".\n");
-
-
 			if ($rs) {
 				$form_state{'first_name'}  = $rs->{'first_name'};
 				$form_state{'middle_name'} = $rs->{'middle_name'};
@@ -409,12 +405,12 @@ if ($Request->QueryString('takeover_cid')) {
 if ($Session->{'cid'} and ! $Session->{'logged_in'}) {
 	$Response->Redirect("login.asp?destination=/secure/profile_id.asp");
 } elsif (!$Session->{'did_warning_search'} and ! $Session->{'logged_in'}) {
-	&display_page('Personal Info', [\&identity, \&as_of, \&search, \&main_ctl], [\&must_search_first], \&profile_tabs);
+	&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&must_search_first], \&profile_tabs);
 } elsif ($Session->{'logged_in'} or $Session->{'did_warning_search'}) {
 	if ($Request->Form('submit')) {
 		&save_values();
 	}
-	&display_page('Personal Info', [\&identity, \&as_of, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
+	&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
 } else {
 %>
 	<h1>How did you get here anyway?</h1>
