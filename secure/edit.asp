@@ -22,7 +22,7 @@ if(!$ENV{"HTTPS"}){
 #	new record cases:
 #		case=statement&topic_num=#&parent_statement_num=$
 #		case=text&topic_num=#&statement_num=#[&long=1]
-# else $Request->Form('submit');
+# else $Request->Form('submit_edit');
 #
 
 use managed_record;
@@ -128,7 +128,7 @@ sub display_topic_form {
 </table>
 
 <input type=reset value="Reset">
-<input type=submit name=submit value="<%=$submit_value%>">
+<input type=submit name=submit_edit value="<%=$submit_value%>">
 
 </form>
 
@@ -260,7 +260,7 @@ if ($statement_tree) {
 </table>
 
 <input type=reset value="Reset">
-<input type=submit name=submit value="<%=$submit_value%>">
+<input type=submit name=submit_edit value="<%=$submit_value%>">
 
 </form>
 
@@ -269,7 +269,7 @@ if ($statement_tree) {
 
 sub display_text_form {
 
-	my $submit_value = 'Create Statement';
+	my $submit_value = 'Create Text';
 	if ($record->{proposed}) {
 		$submit_value = 'Propose Statement Modification';
 	}
@@ -281,11 +281,19 @@ sub display_text_form {
 
 %>
 
+	<script language:javascript>
+	function preview_text() {
+		document.edit_text.action = 'https://<%=&func::get_host()%>/topic.asp';
+		document.edit_text.submit();
+		return true;
+	}
+	</script>
+
 	<br>
 	<%=$error_message%>
 	<br>
 
-	<form method=post>
+	<form method=post name=edit_text>
 	<input type=hidden name=record_id value=<%=$copy_record_id%>>
 	<input type=hidden name=topic_num value=<%=$record->{'topic_num'}%>>
 	<input type=hidden name=statement_num value=<%=$record->{'statement_num'}%>>
@@ -294,7 +302,7 @@ sub display_text_form {
 
 	<b>Text: <font color = red>*</font></b><br>
 
-	<textarea NAME="value" ROWS="30" COLS="60"><%=$record->{'value'}%></textarea>
+	<textarea NAME="value" ROWS="30" COLS="65"><%=$record->{'value'}%></textarea>
 
 	<table>
 	<tr>
@@ -329,14 +337,19 @@ sub display_text_form {
 	</table>
 
 	<input type=reset value="Reset">
-	<input type=submit name=submit value="<%=$submit_value%>">
+	<input type=submit name=submit_edit value="Preview" onClick="preview_text()">
+	<input type=submit name=submit_edit value="<%=$submit_value%>">
 
 	</form>
 
-<%
+	<p>
+	The Canonizer currently uses the Purple Wiki text parser/formatter.  For a reference see
+	<a href="http://purplewiki.blueoxen.net/cgi-bin/wiki.pl?TextFormattingRules" target="_blank">
+	Purple Wiki TextFormattingRules</a>
+	</p>
+
+	<%
 }
-
-
 
 
 ########
@@ -348,7 +361,7 @@ if (!$Session->{'logged_in'}) {
 	$Response->End();
 }
 
-local $dbh = &func::dbh_connect(1) || die "unable to connect to database";	
+local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 local $error_message = '';
 
@@ -379,13 +392,24 @@ if ($Request->Form('record_id')) {
 	$copy_record_id = $Request->QueryString('record_id');
 }
 
-if ($Request->Form('submit')) {
+if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic preview page.
+	$record = new_form $class ($Request);
+	if ($record->{error_message}) {
+		$error_message = $record->{error_message};
+		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+		$Response->End();
+	}
+	$record->{value} = &func::hex_decode($record->{value});
+} elsif ($Request->Form('submit_edit')) {
 
 	$record = new_form $class ($Request);
 
 	if ($record->{error_message}) {
 		$error_message = $record->{error_message};
 	} else {
+		if ($Request->Form('submit_edit') eq 'Commit Text') { # from topic preview page.
+			$record->{value} = &func::hex_decode($record->{value});
+		}
 		$record->save($dbh);
 		my $any_record = $record;
 		my $url = 'http://' . &func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
