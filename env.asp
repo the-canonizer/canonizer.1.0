@@ -59,13 +59,24 @@ sub env {
 	<tr><th colspan = 2 align = left>ENV values:</th></tr>
 
 	<%
-
-	foreach my $key (sort (keys %ENV)) {
+	my $key;
+	foreach $key (sort (keys %ENV)) {
 	%>
 		<tr><td><%=$key%></td><td><%=$ENV{$key}%></td></tr>
 	<%
 	}
+	%>
 
+	<tr><th colspan = 2 height = 30>&nbsp;</th></tr>
+
+	<tr><th colspan = 2 align = left>$Request->Form() values:</th></tr>
+
+	<%
+	foreach $key (keys %{$Request->Form}) {
+	%>
+		<tr><td><%=$key%></td><td><%=$Request->Form($key)%></td></tr>
+	<%
+	}
 	%>
 	</table>
 <%
