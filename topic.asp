@@ -11,6 +11,7 @@ use text;
 <!--#include file = "includes/default/page.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/canonizer.asp"-->
 <!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
@@ -56,18 +57,36 @@ sub lookup_topic_data {
 	}
 
 	my text $short_text = 0;
-	if ($long_short == 0 || $long_short == 2) {			    # 0 -> short text;
-		$short_text = new_num text ($dbh, $topic_num, $statement_num, 0, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
-		if ($short_text->{error_message}) {
-			$short_text = 0;
-		}
-	}
-
 	my text $long_text = 0;
-	if ($long_short == 1 || $long_short == 2) {			   # 1 -> long text;
-		$long_text = new_num text ($dbh, $topic_num, $statement_num, 1, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
-		if ($long_text->{error_message}) {
-			$long_text = 0;
+
+	if ($Request->Form('submit_edit')) {
+
+		if ($Request->Form('text_size')) {	# long text
+			$long_text = new_form text ($Request);
+			if ($long_text->{error_message}) {
+				$long_text = 0;
+			}
+		} else {				# short text
+			$short_text = new_form text ($Request);
+			if ($short_text->{error_message}) {
+				$short_text = 0;
+			}
+		}
+
+	} else {
+
+		if ($long_short == 0 || $long_short == 2) {			    # 0 -> short text;
+			$short_text = new_num text ($dbh, $topic_num, $statement_num, 0, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
+			if ($short_text->{error_message}) {
+				$short_text = 0;
+			}
+		}
+
+		if ($long_short == 1 || $long_short == 2) {			   # 1 -> long text;
+			$long_text = new_num text ($dbh, $topic_num, $statement_num, 1, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
+			if ($long_text->{error_message}) {
+				$long_text = 0;
+			}
 		}
 	}
 
@@ -133,6 +152,29 @@ sub present_topic {
 
 	<%
 
+	if ($Request->Form('submit_edit')) {
+		%>
+		<center>
+		<h3><font color=red>Preview Text Only</font></h3>
+		<form method=post action='https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>'>
+			<input type=hidden name=topic_num value="<%=$Request->Form('topic_num')%>">
+			<input type=hidden name=statement_num value="<%=$Request->Form('statement_num')%>">
+			<input type=hidden name=record_id value="<%=$Request->Form('record_id')%>">
+			<input type=hidden name=value value="<%=&func::hex_encode($Request->Form('value'))%>">
+			<input type=hidden name=text_size value="<%=$Request->Form('text_size')%>">
+			<input type=hidden name=proposed value="<%=$Request->Form('proposed')%>">
+			<input type=hidden name=note value="<%=$Request->Form('note')%>">
+			<input type=hidden name=submitter value="<%=$Request->Form('submitter')%>">
+
+			<input type=submit name=submit_edit value="Commit Text">
+			<input type=submit name=submit_edit value="Edit Text">
+
+		</form>
+		</center>
+		<hr>
+		<%
+	}
+
 	my $html_text;
 
 	# short text:
@@ -143,8 +185,14 @@ sub present_topic {
 
 			%>
 			<%=$html_text%>
-			<p align=right><font face=arial>
-			<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'statement'}->{name}%> statement text</a></font></p>
+			<%
+			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+				%>
+				<p align=right><font face=arial>
+				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'statement'}->{name}%> statement text</a></font></p>
+				<%
+			}
+			%>
 			<hr>
 			<%
 		} else {
@@ -164,8 +212,14 @@ sub present_topic {
 
 			%>
 			<%=$html_text%>
-			<p align=right><font face=arial>
-			<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage <%=$topic_data->{'statement'}->{name}%> long statement text</a></font></p>
+			<%
+			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+				%>
+				<p align=right><font face=arial>
+				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage <%=$topic_data->{'statement'}->{name}%> long statement text</a></font></p>
+				<%
+			}
+			%>
 			<hr>
 			<%
 		} else {
@@ -186,9 +240,13 @@ sub present_topic {
 		<p>&nbsp; &nbsp; &nbsp; &nbsp; None.</p>
 		<%
 	}
-	%>
 
-	<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add new position statement under <%=$topic_data->{'statement'}->{name}%> statement.</a></font></p>
+	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+		%>
+		<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add new position statement under <%=$topic_data->{'statement'}->{name}%> statement.</a></font></p>
+		<%
+	}
+	%>
 
 	<hr>
 	<table border=0>
@@ -197,7 +255,13 @@ sub present_topic {
 	<tr><td></td><td><font face=arial>Name Space:</font></td><td><font face=arial size=4><%=$topic_data->{'topic'}->{namespace}%></font></td></tr>
 	</table>
 
-	<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/manage.asp?class=topic&topic_num=<%=$topic_num%>">Manage Topic.</a></font></p>
+	<%
+	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+		%>
+		<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/manage.asp?class=topic&topic_num=<%=$topic_num%>">Manage Topic.</a></font></p>
+		<%
+	}
+	%>
 
 	<hr>
 
@@ -208,19 +272,28 @@ sub present_topic {
 	<tr><td></td><td><font face=arial>Key Words:</font></td><td><font face=arial size=4><%=$topic_data->{'statement'}->{key_words}%></font></td></tr>
 	</table>
 
-	<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement.</a></font></p>
+	<%
+	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+		%>
+		<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement.</a></font></p>
+		<%
+	}
+	%>
 
 	<hr>
 
-	<p>
-	<select name="long_short" onchange=javascript:change_long_short(value)>
-		<option value=0 <%=$short_sel_str%>>Short Statement Only
-		<option value=1 <%=$long_sel_str%>>Long Statement Only
-		<option value=2 <%=$long_short_sel_str%>>Long and Short Statement
-	</select>
-	</p>
-
 	<%
+	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+		%>
+		<p>
+		<select name="long_short" onchange=javascript:change_long_short(value)>
+			<option value=0 <%=$short_sel_str%>>Short Statement Only
+			<option value=1 <%=$long_sel_str%>>Long Statement Only
+			<option value=2 <%=$long_short_sel_str%>>Long and Short Statement
+		</select>
+		</p>
+		<%
+	}
 }
 
 
@@ -292,10 +365,16 @@ if ($Request->Form('long_short')) {
 local $topic_data = &lookup_topic_data($topic_num, $statement_num, $long_short);
 
 if ($error_message) {
-	&display_page('Unknown Topic Number', [\&identity, &as_of, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Unknown Topic Number', [\&identity, \&canonizer, &as_of, \&search, \&main_ctl], [\&error_page]);
 } else {
-	&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
-&make_statement_path($topic_data->{'statement'}) . '</font><br>', [\&identity, \&as_of, \&search, \&main_ctl], [\&present_topic]);
+	if ($Request->Form('submit_edit')) {		# preview mode
+
+		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
+		&make_statement_path($topic_data->{'statement'}) . '</font><br>', [\&identity, \&search, \&main_ctl], [\&present_topic]);
+	} else {					# normal mode
+		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
+		&make_statement_path($topic_data->{'statement'}) . '</font><br>', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
+	}
 }
 
 %>
