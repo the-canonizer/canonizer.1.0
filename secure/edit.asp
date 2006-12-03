@@ -282,9 +282,21 @@ sub display_text_form {
 %>
 
 	<script language:javascript>
+	function xyz() {
+		return false;
+	}
+
 	function preview_text() {
+		if (document.edit_text.value.value == '') {
+			alert("Must have some text.");
+			return false;
+		}
+		if (document.edit_text.note.value == '') {
+			alert("Must have a note.");
+			return false;
+		}
 		document.edit_text.action = 'https://<%=&func::get_host()%>/topic.asp';
-		document.edit_text.submit();
+		// document.edit_text.action = 'https://<%=&func::get_host()%>/env.asp'; // for testing.
 		return true;
 	}
 	</script>
@@ -337,7 +349,7 @@ sub display_text_form {
 	</table>
 
 	<input type=reset value="Reset">
-	<input type=submit name=submit_edit value="Preview" onClick="preview_text()">
+	<input type=submit name=submit_edit value="Preview" onClick="return preview_text()">
 	<input type=submit name=submit_edit value="<%=$submit_value%>">
 
 	</form>
