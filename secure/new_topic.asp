@@ -64,12 +64,13 @@ sub save_topic {
 		$selstmt = "insert into topic (record_id,     topic_num,      name, namespace, note,                     submitter,                submit_time, go_live_time) values " .
 					     "($new_topic_id, $new_topic_num, ?,    ?,         'First Version of Topic', $form_state{'submitter'}, $now_time,   $go_live_time)";
 
-		$dbh->do($selstmt, \{}, $form_state{'topic_name'}, $form_state{'namespace'}) || die "Failed to create new record with " . $selstmt;
+		my %dummy = ();
+		$dbh->do($selstmt, \%dummy, $form_state{'topic_name'}, $form_state{'namespace'}) || die "Failed to create new record with " . $selstmt;
 
 		$selstmt = "insert into statement (topic_num,      name,        one_line, key_words, record_id,         statement_num,      note,                                   submitter,                submit_time, go_live_time) values " .
 						 "($new_topic_num, 'Agreement', ?,        ?,         $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', $form_state{'submitter'}, $now_time,   $go_live_time)";
 
-		$dbh->do($selstmt, \{}, $form_state{'one_line'}, $form_state{'key_words'} ) || die "Failed to create new record with " . $selstmt;
+		$dbh->do($selstmt, \%dummy, $form_state{'one_line'}, $form_state{'key_words'} ) || die "Failed to create new record with " . $selstmt;
 
 	}
 
