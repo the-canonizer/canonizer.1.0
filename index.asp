@@ -59,7 +59,7 @@ sub top_10 {
 	my $rs;
 
 	%>
-	<ol>
+	<ul>
 	<%
 
 	my $topic_num;
@@ -91,7 +91,7 @@ sub top_10 {
 	}
 
 	%>
-	</ol>
+	</ul>
 	<%
 }
 
