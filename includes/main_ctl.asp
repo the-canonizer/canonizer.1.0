@@ -34,13 +34,13 @@ sub main_ctl {
 	}
 
 
-	if ($uri =~ 'what_is.asp') {
+	if ($uri =~ m|^/topic\.asp\?topic_num=10|) {
 	    %>
-	    <tr><td bgcolor=white>What Is Canonizer</td></tr>
+	    <tr><td bgcolor=white>What Is The Canonizer</td></tr>
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href = 'http://<%=&func::get_host()%>/what_is.asp'>What Is Canonizer</a></td></tr>
+	    <tr><td><a href = 'http://<%=&func::get_host()%>/topic.asp?topic_num=10'>What Is The Canonizer <%=$uri%></a></td></tr>
 	    <%
 	}
 
