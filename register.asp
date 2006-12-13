@@ -185,16 +185,16 @@ sub search_results {
 		while ($rs = $sth->fetchrow_hashref()) {
 			if (length ($rs->{'EMAIL'}) > 0) {
 				$email_hash{$rs->{'CID'}} = {
-					'first_name' => &func::hex_decode($rs->{'FIRST_NAME'}),
-					'middle_name' => &func::hex_decode($rs->{'MIDDLE_NAME'}),
-					'last_name' => &func::hex_decode($rs->{'LAST_NAME'}),
-					'email' => &func::hex_decode($rs->{'EMAIL'})
+					'first_name' => &func::hex_decode($rs->{'first_name'}),
+					'middle_name' => &func::hex_decode($rs->{'middle_name'}),
+					'last_name' => &func::hex_decode($rs->{'last_name'}),
+					'email' => &func::hex_decode($rs->{'email'})
 				};
 			} else {
-				$proxy_hash{$rs->{'CID'}} = {
-					'first_name' => &func::hex_decode($rs->{'FIRST_NAME'}),
-					'middle_name' => &func::hex_decode($rs->{'MIDDLE_NAME'}),
-					'last_name' => &func::hex_decode($rs->{'LAST_NAME'})
+				$proxy_hash{$rs->{'cid'}} = {
+					'first_name' => &func::hex_decode($rs->{'first_name'}),
+					'middle_name' => &func::hex_decode($rs->{'middle_name'}),
+					'last_name' => &func::hex_decode($rs->{'last_name'})
 				};
 			}
 		}
