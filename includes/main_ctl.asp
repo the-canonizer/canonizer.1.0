@@ -40,7 +40,7 @@ sub main_ctl {
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href = 'http://<%=&func::get_host()%>/topic.asp?topic_num=10'>What Is The Canonizer <%=$uri%></a></td></tr>
+	    <tr><td><a href = 'http://<%=&func::get_host()%>/topic.asp?topic_num=10'>What Is The Canonizer</a></td></tr>
 	    <%
 	}
 
