@@ -1,4 +1,5 @@
 <%
+
 if(!$ENV{"HTTPS"}) {
 	my $qs = '';
 	if ($ENV{'QUERY_STRING'}) {
@@ -164,6 +165,7 @@ sub save_values {
 				Domain  => 'canonizer.com',
 				Path    => '/'
 			};
+			&temp_send_email($form_state{'first_name'} . ' ' . $form_state{'last_name'});
 			$message .= &format_success("Registration Completed.");
 		} else {
 			$message .= &format_error("DB Insert Failed.<br>\n");
@@ -379,6 +381,20 @@ if ($#nick_names >= 0) {
 
 <%
 }
+
+sub temp_send_email {
+	my $name = $_[0];
+
+	open(MAIL, "| /bin/mail -s new_user brent\@canonizer.com") || die "can't open mail.\n";
+
+	print(MAIL "A new user, $name,  signed up!\n.\n\n");
+
+	close(MAIL);
+
+	print(STDERR "Sent e-mail.\n");
+
+}
+
 
 ########
 # main #
