@@ -59,6 +59,16 @@ sub top_10 {
 	my $rs;
 
 	%>
+<hr>
+<p>
+Since the "canonization" process is not yet completed, this "top 10"
+list makes no sense. It now is simply a random list of all topics in
+all name spaces.  Once there are more topics, only topics in the
+primary name space will be included and once the canonization
+programming is running, this "Top 10" list will contain only the most
+supported topics in that space according to your selected canonizer.
+</p>
+<hr>
 	<ul>
 	<%
 
