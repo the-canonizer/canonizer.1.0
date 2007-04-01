@@ -248,7 +248,10 @@ if ($found_str) {
 <p>Or if none of the found identities represent you and you are sure there are no identities on the system
 that do represent you, you can go onto the Register New Identity page.</p>
 <form action="https://<%=&func::get_host()%>/secure/profile_id.asp">
-<p><a href = "https://<%=&func::get_host()%>/secure/profile_id.asp"><input type = button value = "Regiseter New Identity"><br>Register new identity</a></p>
+
+<p><input type=submit name = "submit" value = "Register New Identity"></p>
+
+
 <form>
 <br>
 
