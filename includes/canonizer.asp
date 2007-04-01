@@ -13,6 +13,7 @@ sub canonizer {
 	  <option>LDS</option>
 	  <option>Canonizer Canonizer</option>
 	</select>
+	(Not Yet Implemented)
       </td>
     </tr>
   </table>
