@@ -63,6 +63,16 @@ sub main_ctl {
 	    <tr><td><a href='https://<%=&func::get_host()%>/secure/new_topic.asp'>Create New Topic</a></td></tr>
 	    <%
 	}
+
+	if ($uri =~ 'upload.asp') {
+	    %>
+	    <tr><td bgcolor=white>Upload File</td></tr>
+	    <%
+	} else {
+	    %>
+	    <tr><td><a href='https://<%=&func::get_host()%>/secure/upload.asp'>Upload File</a></td></tr>
+	    <%
+	}
 	%>
 
 	<tr><td><a href="">Organizations</a></td></tr>
