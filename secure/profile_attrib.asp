@@ -51,6 +51,13 @@ You can register <a href = "http://<%=&func::get_host()%>/register.asp">here</a>
 sub profile_attrib {
 
 %>
+
+<center>
+<h2>
+non functional mock up page.
+</h2>
+</center>
+
 <form method = post action = "http://canonizer.com/cgi-bin/env.pl">
 
 <table border = 0>
