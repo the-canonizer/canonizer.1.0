@@ -27,7 +27,7 @@ sub browse {
 		$as_of_clause = 'and go_live_time < ' . time;
 	}
 
-	my $selstmt = "select t.topic_num, t.namespace, t.name, s.one_line from (select topic_num, namespace, name from topic where objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)) t, (select topic_num, one_line from statement where statement_num = 1 and objector is null $as_of_clause and go_live_time in (select max(go_live_time) from statement where statement_num = 1 and objector is null $as_of_clause group by topic_num)) s where t.topic_num = s.topic_num";
+	my $selstmt = "select t.topic_num, t.namespace, t.name, s.one_line from (select topic_num, namespace, name from topic where objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)) t, (select topic_num, one_line from statement where statement_num = 1 and objector is null $as_of_clause and go_live_time in (select max(go_live_time) from statement where statement_num = 1 and objector is null $as_of_clause group by topic_num)) s where t.topic_num = s.topic_num order by t.namespace, t.name";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;
@@ -35,7 +35,7 @@ sub browse {
 	my $no_data = 1;
 	while ($rs = $sth->fetch()) {
 		$no_data = 0;
-		print('<li><a href="/topic.asp?topic_num=' . $rs->[0] . '">', $rs->[1], $rs->[2], '</a><br>', $rs->[3], "</li>\n");
+		print('<li><a href="/topic.asp?topic_num=' . $rs->[0] . '">', $rs->[1], $rs->[2], '</a><br> &nbsp; &nbsp;', $rs->[3], "</li><br><br>\n");
 	}
 
 	if ($no_data) {
