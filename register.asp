@@ -42,6 +42,9 @@ id number, enter it so we can give you ownership of this information.
 You can repeat this search multiple times, and it is your
 responsibility not to have multiple identities on the system.</p>
 
+<p>On the search results page, there will be a link to register a new
+identity page if the system doesn't already know about you.</p>
+
 <form method = post>
 
 <table border=0>
@@ -145,16 +148,16 @@ sub search_results {
 		if ($rs) {
 			if (length ($rs->{'EMAIL'}) > 0) {
 				$email_hash{$rs->{'CID'}} = {
-					'first_name' => &func::hex_decode($rs->{'FIRST_NAME'}),
-					'middle_name' => &func::hex_decode($rs->{'MIDDLE_NAME'}),
-					'last_name' => &func::hex_decode($rs->{'LAST_NAME'}),
+					'first_name' => &func::hex_decode($rs->{'first_name'}),
+					'middle_name' => &func::hex_decode($rs->{'middle_name'}),
+					'last_name' => &func::hex_decode($rs->{'last_name'}),
 					'email' => &func::hex_decode($rs->{'EMAIL'})
 				};
 			} else {
 				$proxy_hash{$rs->{'CID'}} = {
-					'first_name' => &func::hex_decode($rs->{'FIRST_NAME'}),
-					'middle_name' => &func::hex_decode($rs->{'MIDDLE_NAME'}),
-					'last_name' => &func::hex_decode($rs->{'LAST_NAME'})
+					'first_name' => &func::hex_decode($rs->{'first_name'}),
+					'middle_name' => &func::hex_decode($rs->{'middle_name'}),
+					'last_name' => &func::hex_decode($rs->{'last_name'})
 				};
 			}
 		}
@@ -243,9 +246,9 @@ if ($found_str) {
 <br>
 
 <p>Or if none of the found identities represent you and you are sure there are no identities on the system
-that do represent you, you can go onto the registration page.</p>
+that do represent you, you can go onto the Register New Identity page.</p>
 <form action="https://<%=&func::get_host()%>/secure/profile_id.asp">
-<p><a href = "https://<%=&func::get_host()%>/secure/profile_id.asp"><input type = button value = register></a></p>
+<p><a href = "https://<%=&func::get_host()%>/secure/profile_id.asp"><input type = button value = "Regiseter New Identity"><br>Register new identity</a></p>
 <form>
 <br>
 
