@@ -232,14 +232,10 @@ sub present_topic {
 	}
 	%>
 
-	<p><font face=arial><b>Canonizer Sorted Postion (POV) Statements below <%=$topic_data->{'statement'}->{name}%> statement:</b></font></p>
+	<p><font face=arial><b>Canonizer Sorted Postion (POV) Statement tree:</b></font></p>
 
 	<%
-	if (!&display_statement_tree($topic_data->{'statement'})) {
-		%>
-		<p>&nbsp; &nbsp; &nbsp; &nbsp; None.</p>
-		<%
-	}
+	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{name}, $topic_num));
 
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
@@ -294,29 +290,6 @@ sub present_topic {
 		</p>
 		<%
 	}
-}
-
-
-sub display_statement_tree {
-	my statement $statement = $_[0];
-
-	if ($statement->{children}) {
-		%>
-		<ol>
-		<%
-		my statement $child;
-		foreach $child (@{$statement->{children}}) {
-			%>
-			<li><a href = "http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$child->{topic_num}%>&statement_num=<%=$child->{statement_num}%>"><%=$child->{name}%> (<%=$child->{one_line}%>)</a></li>
-			<%
-			&display_statement_tree($child);
-		}
-		%>
-		</ol>
-		<%
-		return(1);
-	}
-	return(0);
 }
 
 
