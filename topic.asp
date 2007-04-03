@@ -235,7 +235,7 @@ sub present_topic {
 	<p><font face=arial><b>Canonizer Sorted Postion (POV) Statement tree:</b></font></p>
 
 	<%
-	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{name}, $topic_num));
+	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{name}, $topic_num, 1)); # 1 -> no_active_link
 
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
