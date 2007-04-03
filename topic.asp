@@ -188,8 +188,8 @@ sub present_topic {
 			<%
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<p align=right><font face=arial>
-				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'statement'}->{name}%> statement text</a></font></p>
+				<p align=right><font face=arial><b>
+				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'statement'}->{name}%> statement text</a></b></font></p>
 				<%
 			}
 			%>
@@ -215,8 +215,8 @@ sub present_topic {
 			<%
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<p align=right><font face=arial>
-				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage <%=$topic_data->{'statement'}->{name}%> long statement text</a></font></p>
+				<p align=right><font face=arial><b>
+				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage <%=$topic_data->{'statement'}->{name}%> long statement text</a></b></font></p>
 				<%
 			}
 			%>
@@ -239,7 +239,19 @@ sub present_topic {
 
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add new position statement under <%=$topic_data->{'statement'}->{name}%> statement.</a></font></p>
+		<p align=right><font face=arial><b><a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add new position statement under <%=$topic_data->{'statement'}->{name}%> statement.</a></b></font></p>
+		<%
+	}
+	%>
+
+	<hr>
+	<font face=arial><b>Support tree for <font color=green><%=$topic_data->{'statement'}->{name}%></font> statement:</font><br>
+	<br><br>
+
+	<%
+	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+		%>
+		<p align=right><font face=arial><a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Directly support this statement.</a></font></p>
 		<%
 	}
 	%>
