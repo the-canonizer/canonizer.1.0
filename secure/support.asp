@@ -49,7 +49,7 @@ local $message = "Not yet implemented ($topic_num:$statement_num)";
 if ($message) {
 	&display_page('Support Error', [], [\&support_error]);
 } else {
-	$Response->Redirect('http://' . &func::get_host() . "topic.asp?=$topic_num&statement_num=$statement_num");
+	$Response->Redirect('http://' . &func::get_host() . "/topic.asp?=$topic_num&statement_num=$statement_num");
 }
 
 %>
