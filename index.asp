@@ -69,7 +69,6 @@ programming is running, this "Top 10" list will contain only the most
 supported topics in that space according to your selected canonizer.
 </p>
 <hr>
-	<ul>
 	<%
 
 	my $topic_num;
@@ -84,13 +83,7 @@ supported topics in that space according to your selected canonizer.
 		if (!$statement) {
 			next;
 		}
-		%>
-		<li><a href="http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$topic_num%>&statement_num=1"><b><%=$rs->[1]%></b> (<%=$statement->{one_line}%>)</a>
-		<%
-		&display_statement_tree($statement);
-		%>
-		<br><br>
-		<%
+		$Response->Write($statement->display_statement_tree($topic_name, $topic_num));
 	}
 	$sth->finish();
 
@@ -99,10 +92,6 @@ supported topics in that space according to your selected canonizer.
 		<h2>No topics YET.</h2>
 		<%
 	}
-
-	%>
-	</ul>
-	<%
 }
 
 
