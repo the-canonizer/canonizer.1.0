@@ -13,6 +13,7 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 <!--#include file = "includes/error_page.asp"-->
+<!--#include file = "includes/must_login.asp"-->
 
 <%
 
@@ -29,23 +30,6 @@ use managed_record;
 use topic;
 use statement;
 use text;
-
-sub must_login {
-
-	my $login_url = 'https://' . &func::get_host() . '/secure/login.asp?destination=/secure/edit.asp';
-	if (my $query_string = $ENV{'QUERY_STRING'}) {
-		$login_url .= ('?' . $query_string);
-	}
-%>
-	<br>
-	<h2>You must register and or login before you can edit.</h2>
-	<center>
-	<h2><a href="http://<%=&func::get_host()%>/register.asp">Register</a><h2>
-	<h2><a href="<%=$login_url%>">Login</a><h2>
-	</center>
-<%
-}
-
 
 # it would be nice to object orient this, but alas, we must have asp ability to do html.
 sub display_form {
@@ -368,7 +352,13 @@ sub display_text_form {
 # main #
 ########
 
+local $destination = '';
+
 if (!$Session->{'logged_in'}) {
+	$destination = '/secure/edit.asp';
+	if (my $query_string = $ENV{'QUERY_STRING'}) {
+		$destination .= ('?' . $query_string);
+	}
 	&display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
