@@ -8,8 +8,8 @@ if(!$ENV{"HTTPS"}){
 }
 %>
 
-
 <!--#include file = "includes/default/page.asp"-->
+<!--#include file = "includes/must_login.asp"-->
 
 <%
 
@@ -29,6 +29,17 @@ sub support_error {
 ########
 # main #
 ########
+
+local $destination = '';
+
+if (!$Session->{'logged_in'}) {
+	$destination = '/secure/support.asp';
+	if (my $query_string = $ENV{'QUERY_STRING'}) {
+		$destination .= ('?' . $query_string);
+	}
+	&display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	$Response->End();
+}
 
 local $topic_num = 0;
 if ($Request->Form('topic_num')) {
