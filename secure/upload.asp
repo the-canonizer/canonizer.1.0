@@ -12,22 +12,9 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
+<!--#include file = "includes/must_login.asp"-->
 
 <%
-
-
-sub must_login {
-
-	my $login_url = 'https://' . &func::get_host() . '/secure/login.asp?destination=/secure/upload.asp';
-%>
-	<br>
-	<h2>You must register and or login before you can edit.</h2>
-	<center>
-	<h2><a href="http://<%=&func::get_host()%>/register.asp">Register</a><h2>
-	<h2><a href="<%=$login_url%>">Login</a><h2>
-	</center>
-<%
-}
 
 
 sub upload {
@@ -82,7 +69,13 @@ sub upload {
 # main #
 ########
 
+local $destination = '';
+
 if (!$Session->{'logged_in'}) {
+	$destination = '/secure/upload.asp';
+	if (my $query_string = $ENV{'QUERY_STRING'}) {
+		$destination .= ('?' . $query_string);
+	}
 	&display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
