@@ -97,7 +97,7 @@ sub do_login {
 		$message = '<h2><font color = red>Invalid e-mail or password.</font></h2>';
 	}
 
-	if (!$message) { # login failed so don't redirect.
+	if (!$message) { # only redirect to destination if there is no message.
 		my $protocol = 'http://';
 		if ($destination =~ m|secure|) {
 			$protocol = 'https://';
