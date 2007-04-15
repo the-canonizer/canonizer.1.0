@@ -371,7 +371,7 @@ if ($#nick_names >= 0) {
 <tr height = <%=$spacer%>><td colspan = 2></td></tr>
 
 <tr><td nowrap>Add New Permanent Nick Name:</td><td><input type = string name = new_nick_name maxlength=25 size=25 value="<%=$form_state{'new_nick_name'}%>">
-	<button name=nick_name_check>Check Nick Name</button> </td></td></tr>
+	<!-- button name=nick_name_check>Check Nick Name</button> </td></td></tr not yet implemented -->
 
 <tr height = <%=$spacer%>><td colspan = 2></td></tr>
 
