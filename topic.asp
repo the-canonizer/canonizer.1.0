@@ -18,6 +18,7 @@ use text;
 <!--#include file = "includes/error_page.asp"-->
 <%
 
+
 #
 #	present a topic with a statement (default agreement statement)
 #	?topic_num=#[&statement_num=#]
@@ -28,13 +29,6 @@ use text;
 #		1	long only
 #		2	both long and short
 #
-
-sub error_page {
-	%>
-	<h1>Error: Unkown Topic Reference (<%=$topic_num%>:<%=$statement_num%>).</h1>
-	<%
-}
-
 
 sub lookup_topic_data {
 	my $topic_num     = $_[0];
@@ -47,6 +41,7 @@ sub lookup_topic_data {
 	$dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
 	my topic $topic = new_topic_num topic ($dbh, $topic_num, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
+
 	if ($topic->{error_message}) {
 		$error_message .= $topic->{error_message};
 	}
@@ -349,8 +344,9 @@ if ($Request->Form('long_short')) {
 
 local $topic_data = &lookup_topic_data($topic_num, $statement_num, $long_short);
 
-if ($error_message) {
-	&display_page('Unknown Topic Number', [\&identity, \&canonizer, &as_of, \&search, \&main_ctl], [\&error_page]);
+if ($topic_data->{'error_message'}) {
+	$error_message = $topic_data->{'error_message'};
+	&display_page('Unknown Topic Number', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&error_page]);
 } else {
 	if ($Request->Form('submit_edit')) {		# preview mode
 
