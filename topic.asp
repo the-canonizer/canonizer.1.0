@@ -300,20 +300,6 @@ sub present_topic {
 }
 
 
-sub make_statement_path {
-	my statement $statement = $_[0];
-
-	my $statement_path = '<font size=6>' . $statement->{name} . '</font>';
-
-	while ($statement->{statement_num} > 1) { # have more parents.
-		$statement = $statement->{parent};
-		$statement_path = '<a href="http://' . &func::get_host() . '/topic.asp?topic_num=' . $statement->{topic_num} . '&statement_num=' . $statement->{statement_num} . '">' . $statement->{name} . '</a> <b>/</b> ' . $statement_path
-	}
-
-	return($statement_path);
-}
-
-
 ########
 # main #
 ########
@@ -351,10 +337,10 @@ if ($topic_data->{'error_message'}) {
 	if ($Request->Form('submit_edit')) {		# preview mode
 
 		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
-		&make_statement_path($topic_data->{'statement'}) . '</font><br>', [\&identity, \&search, \&main_ctl], [\&present_topic]);
+		$topic_data->{'statement'}->make_statement_path() . '</font><br>', [\&identity, \&search, \&main_ctl], [\&present_topic]);
 	} else {					# normal mode
 		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
-		&make_statement_path($topic_data->{'statement'}) . '</font><br>', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
+		$topic_data->{'statement'}->make_statement_path() . '</font><br>', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
 	}
 }
 
