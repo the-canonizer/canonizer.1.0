@@ -44,7 +44,7 @@ sub save_support {
 	my $now_time = time;
 
 	# end modified support
-	my $selstmt = "select statement_num, nick_name_id, delegate_nick_name_id, support_order from support where topic_num = $topic_num and ((start > $now_time) and (end = 0 or end > $now_time)) and ($nick_clause)";
+	my $selstmt = "select statement_num, nick_name_id, delegate_nick_name_id, support_order from support where topic_num = $topic_num and ((start < $now_time) and (end = 0 or end > $now_time)) and ($nick_clause)";
 
 	my $sth = $dbh->prepare($selstmt) || die "save_support failed to prepair $selstmt";
 
@@ -53,13 +53,13 @@ sub save_support {
 	my $rs;
 	my $statement_num;
 	my $support_order;
-	# ???? got to add the delegate compare stuff here too????
+
 	while ($rs = $sth->fetchrow_hashref()) {
 		$statement_num = $rs->{'statement_num'};
 		$support_order = $rs->{'support_order'};
 		if (($rs->{'nick_name_id'} == $nick_name_id) &&
 		    ($form_support_hash{$support_order} == $statement_num) ) {	# no change
-			delete($form_support_hash{$statement_num});
+			delete($form_support_hash{$support_order});
 		} else {							# modify (terminate old, add new record);
 			# ???? mark the old record terminated.
 		}
@@ -75,6 +75,9 @@ sub save_support {
 			   '(support_id,  nick_name_id,  topic_num,  statement_num,  support_order,  start    ) values ' .
 			   "($support_id, $nick_name_id, $topic_num, $statement_num, $support_order, $now_time)";
 		# print(STDERR "save_support selstmt: $selstmt.\n");
+		if (!$dbh->do($selstmt)) {
+			die "Failed to insert support: $selstmt.\n";
+		}
 	}
 
 	# save in db then redirect to statement page.
@@ -127,7 +130,7 @@ sub support_form {
 
 	<%
 
-	my $pre_selstmt = "select statement_num, delegate_nick_name_id, support_order from support where topic_num = $topic_num and ((start > $now_time) and (end = 0 or end > $now_time)) and (nick_clause) order by support_order";
+	my $pre_selstmt = "select statement_num, delegate_nick_name_id, support_order from support where topic_num = $topic_num and ((start < $now_time) and (end = 0 or end > $now_time)) and (nick_clause) order by support_order";
 
 	my $selstmt = $pre_selstmt;
 	$selstmt =~ s|nick_clause|$nick_clause|;
@@ -144,7 +147,7 @@ sub support_form {
 			$root_delegate = $rs->{'support_order'};
 		} else {
 			$statement_num = $rs->{'statement_num'};
-			$statement_info = $statement->tree_hash->{$statement_num}->make_statement_path(1);
+			$statement_info = $statement->{tree_hash}->{$statement_num}->make_statement_path(1);
 			$statement_info =~ s|"|\\"|g;
 			$last_support = $rs->{'support_order'};
 			%>
@@ -152,7 +155,7 @@ sub support_form {
 			support_object.statement_num = <%=$statement_num%>;
 			support_object.statement_info = "<%=$statement_info%>";
 			support_object.new = false;
-			support_array[<%=$last_support%>"] = support_object;
+			support_array[<%=$last_support%>] = support_object;
 			<%
 		}
 	}
@@ -175,7 +178,7 @@ sub support_form {
 			support_object.statement_num = <%=$rs->{'statement_num'}%>;
 			support_object.statement_info = "<%=$statement_info%>";
 			support_object.new = false;
-			support_array[<%=$last_support%>"] = support_object;
+			support_array[<%=$last_support%>] = support_object;
 			<%
 		}
 		$sth->finish();
@@ -193,6 +196,23 @@ sub support_form {
 	support_object.new = true;
 	support_array[<%=$last_support%>] = support_object;
 
+
+	function move_up(idx) {
+		var temp_object = support_array[idx - 1];
+		support_array[idx - 1] = support_array[idx];
+		support_array[idx] = temp_object;
+		render_support();
+	}
+
+
+	function move_down(idx) {
+		var temp_object = support_array[idx + 1];
+		support_array[idx + 1] = support_array[idx];
+		support_array[idx] = temp_object;
+		render_support();
+	}
+
+
 	function render_support() {
 		var render_str = "";
 		render_str += "<br><br>\n";
@@ -207,7 +227,18 @@ sub support_form {
 			render_str += "<tr>\n";
 			render_str += "  <td>" + idx + "</td>\n";
 			render_str += "  <td>" + support_object.statement_info + "</td>\n";
-			render_str += "  <td>&nbsp;</td>\n"; // the move buttons go here.
+			if (support_array.length > 1) { // no move buttons if only supporting one.
+				if (idx < (support_array.length - 1)) {
+					render_str += "  <td><button onclick=move_down(" + idx + ")>v</button></td>";
+				} else {
+					render_str += "  <td>&nbsp;</td>";
+				}
+				if (idx > 0) {
+					render_str += "  <td><button onclick=move_up(" + idx + ")>^</button></td>\n"; // the move buttons go here.
+				} else {
+					render_str += "  <td>&nbsp;</td>\n"; // the move buttons go here.
+				}
+			}
 			render_str += "  <td align=center>Delete<br><input type=checkbox name=delete_" + idx + "></td>\n";
 			render_str += "</tr>\n";
 			render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.statement_num + ">\n";
