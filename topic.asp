@@ -4,20 +4,8 @@ use Time::Local;
 use managed_record;
 use topic;
 use statement;
+use support;
 use text;
-
-%>
-
-<!--#include file = "includes/default/page.asp"-->
-
-<!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/canonizer.asp"-->
-<!--#include file = "includes/as_of.asp"-->
-<!--#include file = "includes/search.asp"-->
-<!--#include file = "includes/main_ctl.asp"-->
-<!--#include file = "includes/error_page.asp"-->
-<%
-
 
 #
 #	present a topic with a statement (default agreement statement)
@@ -30,15 +18,62 @@ use text;
 #		2	both long and short
 #
 
+my $error_message = '';
+
+my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+# ???? is this the right place for this?
+$dbh->{LongReadLen} = 1000000; # what and where should this really be ????
+
+
+my $topic_num = 0;
+if ($Request->Form('topic_num')) {
+	$topic_num = int($Request->Form('topic_num'));
+} elsif ($Request->QueryString('topic_num')) {
+	$topic_num = int($Request->QueryString('topic_num'));
+}
+
+my $statement_num = 1; # 1 is the default ageement statement;
+if ($Request->Form('statement_num')) {
+	$statement_num = int($Request->Form('statement_num'));
+} elsif ($Request->QueryString('statement_num')) {
+	$statement_num = int($Request->QueryString('statement_num'));
+}
+
+my $long_short = 0;
+if ($Request->Form('long_short')) {
+	$long_short = int($Request->Form('long_short'));
+} elsif ($Request->QueryString('long_short')) {
+	$long_short = int($Request->QueryString('long_short'));
+}
+
+
+my $topic_data = &lookup_topic_data($dbh, $topic_num, $statement_num, $long_short);
+
+if ($topic_data->{'error_message'}) {
+	$error_message = $topic_data->{'error_message'};
+	&display_page('Unknown Topic Number', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&error_page]);
+} else {
+	if ($Request->Form('submit_edit')) {		# preview mode
+
+		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
+		$topic_data->{'statement'}->make_statement_path() . '</font><br>', [\&identity, \&search, \&main_ctl], [\&present_topic]);
+	} else {					# normal mode
+		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
+		$topic_data->{'statement'}->make_statement_path() . '</font><br>', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
+	}
+}
+
+
+
+
+
 sub lookup_topic_data {
-	my $topic_num     = $_[0];
-	my $statement_num = $_[1];
-	my $long_short    = $_[2];
+	my $dbh           = $_[0];
+	my $topic_num     = $_[1];
+	my $statement_num = $_[2];
+	my $long_short    = $_[3];
 
 	my $error_message = '';
-	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
-	# ???? is this the right place for this?
-	$dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
 	my topic $topic = new_topic_num topic ($dbh, $topic_num, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 
@@ -241,13 +276,19 @@ sub present_topic {
 
 	<hr>
 	<font face=arial><b>Support tree for <font color=green><%=$topic_data->{'statement'}->{name}%></font> statement:</font><br>
-	<br><br>
+	<br>
+	<%
+	$Response->Write($topic_data->{'statement'}->display_support_tree($topic_num, $statement_num));
+	%>
+	<br>
 
 	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
-		%>
-		<p align=right><font face=arial><a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Directly support this statement.</a></font></p>
-		<%
+		if ((! $Session->{'cid'}) || ! $topic_data->{'statement'}->is_supporting($dbh, $Session->{'cid'})) {
+			%>
+			<p align=right><font face=arial><a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Directly support this statement.</a></font></p>
+			<%
+		}
 	}
 	%>
 
@@ -300,48 +341,14 @@ sub present_topic {
 }
 
 
-########
-# main #
-########
-
-local $error_message = '';
-
-local $topic_num = 0;
-if ($Request->Form('topic_num')) {
-	$topic_num = int($Request->Form('topic_num'));
-} elsif ($Request->QueryString('topic_num')) {
-	$topic_num = int($Request->QueryString('topic_num'));
-}
-
-local $statement_num = 1; # 1 is the default ageement statement;
-if ($Request->Form('statement_num')) {
-	$statement_num = int($Request->Form('statement_num'));
-} elsif ($Request->QueryString('statement_num')) {
-	$statement_num = int($Request->QueryString('statement_num'));
-}
-
-local $long_short = 0;
-if ($Request->Form('long_short')) {
-	$long_short = int($Request->Form('long_short'));
-} elsif ($Request->QueryString('long_short')) {
-	$long_short = int($Request->QueryString('long_short'));
-}
-
-
-local $topic_data = &lookup_topic_data($topic_num, $statement_num, $long_short);
-
-if ($topic_data->{'error_message'}) {
-	$error_message = $topic_data->{'error_message'};
-	&display_page('Unknown Topic Number', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&error_page]);
-} else {
-	if ($Request->Form('submit_edit')) {		# preview mode
-
-		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
-		$topic_data->{'statement'}->make_statement_path() . '</font><br>', [\&identity, \&search, \&main_ctl], [\&present_topic]);
-	} else {					# normal mode
-		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
-		$topic_data->{'statement'}->make_statement_path() . '</font><br>', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
-	}
-}
-
 %>
+
+<!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/canonizer.asp"-->
+<!--#include file = "includes/as_of.asp"-->
+<!--#include file = "includes/search.asp"-->
+<!--#include file = "includes/main_ctl.asp"-->
+<!--#include file = "includes/error_page.asp"-->
+
