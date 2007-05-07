@@ -14,7 +14,7 @@
 #		Clear Browser (logout.asp&clear=1)
 
 
-local $mode = 0;	# make this global so everyone can see it.
+my $mode = 0;	# make this global so everyone can see it.
 
 
 sub identity {
