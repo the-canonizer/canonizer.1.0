@@ -5,7 +5,7 @@
 # modes:	selections:
 
 
-local $as_of = 0;	# make this global so everyone can see it.
+my $as_of = 0;	# make this global so everyone can see it.
 
 
 sub as_of {
