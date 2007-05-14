@@ -1,7 +1,5 @@
 <%
 
-# ???? this 002 version is trying the new my (not local) asp organization.
-
 use managed_record;
 use topic;
 use statement;
@@ -46,11 +44,11 @@ if ($Request->Form('statement_num')) {
 	$statement_num = int($Request->QueryString('statement_num'));
 }
 
-my $deligate_id = 0; # 0 is direct support default.
-if ($Request->Form('deligate_id')) {
-	$deligate_id = int($Request->Form('deligate_id'));
-} elsif ($Request->QueryString('deligate_id')) {
-	$deligate_id = int($Request->QueryString('deligate_id'));
+my $delegate_id = 0; # 0 is direct support default.
+if ($Request->Form('delegate_id')) {
+	$delegate_id = int($Request->Form('delegate_id'));
+} elsif ($Request->QueryString('delegate_id')) {
+	$delegate_id = int($Request->QueryString('delegate_id'));
 }
 
 my $dbh = &func::dbh_connect(1) || die "support.asp unable to connect to database";
@@ -61,21 +59,19 @@ if ($topic->{error_message}) {
 }
 
 
+my statement $statement = new_tree statement ($dbh, $topic_num, $statement_num);
+if ($statement->{error_message}) {
+	%>
+	<br>
+	<h1><font color=red><%=$statement->{error_message}%></font></h1>
+	<br>
+	<%
+	return();
+}
+
+
 # this nick stuff is used by both save_support and support_form
 my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
-# ???? nick_clause is no longer used by support_form (%nick_names is) so move it into save_support
-my $nick_clause = '';
-my $nick_name;
-foreach $nick_name (keys (%nick_names)) {
-	$nick_clause .= "nick_name_id = $nick_name or ";
-}
-if (!$nick_clause) {
-	$error_message .= "No nick name found for current user.<br>\n";
-}
-chop($nick_clause); # remove extra or
-chop($nick_clause);
-chop($nick_clause);
-chop($nick_clause);
 
 
 if ($error_message) {
@@ -91,27 +87,58 @@ if ($error_message) {
 
 
 
-
-
 sub save_support {
+
+	my $nick_clause = '';
+	my $nick_name;
+	foreach $nick_name (keys (%nick_names)) {
+		$nick_clause .= "nick_name_id = $nick_name or ";
+	}
+	if (!$nick_clause) {
+		%>
+		<h1>No nick name found for current user.<h1>
+		<%
+		return();
+	}
+	chop($nick_clause); # remove extra or
+	chop($nick_clause);
+	chop($nick_clause);
+	chop($nick_clause);
 
 	my $idx = 0;
 	my $del_idx = 0;
 	my $nick_name_id = $Request->Form('nick_name');
-	my $support_num;
-	my %form_support_hash = ();
-	while ($support_num = $Request->Form('support_' . $idx)) {
-		$form_support_hash{$del_idx} = $support_num;
-		$idx++;
-		if (! $Request->Form('delete_' . $support_order)) {
+	my $support_statement_num;
+	my support $delegate_support = undef;
+	while ($support_statement_num = $Request->Form('support_' . $idx)) {
+		if (! $Request->Form('delete_' . $idx)) {
+			if ($delegate_id) { # use delegate's primary (0 order) support
+				$delegate_support = $statement->{support_hash}->{$delegate_id}->[0];
+				if ($delegate_support) {
+					# $support_statement_num = $delegate_support->{statement_num};
+					# no need to change this to the deligate's primary.
+					# this is never used for a delegator's support so might as well not change it.
+					# (And it must be this way so when the deligates primary changes
+					# this doesn't have to.)
+					# but we should still do this below check just for saftey.
+					# and we need this support record below.
+				} else {
+					%>
+					<h1>Can't find delegate <%=$delegate_id%> on this topic.<h1>
+					<%
+					return();
+				}
+			}
+			$form_support_hash{$del_idx} = $support_statement_num;
 			$del_idx++;
 		}
+		$idx++;
 	}
 
 	my $now_time = time;
 
-	# end modified support
-	my $selstmt = "select statement_num, nick_name_id, delegate_nick_name_id, support_order from support where topic_num = $topic_num and ((start < $now_time) and (end = 0 or end > $now_time)) and ($nick_clause)";
+	# end any modified support
+	my $selstmt = "select support_id, statement_num, nick_name_id, delegate_nick_name_id, support_order from support where topic_num = $topic_num and ((start < $now_time) and (end = 0 or end > $now_time)) and ($nick_clause)";
 
 	my $sth = $dbh->prepare($selstmt) || die "save_support failed to prepair $selstmt";
 
@@ -120,15 +147,21 @@ sub save_support {
 	my $rs;
 	my $statement_num;
 	my $support_order;
+	my $support_id;
 
 	while ($rs = $sth->fetchrow_hashref()) {
 		$statement_num = $rs->{'statement_num'};
 		$support_order = $rs->{'support_order'};
-		if (($rs->{'nick_name_id'} == $nick_name_id) &&
-		    ($form_support_hash{$support_order} == $statement_num) ) {	# no change
+		$support_id = $rs->{'support_id'};
+		if (($rs->{'nick_name_id'} == $nick_name_id)               &&
+		    ($form_support_hash{$support_order} == $statement_num) &&
+		    ($rs->{'delegate_nick_name_id'} == $delegate_id)           ) { # no change
 			delete($form_support_hash{$support_order});
 		} else {							# modify (terminate old, add new record);
-			# ???? mark the old record terminated.
+			$selstmt = "update support set end=$now_time where support_id = $support_id";
+			if (!$dbh->do($selstmt)) {
+				die "Failed to terminate support: $selstmt.\n";
+			}
 		}
 	}
 	$sth->finish();
@@ -138,9 +171,18 @@ sub save_support {
 	foreach $support_order (keys %form_support_hash) {
 		$support_id = &func::get_next_id($dbh, 'support', 'support_id');
 		$statement_num = $form_support_hash{$support_order};
+		my $real_support_order = $support_order;
+		if ($delegate_id) {
+			if ($delegate_support->{delegate_nick_name_id}) { # get root delegate id
+				$real_support_order = $delegate_support->{support_order};
+			} else {					  # this is root delegate
+				$real_support_order = $delegate_id;
+			}
+		}
+
 		$selstmt = 'insert into support ' .
-			   '(support_id,  nick_name_id,  topic_num,  statement_num,  support_order,  start    ) values ' .
-			   "($support_id, $nick_name_id, $topic_num, $statement_num, $support_order, $now_time)";
+			   '(support_id,  nick_name_id,  topic_num,  statement_num,  support_order,       delegate_nick_name_id, start    ) values ' .
+			   "($support_id, $nick_name_id, $topic_num, $statement_num, $real_support_order, $delegate_id, $now_time)";
 		# print(STDERR "save_support selstmt: $selstmt.\n");
 		if (!$dbh->do($selstmt)) {
 			die "Failed to insert support: $selstmt.\n";
@@ -171,38 +213,28 @@ sub save_support {
 
 sub support_form {
 
-	my statement $statement = new_tree statement ($dbh, $topic_num, $statement_num);
-	if ($statement->{error_message}) {
-		%>
-		<br>
-		<h1><font color=red><%=$statement->{error_message}%></font></h1>
-		<br>
-		<%
-		return();
-	}
-
 	my $nick_name_id;
-	my $support_array_ref = undef;
+	my $old_support_array_ref = undef;
 	foreach $nick_name_id (keys %nick_names) {
-		$support_array_ref = $statement->{support_hash}->{$nick_name_id};
-		if ($support_array_ref) {
+		$old_support_array_ref = $statement->{support_hash}->{$nick_name_id};
+		if ($old_support_array_ref) {
 			last;
 		}
 	}
 
-	my $delegate_nick_name_id;
-	my support $support;
-	if (! $support_array_ref) {
+	my $old_delegate_nick_name_id;
+	my support $old_support;
+	if (! $old_support_array_ref) {
 		# wasn't yet supporting any statements.
 	} else {
-		$support = $support_array_ref->[0];
-		$delegate_nick_name_id = $support->{delegate_nick_name_id};
-		if ($delegate_nick_name_id) {
-			$support_array_ref = $statement->{support_hash}->{$support->{support_order}};
-			if (! $support_array_ref) {
+		$old_support = $old_support_array_ref->[0];
+		$old_delegate_nick_name_id = $old_support->{delegate_nick_name_id};
+		if ($old_delegate_nick_name_id) {
+			$old_support_array_ref = $statement->{support_hash}->{$old_support->{support_order}};
+			if (! $old_support_array_ref) {
 				%>
 				<br>
-				<h1><font color=red>suppoert <%=$nick_name_id%> is delegated to non existant root support id: <%=$support->{support_order}%></font></h1>
+				<h1><font color=red>support <%=$nick_name_id%> is delegated to non existant root support id: <%=$old_support->{support_order}%></font></h1>
 				<br>
 				<%
 				return();
@@ -210,7 +242,7 @@ sub support_form {
 		}
 	}
 
-	# the support_array_ref, if any, will be used for the old list in the deligated case
+	# the support_array_ref, if any, will be used for the old list in the delegated case
 	# and the new support will be added to this ref, so the entire list order can be edited in the direct case:
 
 	if ($delegate_id) {	# new delegated support (show old support if any.)
@@ -224,6 +256,61 @@ sub support_form {
 			return();
 		}
 
+		# ???? what is this for?
+		if ($old_support_array_ref) {
+			if ($old_delegate_nick_name_id) {
+				my $old_delegate_name = $statement->{support_hash}->{$old_delegate_nick_name_id}->[0]->{nick_name};
+			} else {
+			}
+		}
+
+		my $delegate_name = $statement->{support_hash}->{$delegate_id}->[0]->{nick_name};
+		my $new_plural = '';
+		if ($#{$new_support_array_ref} > 0) {
+			$new_plural = 's';
+		}
+
+		%>
+		<p>After committing this delegated support to <%=$delegate_name%> you will be supporting the below statement<%=$new_plural%>.  If <%=$delegate_name%> changes camps your support will follow as long as it is so delegated.
+		<center>
+		<form method=post>
+		<input type=hidden name=support_0 value=<%=$statement_num%>
+		<input type=hidden name=delegate_id value=<%=$delegate_id%>>
+		<table border=1>
+		<%
+		my $idx;
+		for ($idx = 0; $idx <= $#{$new_support_array_ref}; $idx++) {
+			%>
+			<tr><td><%=$idx%></td><td>
+<%=$statement->{statement_tree_hash}->{$new_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%>
+</td></tr>
+			<%
+		}
+		%>
+		</table>
+		<br><br>
+		Support Nick Name: 
+		<select name=nick_name>
+		<%
+		my $id;
+		foreach $id (sort {$a <=> $b} (keys %nick_names)) {
+			if ($id == -1) { # some day propegate the previous support nick selection????
+				%>
+				<option value=<%=$id%> selected><%=$nick_names{$id}%>
+				<%
+			} else {
+				%>
+				<option value=<%=$id%>><%=$nick_names{$id}%>
+				<%
+			}
+		}
+		%>
+		</select>
+		<br><br>
+		<input type=submit name=submit value="Commit Support">
+		</form>
+		</center>
+		<%
 		# this is where we display both lists!! ???? (after we check for delegate support to deref);
 
 	} else {		# new direct (may change order) suport
@@ -235,31 +322,36 @@ sub support_form {
 		<%
 
 		my $support_order_idx = 0;
-		my $statement_info;
 
+		my $replacement_hdr = ''; # configure or new
 		my $replacement_str = ''; # build up this string with all replacements.
 		my $replacement_idx = -1; # where to put the replacement.
 
-		if ($support_array_ref) {
+		if ($old_support_array_ref) {
 			my statement $old_statement;
-			foreach $support (@{$support_array_ref}) {
-				$old_statement = $statement->{statement_tree_hash}->{$support->{statement_num}};
-				if ($statement->is_related($old_statement->{statement_num})) {
-					if ($replacement_idx == -1) {
-						$replacement_idx = $support_order_idx++;
-						$replacement_str = '<br><br><font color=green>This new support will replace the existing support for the following related statements:</font>';
-					}
-					$replacement_str .= '<br>' . $old_statement->make_statement_path(1);
+			foreach $old_support (@{$old_support_array_ref}) {
+				if ($statement->{statement_num} == $old_support->{statement_num}) { # modify support
+					$replacement_idx = $support_order_idx++;
+					$replacement_hdr = '<font color=green>Modify Support</font><br>';
 				} else {
-					$Response->Write(&make_js_support_object_str($support_order_idx++, 0, $statement, '')); # 0: old
+					$old_statement = $statement->{statement_tree_hash}->{$old_support->{statement_num}};
+					if ($statement->is_related($old_statement->{statement_num})) {
+						if ($replacement_idx == -1) {
+							$replacement_idx = $support_order_idx++;
+							$replacement_str = '<br><br><font color=green>This new support will replace the existing support for the following related statements:</font>';
+						}
+						$replacement_str .= '<br>' . $old_statement->make_statement_path(1);
+					} else {
+						$Response->Write(&make_js_support_object_str($support_order_idx++, $old_statement, '', ''));
+					}
 				}
 			}
 		}
 
 		if ($replacement_idx == -1) {
-			$Response->Write(&make_js_support_object_str($support_order_idx++, 1, $statement, '')); # 1: new
+			$Response->Write(&make_js_support_object_str($support_order_idx++, $statement, '<font color=green>New Support:</font><br>'));
 		} else {
-			$Response->Write(&make_js_support_object_str($replacement_idx, 1, $statement, $replacement_str)); # 1: new
+			$Response->Write(&make_js_support_object_str($replacement_idx, $statement, $replacement_hdr, $replacement_str));
 		}
 
 		%>
@@ -329,7 +421,7 @@ sub support_form {
 			}
 			%>
 			render_str += "  </select><br><br>\n";
-			render_str += "<input type=submit name=submit value=\"commit support\">\n";
+			render_str += "<input type=submit name=submit value=\"Commit Support\">\n";
 			render_str += "</form>\n";
 			render_str += "</center>\n";
 			// alert(render_str);
@@ -351,17 +443,13 @@ sub support_form {
 
 sub make_js_support_object_str {
 	my $support_order_idx   = $_[0];
-	my $new			= $_[1];
-	my statement $statement = $_[2];
+	my statement $statement = $_[1];
+	my $header		= $_[2];
 	my $replacement_str     = $_[3];
 
 	my $ret_str = '';
 
-	my $statement_info = '';
-	if ($new) {
-		$statement_info .= "<font color=green>New Support:</font><br>";
-	}
-	$statement_info .= $statement->make_statement_path(1) . $replacement_str;
+	my $statement_info .= $header . $statement->make_statement_path(1) . $replacement_str;
 
 	$statement_info =~ s|"|\\"|g;
 
