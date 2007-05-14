@@ -278,13 +278,18 @@ sub present_topic {
 	<font face=arial><b>Support tree for <font color=green><%=$topic_data->{'statement'}->{name}%></font> statement:</font><br>
 	<br>
 	<%
-	$Response->Write($topic_data->{'statement'}->display_support_tree($topic_num, $statement_num));
+	my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
+	$Response->Write($topic_data->{'statement'}->display_support_tree($topic_num, $statement_num, \%nick_names));
 	%>
 	<br>
 
 	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
-		if ((! $Session->{'cid'}) || ! $topic_data->{'statement'}->is_supporting($dbh, $Session->{'cid'})) {
+		if ((! $Session->{'cid'}) || $topic_data->{'statement'}->is_supporting(\%nick_names)) {
+			%>
+			<p align=right><font face=arial><a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Modify support for this statement.</a></font></p>
+			<%
+		} else {
 			%>
 			<p align=right><font face=arial><a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Directly support this statement.</a></font></p>
 			<%
