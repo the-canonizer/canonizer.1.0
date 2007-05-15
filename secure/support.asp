@@ -26,6 +26,8 @@ if (!$Session->{'logged_in'} || !$Session->{'cid'}) {
 	$Response->End();
 }
 
+my $dbh = &func::dbh_connect(1) || die "support.asp unable to connect to database";
+
 my $topic_num = 0;
 if ($Request->Form('topic_num')) {
 	$topic_num = int($Request->Form('topic_num'));
@@ -44,14 +46,36 @@ if ($Request->Form('statement_num')) {
 	$statement_num = int($Request->QueryString('statement_num'));
 }
 
+# this nick stuff is used by both save_support and support_form
+my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
+# nick_clause is used in both save and delete support.
+my $nick_clause = '';
+my $nick_name;
+foreach $nick_name (keys (%nick_names)) {
+	$nick_clause .= "nick_name_id = $nick_name or ";
+}
+if (!$nick_clause) {
+	%>
+	<h1>No nick name found for current user.<h1>
+	<%
+	return();
+}
+chop($nick_clause); # remove extra or
+chop($nick_clause);
+chop($nick_clause);
+chop($nick_clause);
+
+if ($Request->QueryString('delete_id')) {
+	# does not return if successful (rederects to topic.asp for original statement.)
+	&delete_support();
+}
+
 my $delegate_id = 0; # 0 is direct support default.
 if ($Request->Form('delegate_id')) {
 	$delegate_id = int($Request->Form('delegate_id'));
 } elsif ($Request->QueryString('delegate_id')) {
 	$delegate_id = int($Request->QueryString('delegate_id'));
 }
-
-my $dbh = &func::dbh_connect(1) || die "support.asp unable to connect to database";
 
 my topic $topic = new_topic_num topic ($dbh, $topic_num, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 if ($topic->{error_message}) {
@@ -70,10 +94,6 @@ if ($statement->{error_message}) {
 }
 
 
-# this nick stuff is used by both save_support and support_form
-my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
-
-
 if ($error_message) {
 	&display_page('Support Errorr', [\&identity, \&search, \&main_ctl], [\&error_page]);
 } elsif ($Request->Form('submit')) {
@@ -87,23 +107,27 @@ if ($error_message) {
 
 
 
+sub delete_support {
+
+	# add the nick clause just to make sure someone isn't deleteing some unowned support record.
+	my $now_time = time;
+	my $delete_id = $Request->QueryString('delete_id');
+	my $selstmt = "update support set end = $now_time where support_id = $delete_id and ($nick_clause)";
+	my %dummy;
+	if ($dbh->do($selstmt) eq '0E0') {
+		%>
+		<h1><font color=red>Failed to delete support <%=$delete_id%>.</h1>
+		<%
+	} else {
+	        $Response->Redirect('https://' . &func::get_host() . "/topic.asp?topic_num=$topic_num&statement_num=$statement_num");
+	}
+	$Response->End();
+}
+
+
+
 sub save_support {
 
-	my $nick_clause = '';
-	my $nick_name;
-	foreach $nick_name (keys (%nick_names)) {
-		$nick_clause .= "nick_name_id = $nick_name or ";
-	}
-	if (!$nick_clause) {
-		%>
-		<h1>No nick name found for current user.<h1>
-		<%
-		return();
-	}
-	chop($nick_clause); # remove extra or
-	chop($nick_clause);
-	chop($nick_clause);
-	chop($nick_clause);
 
 	my $idx = 0;
 	my $del_idx = 0;
