@@ -213,10 +213,8 @@ sub save_support {
 		}
 	}
 
-	# save in db then redirect to statement page.
-	# $Response->Redirect('http://' . &func::get_host() . "/topic.asp?=$topic_num&statement_num=$statement_num");
-
-	# add new and modified support
+        $Response->Redirect('https://' . &func::get_host() . "/topic.asp?topic_num=$topic_num&statement_num=$statement_num");
+	$Response->End();
 
 	%>
 	<h1>Submitted</h1>
@@ -271,6 +269,11 @@ sub support_form {
 
 	if ($delegate_id) {	# new delegated support (show old support if any.)
 		my $new_support_array_ref = $statement->{support_hash}->{$delegate_id};
+		my support $delegate_support = $new_support_array_ref->[0];
+		if ($delegate_support->{delegate_nick_name_id}) { # lookup root support array.
+			$new_support_array_ref = $statement->{support_hash}->{$delegate_support->{support_order}};
+		}
+
 		if (! $new_support_array_ref) {
 			%>
 			<br>
@@ -280,12 +283,39 @@ sub support_form {
 			return();
 		}
 
-		# ???? what is this for?
+
 		if ($old_support_array_ref) {
+			my $old_plural = '';
+			if ($#{$old_support_array_ref} > 0) {
+				$old_plural = 's';
+			}
 			if ($old_delegate_nick_name_id) {
 				my $old_delegate_name = $statement->{support_hash}->{$old_delegate_nick_name_id}->[0]->{nick_name};
+				%>
+				<p>Previously, you were delegating the following support from <%=$$old_delegate_name%>.</p>
+				<%
 			} else {
+				%>
+				<p>Previously, you were directly supporting the folowing statement<%=$old_plural%>.</p>
+				<%
 			}
+			%>
+			<center>
+			<table border=1>
+			<%
+			my $idx;
+			for ($idx = 0; $idx <= $#{$old_support_array_ref}; $idx++) {
+				%>
+				<tr><td><%=$idx%></td><td>
+				<%=$statement->{statement_tree_hash}->{$old_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%>
+				</td></tr>
+				<%
+			}
+			%>
+			</table>
+			</center>
+			<br><br>
+			<%
 		}
 
 		my $delegate_name = $statement->{support_hash}->{$delegate_id}->[0]->{nick_name};
@@ -306,8 +336,8 @@ sub support_form {
 		for ($idx = 0; $idx <= $#{$new_support_array_ref}; $idx++) {
 			%>
 			<tr><td><%=$idx%></td><td>
-<%=$statement->{statement_tree_hash}->{$new_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%>
-</td></tr>
+			<%=$statement->{statement_tree_hash}->{$new_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%>
+			</td></tr>
 			<%
 		}
 		%>
@@ -331,7 +361,7 @@ sub support_form {
 		%>
 		</select>
 		<br><br>
-		<input type=submit name=submit value="Commit Support">
+		<input type=submit name=submit value="Commit Delegated Support">
 		</form>
 		</center>
 		<%
@@ -445,7 +475,7 @@ sub support_form {
 			}
 			%>
 			render_str += "  </select><br><br>\n";
-			render_str += "<input type=submit name=submit value=\"Commit Support\">\n";
+			render_str += "<input type=submit name=submit value=\"Commit Direct Support\">\n";
 			render_str += "</form>\n";
 			render_str += "</center>\n";
 			// alert(render_str);
