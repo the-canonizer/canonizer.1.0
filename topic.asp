@@ -82,8 +82,11 @@ sub lookup_topic_data {
 	}
 
 	my statement $statement = new_tree statement ($dbh, $topic_num, $statement_num, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
+
 	if ($statement->{error_message}) {
 		$error_message .= $statement->{error_message};
+	} else {
+		$statement->canonize();
 	}
 
 	my text $short_text = 0;
@@ -272,11 +275,13 @@ sub present_topic {
 		<p align=right><font face=arial><b><a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add new position statement under <%=$topic_data->{'statement'}->{name}%> statement.</a></b></font></p>
 		<%
 	}
+
 	%>
 
 	<hr>
 	<font face=arial><b>Support tree for <font color=green><%=$topic_data->{'statement'}->{name}%></font> statement:</font><br>
 	<br>
+	Total support for this statement (including sub statements): <%=$topic_data->{'statement'}->{score}%>.
 	<%
 	my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
 	$Response->Write($topic_data->{'statement'}->display_support_tree($topic_num, $statement_num, \%nick_names));
