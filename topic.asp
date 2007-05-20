@@ -264,9 +264,8 @@ sub present_topic {
 		}
 	}
 	%>
-
 	<p><font face=arial><b>Canonizer Sorted Postion (POV) Statement tree:</b></font></p>
-
+	<ul>
 	<%
 	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{name}, $topic_num, 1)); # 1 -> no_active_link
 
@@ -277,6 +276,7 @@ sub present_topic {
 	}
 
 	%>
+	</ul>
 
 	<hr>
 	<font face=arial><b>Support tree for <font color=green><%=$topic_data->{'statement'}->{name}%></font> statement:</font><br>
