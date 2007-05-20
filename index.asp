@@ -5,15 +5,18 @@ use statement;
 
 %>
 
-<!--#include file = "includes/default/page.asp"-->
-
-<!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/canonizer.asp"-->
-<!--#include file = "includes/as_of.asp"-->
-<!--#include file = "includes/search.asp"-->
-<!--#include file = "includes/main_ctl.asp"-->
-
 <%
+
+my $header = 'CANONIZER <br><font size=5>Top 10</font>';
+
+&display_page($header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&top_10]);
+
+
+
+##############
+# start subs #
+##############
+
 
 sub display_statement_tree {
 	my statement $statement = $_[0];
@@ -60,47 +63,65 @@ sub top_10 {
 
 	%>
 <hr>
-<p>
-Since the "canonization" process is not yet completed, this "top 10"
-list makes no sense. It now is simply a random list of all topics in
-all name spaces.  Once there are more topics, only topics in the
-primary name space will be included and once the canonization
-programming is running, this "Top 10" list will contain only the most
-supported topics in that space according to your selected canonizer.
-</p>
+
+<p>For a brief description of the Canonizer see the "What is the
+Canonizer" link on the side bar.  </p>
+
+<p>Enough of the canonization process is now completed to do "Blind
+Popularity" (one person, one vote) Canonization.  Since there are
+still so few topics, all are now being displayed here rather than just
+the top 10.  Once there are more topics, only the top 10 topics in the
+primary name space will be included here.  Once a user attribute
+system is completed, along with more canonizers using these attributes
+you will be able to canonize this page in different ways giving more
+influence to people you choose to respect.  </p>
+
 <hr>
+	<ol>
 	<%
 
+	my @topic_array = ();
+
+	my %topic_names = ();
+
 	my $topic_num;
-	my $topic_name;
 	my statement $statement;
 	my $no_data = 1;
 	while ($rs = $sth->fetch()) {
 		$no_data = 0;
 		$topic_num = $rs->[0];
-		$topic_name = $rs->[1];
+		$topic_names{$topic_num} = $rs->[1];
 		$statement = new_tree statement ($dbh, $topic_num, 1, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 		if (!$statement) {
 			next;
 		}
-		$Response->Write($statement->display_statement_tree($topic_name, $topic_num));
+		$statement->canonize();
+		push(@topic_array, $statement);
 	}
 	$sth->finish();
 
-	if ($no_data) {
-		%>
-		<h2>No topics YET.</h2>
-		<%
+	my $topic_name;
+	foreach $statement (sort {(($a->{score} <=> $b->{score}) * -1)} @topic_array) {
+		$topic_num = $statement->{topic_num};
+		$topic_name = $topic_names{$statement->{topic_num}};
+		$Response->Write($statement->display_statement_tree($topic_name, $topic_num));
+		$Response->Write("<br>\n");
 	}
+
+	%>
+	</ol>
+	<%
 }
 
 
-########
-# main #
-########
-
-my $header = 'CANONIZER <br><font size=5>Top 10</font>';
-
-&display_page($header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&top_10]);
-
 %>
+
+
+<!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/canonizer.asp"-->
+<!--#include file = "includes/as_of.asp"-->
+<!--#include file = "includes/search.asp"-->
+<!--#include file = "includes/main_ctl.asp"-->
+
