@@ -424,6 +424,8 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 			$url .= ('&long=' . $any_record->{'text_size'});
 		}
 
+		sleep(1); # or else it goes to the next page before the new data is live.
+
 		$Response->Redirect($url);
 		$Response->End();
 	}
