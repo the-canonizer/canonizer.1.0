@@ -119,6 +119,7 @@ sub delete_support {
 		<h1><font color=red>Failed to delete support <%=$delete_id%>.</h1>
 		<%
 	} else {
+		sleep(1);
 	        $Response->Redirect('https://' . &func::get_host() . "/topic.asp?topic_num=$topic_num&statement_num=$statement_num");
 	}
 	$Response->End();
@@ -213,6 +214,7 @@ sub save_support {
 		}
 	}
 
+	sleep(1);
         $Response->Redirect('https://' . &func::get_host() . "/topic.asp?topic_num=$topic_num&statement_num=$statement_num");
 	$Response->End();
 
