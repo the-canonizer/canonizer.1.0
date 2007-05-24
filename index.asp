@@ -68,7 +68,7 @@ sub top_10 {
 Canonizer" link on the side bar.  </p>
 
 <p>Enough of the canonization process is now completed to do "Blind
-Popularity" (one person, one vote) Canonization.  Since there are
+Popularity" (one person, one vote) canonization.  Since there are
 still so few topics, all are now being displayed here rather than just
 the top 10.  Once there are more topics, only the top 10 topics in the
 primary name space will be included here.  Once a user attribute
