@@ -5,19 +5,58 @@ use topic;
 use statement;
 use text;
 
-%>
-
-<!--#include file = "includes/default/page.asp"-->
-
-<!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/search.asp"-->
-<!--#include file = "includes/main_ctl.asp"-->
-<!--#include file = "includes/topic_tabs.asp"-->
-<!--#include file = "includes/error_page.asp"-->
-
-<%
-
 use history_class;
+
+########
+# main #
+########
+
+my $error_message = '';
+
+my $class;
+if ($Request->Form('class')) {
+	$class = $Request->Form('class');
+} elsif ($Request->QueryString('class')) {
+	$class = $Request->QueryString('class');
+}
+
+if (&managed_record::bad_managed_class($class)) {
+	$error_message = "Error: '$class' is an invalid manage class.<br>\n";
+	&display_page("Manage Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
+}
+
+my $args;
+
+eval('$args = ' . $class . '::get_args($Request)');
+
+if ($args->{'error_message'}) {
+	$error_message = $args->{'error_message'};
+	&display_page("<font size=5>Manage $class:</font><br>". $topic_num, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
+}
+
+my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+
+my $history = history_class->new($dbh, $class, $args);
+
+if ($history->{error_message}) {
+	$error_message = $history->{error_message};
+	&display_page("<font size=5>Manage $class:</font><br>" . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
+} elsif ($history->{active} == 0) {
+	$error_message = "Unknown Topic Number:&nbsp;" . $args->{'topic_num'} . ".<br>\n";
+	&display_page("<font size=5>Manage $class:</font><br>" . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
+}
+
+&display_page("<font size=5>Manage $class:</font><br>" . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&manage_record]);
+
+
+
+########
+# subs #
+########
 
 sub manage_record {
 
@@ -45,50 +84,13 @@ sub manage_record {
 
 
 
-########
-# main #
-########
-
-local $error_message = '';
-
-local $class;
-if ($Request->Form('class')) {
-	$class = $Request->Form('class');
-} elsif ($Request->QueryString('class')) {
-	$class = $Request->QueryString('class');
-}
-
-if (&managed_record::bad_managed_class($class)) {
-	$error_message = "Error: '$class' is an invalid manage class.<br>\n";
-	&display_page("Manage Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
-	$Response->End();
-}
-
-my $args;
-
-eval('$args = ' . $class . '::get_args($Request)');
-
-if ($args->{'error_message'}) {
-	$error_message = $args->{'error_message'};
-	&display_page("<font size=5>Manage $class:</font><br>". $topic_num, [\&identity, \&search, \&main_ctl], [\&error_page]);
-	$Response->End();
-}
-
-local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
-
-local $history = history_class->new($dbh, $class, $args);
-
-if ($history->{error_message}) {
-	$error_message = $history->{error_message};
-	&display_page("<font size=5>Manage $class:</font><br>" . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&error_page]);
-	$Response->End();
-} elsif ($history->{active} == 0) {
-	$error_message = "Unknown Topic Number:&nbsp;" . $args->{'topic_num'} . ".<br>\n";
-	&display_page("<font size=5>Manage $class:</font><br>" . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&error_page]);
-	$Response->End();
-}
-
-&display_page("<font size=5>Manage $class:</font><br>" . $history->{active}->{name}, [\&identity, \&search, \&main_ctl], [\&manage_record]);
-
 %>
+
+<!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/search.asp"-->
+<!--#include file = "includes/main_ctl.asp"-->
+<!--#include file = "includes/topic_tabs.asp"-->
+<!--#include file = "includes/error_page.asp"-->
 
