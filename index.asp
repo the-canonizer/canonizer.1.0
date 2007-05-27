@@ -3,50 +3,21 @@
 use managed_record;
 use statement;
 
-%>
-
-<%
-
 my $header = 'CANONIZER <br><font size=5>Top 10</font>';
 
 &display_page($header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&top_10]);
-
 
 
 ##############
 # start subs #
 ##############
 
-
-sub display_statement_tree {
-	my statement $statement = $_[0];
-
-	if ($statement->{children}) {
-		%>
-		<ol>
-		<%
-		my statement $child;
-		foreach $child (@{$statement->{children}}) {
-			%>
-			<li><a href="http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$child->{topic_num}%>&statement_num=<%=$child->{statement_num}%>"><%=$child->{name}%> (<%=$child->{one_line}%>)</a></li>
-			<%
-			&display_statement_tree($child);
-		}
-		%>
-		</ol>
-		<%
-		return(1);
-	}
-	return(0);
-}
-
-
 sub top_10 {
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 	my $as_of_mode = $Session->{'as_of_mode'};
-	my $as_of_date = $Session->{'date'};
+	my $as_of_date = $Session->{'as_of_date'};
 	my $as_of_clause = '';
 	if ($as_of_mode eq 'review') {
 		# no as_of_clause;
@@ -57,6 +28,7 @@ sub top_10 {
 	}
 
 	my $selstmt = "select topic_num, name from topic $as_of_clause group by topic_num";
+
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
 	$sth->execute() || die "Failed to execute $selstmt";
 	my $rs;
@@ -114,8 +86,29 @@ influence to people you choose to respect.  </p>
 }
 
 
-%>
+sub display_statement_tree {
+	my statement $statement = $_[0];
 
+	if ($statement->{children}) {
+		%>
+		<ol>
+		<%
+		my statement $child;
+		foreach $child (@{$statement->{children}}) {
+			%>
+			<li><a href="http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$child->{topic_num}%>&statement_num=<%=$child->{statement_num}%>"><%=$child->{name}%> (<%=$child->{one_line}%>)</a></li>
+			<%
+			&display_statement_tree($child);
+		}
+		%>
+		</ol>
+		<%
+		return(1);
+	}
+	return(0);
+}
+
+%>
 
 <!--#include file = "includes/default/page.asp"-->
 
