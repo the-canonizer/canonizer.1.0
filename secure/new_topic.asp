@@ -197,6 +197,7 @@ my $subtitle = 'Create New Topic';
 if ($Request->Form('submit')) {
 	%form_state = &save_topic($dbh);
 	if (!$message) {
+		sleep(1);
 		$Response->Redirect('http://' . &func::get_host() . '/topic.asp?topic_num=' . $new_topic_num);
 		$Response->End();
 	}
