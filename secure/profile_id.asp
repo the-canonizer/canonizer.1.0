@@ -346,12 +346,26 @@ sub profile_id {
 
 <tr><td><b>Social Security Number:</b> <font color = blue>*</font> </td><td><input type = string name = country value = ""></td></td></tr>
 
-<tr><td colspan = 2><font color = blue>*</font> If you provide your Social Security Number we can send you a check based on add revenue generated from any of your contributions.</td></tr>
+<tr><td colspan = 2><font color = blue>*</font>
+
+A Social Security number is not required to register and fully
+participate with the Canonizer.  However, if your contributions start
+earning monetary rewards, we will not be able to pay you these until
+you provide it here.
+
+</td></tr>
 
 <tr height = <%=$spacer%>><td colspan = 2></td></tr>
 
-<tr><td colspan = 2><b>Permanent Nick Names:</b> Used (anonymously if desired)
-	for comunication and participation attribution.</td></tr>
+<tr><td colspan = 2><b>Permanent Nick Names:</b><br>
+
+You can have multiple Nick Names.  Some of them may obviously be you,
+while others may be anonymous pen names possibly used to support
+various controversial positions.  You must provide one to start.  You
+may return to this page to add more.
+
+</td></tr>
+<tr><td height=20></td></tr>
 
 <%
 if ($#nick_names >= 0) {
@@ -370,7 +384,16 @@ if ($#nick_names >= 0) {
 
 <tr height = <%=$spacer%>><td colspan = 2></td></tr>
 
-<tr><td nowrap>Add New Permanent Nick Name:</td><td><input type = string name = new_nick_name maxlength=25 size=25 value="<%=$form_state{'new_nick_name'}%>">
+<tr><td nowrap>Add New Permanent Nick Name: 
+<%
+if (! ($#nick_names >= 0)) {
+	%>
+	<font color=red>*</font>
+	<%
+}
+%>
+
+</td><td><input type = string name = new_nick_name maxlength=25 size=25 value="<%=$form_state{'new_nick_name'}%>">
 	<!-- button name=nick_name_check>Check Nick Name</button> </td></td></tr not yet implemented -->
 
 <tr height = <%=$spacer%>><td colspan = 2></td></tr>
