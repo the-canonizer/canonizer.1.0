@@ -47,23 +47,10 @@ if ($Request->Form('statement_num')) {
 }
 
 # this nick stuff is used by both save_support and support_form
-my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
 # nick_clause is used in both save and delete support.
-my $nick_clause = '';
-my $nick_name;
-foreach $nick_name (keys (%nick_names)) {
-	$nick_clause .= "nick_name_id = $nick_name or ";
-}
-if (!$nick_clause) {
-	%>
-	<h1>No nick name found for current user.<h1>
-	<%
-	return();
-}
-chop($nick_clause); # remove extra or
-chop($nick_clause);
-chop($nick_clause);
-chop($nick_clause);
+my $cid = $Session->{'cid'};
+my %nick_names = func::get_nick_name_hash($cid, $dbh);
+my $nick_clause = func::get_nick_name_clause(\%nick_names);
 
 if ($Request->QueryString('delete_id')) {
 	# does not return if successful (rederects to topic.asp for original statement.)
