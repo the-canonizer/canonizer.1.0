@@ -16,15 +16,52 @@ if(!$ENV{"HTTPS"}){
 	}
         $Response->Redirect("https://" . $ENV{"SERVER_NAME"} . $ENV{"SCRIPT_NAME"} . $qs);
 }
-%>
-<!--#include file = "includes/default/page.asp"-->
 
-<!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/search.asp"-->
-<!--#include file = "includes/main_ctl.asp"-->
-<!--#include file = "includes/error_page.asp"-->
-<%
 
+########
+# main #
+########
+
+if (!$Session->{'logged_in'}) {
+	display_page('New Topic', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	$Response->End();
+}
+
+my $dbh = func::dbh_connect(1) || die "unable to connect to database";	
+
+my %form_state = ();
+
+my $new_topic_num = 0;
+
+my $message = '';
+
+my $subtitle = 'Create New Topic';
+
+if ($Request->Form('submit')) {
+	%form_state = save_topic($dbh);
+	if (!$message) {
+		func::send_email("New Topic Submitted", "nick id $form_state{'submitter'} added a new topic num $new_topic_num.\nfrom new_topic.asp.\n");
+		sleep(1);
+		$Response->Redirect('http://' . func::get_host() . '/topic.asp?topic_num=' . $new_topic_num);
+		$Response->End();
+	}
+}
+
+my %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
+
+if ($nick_names{'error_message'}) {
+	$error_message = $nick_names{'error_message'};
+	display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
+}
+
+display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&new_topic_form]);
+
+
+
+########
+# subs #
+########
 
 sub save_topic {
 	my $dbh = $_[0];
@@ -54,10 +91,10 @@ sub save_topic {
 
 	if (!$message) {
 
-		$new_topic_num = &func::get_next_id($dbh, 'topic', 'topic_num');
-		my $new_topic_id = &func::get_next_id($dbh, 'topic', 'record_id');
+		$new_topic_num = func::get_next_id($dbh, 'topic', 'topic_num');
+		my $new_topic_id = func::get_next_id($dbh, 'topic', 'record_id');
 		my $new_statement_num = 1; # first one (agreement statement) is always 1.
-		my $new_statement_id = &func::get_next_id($dbh, 'statement', 'record_id');
+		my $new_statement_id = func::get_next_id($dbh, 'statement', 'record_id');
 		my $now_time = time;
 		my $go_live_time = $now_time;
 
@@ -79,7 +116,7 @@ sub save_topic {
 
 sub must_login {
 
-	my $login_url = 'https://' . &func::get_host() . '/secure/login.asp?destination=/secure/new_topic.asp';
+	my $login_url = 'https://' . func::get_host() . '/secure/login.asp?destination=/secure/new_topic.asp';
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$login_url .= ('?' . $query_string);
 	}
@@ -88,7 +125,7 @@ sub must_login {
 	<br>
 	<h2>You must register and or login before you can edit topics.</h2>
 	<center>
-	<h2><a href="http://<%=&func::get_host()%>/register.asp">Register</a><h2>
+	<h2><a href="http://<%=func::get_host()%>/register.asp">Register</a><h2>
 	<h2><a href="<%=$login_url%>">Login</a><h2>
 	</center>
 <%
@@ -175,42 +212,10 @@ sub new_topic_form {
 
 
 
-########
-# main #
-########
-
-if (!$Session->{'logged_in'}) {
-	&display_page('New Topic', [\&identity, \&search, \&main_ctl], [\&must_login]);
-	$Response->End();
-}
-
-local $dbh = &func::dbh_connect(1) || die "unable to connect to database";	
-
-local %form_state = ();
-
-local $new_topic_num = 0;
-
-local $message = '';
-
-my $subtitle = 'Create New Topic';
-
-if ($Request->Form('submit')) {
-	%form_state = &save_topic($dbh);
-	if (!$message) {
-		sleep(1);
-		$Response->Redirect('http://' . &func::get_host() . '/topic.asp?topic_num=' . $new_topic_num);
-		$Response->End();
-	}
-}
-
-local %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
-
-if ($nick_names{'error_message'}) {
-	$error_message = $nick_names{'error_message'};
-	&display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&error_page]);
-	$Response->End();
-}
-
-&display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&new_topic_form]);
-
 %>
+<!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/search.asp"-->
+<!--#include file = "includes/main_ctl.asp"-->
+<!--#include file = "includes/error_page.asp"-->
