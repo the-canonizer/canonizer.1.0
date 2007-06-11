@@ -1,11 +1,18 @@
-<!--#include file = "includes/default/page.asp"-->
-
-<!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/as_of.asp"-->
-<!--#include file = "includes/search.asp"-->
-<!--#include file = "includes/main_ctl.asp"-->
-
 <%
+
+########
+# main #
+########
+
+
+display_page('Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&env]);
+
+
+
+########
+# subs #
+########
+
 
 sub env {
 
@@ -81,13 +88,13 @@ sub env {
 	</table>
 <%
 }
-
-########
-# main #
-########
-
-&display_page('Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&env]);
-
 %>
 
+
+<!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/as_of.asp"-->
+<!--#include file = "includes/search.asp"-->
+<!--#include file = "includes/main_ctl.asp"-->
 
