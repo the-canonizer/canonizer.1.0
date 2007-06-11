@@ -6,16 +6,6 @@ if(!$ENV{"HTTPS"}){
 	}
         $Response->Redirect("https://" . $ENV{"SERVER_NAME"} . $ENV{"SCRIPT_NAME"} . $qs);
 }
-%>
-<!--#include file = "includes/default/page.asp"-->
-
-<!--#include file = "includes/identity.asp"-->
-<!--#include file = "includes/search.asp"-->
-<!--#include file = "includes/main_ctl.asp"-->
-<!--#include file = "includes/error_page.asp"-->
-<!--#include file = "includes/must_login.asp"-->
-
-<%
 
 #
 # query string cases:
@@ -30,6 +20,149 @@ use managed_record;
 use topic;
 use statement;
 use text;
+
+
+local $destination = '';
+
+if (!$Session->{'logged_in'}) {
+	$destination = '/secure/edit.asp';
+	if (my $query_string = $ENV{'QUERY_STRING'}) {
+		$destination .= ('?' . $query_string);
+	}
+	&display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	$Response->End();
+}
+
+local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+
+local $error_message = '';
+
+local $record = null;
+
+local $message = '';
+local $copy_record_id = 0;
+
+local $class = '';
+
+if ($Request->Form('class')) {
+	$class = $Request->Form('class');
+} elsif ($Request->QueryString('class')) {
+	$class = $Request->QueryString('class');
+}
+
+if (&managed_record::bad_managed_class($class)) {
+	$error_message = "Error: '$class' is an invalid edit class.<br>\n";
+	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
+}
+
+my $subtitle = "Create new $class";
+
+if ($Request->Form('record_id')) {
+	$copy_record_id = $Request->Form('record_id');
+} elsif ($Request->QueryString('record_id')) {
+	$copy_record_id = $Request->QueryString('record_id');
+}
+
+if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic preview page.
+	$record = new_form $class ($Request);
+	if ($record->{error_message}) {
+		$error_message = $record->{error_message};
+		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+		$Response->End();
+	}
+	$record->{value} = &func::hex_decode($record->{value});
+} elsif ($Request->Form('submit_edit')) {
+
+	$record = new_form $class ($Request);
+
+	if ($record->{error_message}) {
+		$error_message = $record->{error_message};
+	} else {
+		if ($Request->Form('submit_edit') eq 'Commit Text') { # from topic preview page.
+			$record->{value} = &func::hex_decode($record->{value});
+		}
+		$record->save($dbh);
+		my $any_record = $record;
+		my $url = 'http://' . &func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
+
+		if ($class eq 'statement' || $class eq 'text') {
+			$url .= ('&statement_num=' . $any_record->{'statement_num'});
+		}
+
+		if ($class eq 'text' && $any_record->{'text_size'}) {
+			$url .= ('&long=' . $any_record->{'text_size'});
+		}
+
+		sleep(1); # or else it goes to the next page before the new data is live.
+
+		$Response->Redirect($url);
+		$Response->End();
+	}
+} elsif ($copy_record_id) {
+	$record = new_record_id $class ($dbh, $copy_record_id);
+	if ($record->{error_message}) {
+		$error_message = $record->{error_message};
+		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+		$Response->End();
+	}
+	$record->{proposed} = 1;
+	$record->{note} = ''; # we don't want to copy the old note.
+	$subtitle = "Propose $class Modification";
+
+} else { # create a first version of a managed record (not a topic)
+
+	if (! int($Request->QueryString('topic_num'))) {
+		$error_message .= "Must have a topic_num in order to create a $class.<br>\n";
+	}
+
+	if ($class eq 'statement') {
+		if ($Request->QueryString('parent_statement_num')) {
+			$record = new_blank statement ();
+			$record->{topic_num} = int($Request->QueryString('topic_num'));
+			$record->{statement_num} = 0; # a new one will be created on insert.
+			$record->{parent_statement_num} = $Request->QueryString('parent_statement_num');
+			$record->{note} = 'First Version';
+			$record->{proposed} = 0;
+		} else {
+			$error_message .= "Must have a prent_statement_num in order to create a new statement.<br>\n";
+		}
+	} else {  # I am assuming 'topic' class will never come through this create new block so this is 'text' case.
+		if ($Request->QueryString('statement_num')) {
+			$record = new_blank text ();
+			$record->{topic_num} = $Request->QueryString('topic_num');
+			$record->{statement_num} = $Request->QueryString('statement_num');
+			$record->{note} = 'First Version';
+			$record->{proposed} = 0;
+			if ($Request->QueryString('long')) {
+				$record->{text_size} = int($Request->QueryString('long'));
+			} else {
+				$record->{text_size} = 0; # default to small text size.
+			}
+		} else {
+			$error_message .= "Must have a statement_num in order to create a text record.<br>\n";
+		}
+	}
+	if ($error_message) {
+		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+		$Response->End();
+	}
+}
+
+local %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
+
+if ($nick_names{'error_message'}) {
+	$error_message = $nick_names{'error_message'};
+	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
+}
+
+&display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&display_form]);
+
+
+########
+# subs #
+########
 
 # it would be nice to object orient this, but alas, we must have asp ability to do html.
 sub display_form {
@@ -137,10 +270,12 @@ sub print_parent_option {
 		<%
 	}
 
-	my $index;
-	my @children = @{$statement_tree->{children}};
-	for ($index = 0; $index <= $#children; $index++) {
-		&print_parent_option($children[$index], $selected, $indent . ' &nbsp; &nbsp; ');
+	my statement $child;
+	foreach $child (@{$statement_tree->{children}}) {
+
+print(STDERR "$indent $child->{name}, id: $child->{record_id}.\n"); # ????
+
+		&print_parent_option($child, $selected, $indent . ' &nbsp; &nbsp; ');
 	}
 }
 
@@ -348,146 +483,13 @@ sub display_text_form {
 }
 
 
-########
-# main #
-########
-
-local $destination = '';
-
-if (!$Session->{'logged_in'}) {
-	$destination = '/secure/edit.asp';
-	if (my $query_string = $ENV{'QUERY_STRING'}) {
-		$destination .= ('?' . $query_string);
-	}
-	&display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
-	$Response->End();
-}
-
-local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
-
-local $error_message = '';
-
-local $record = null;
-
-local $message = '';
-local $copy_record_id = 0;
-
-local $class = '';
-
-if ($Request->Form('class')) {
-	$class = $Request->Form('class');
-} elsif ($Request->QueryString('class')) {
-	$class = $Request->QueryString('class');
-}
-
-if (&managed_record::bad_managed_class($class)) {
-	$error_message = "Error: '$class' is an invalid edit class.<br>\n";
-	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
-	$Response->End();
-}
-
-my $subtitle = "Create new $class";
-
-if ($Request->Form('record_id')) {
-	$copy_record_id = $Request->Form('record_id');
-} elsif ($Request->QueryString('record_id')) {
-	$copy_record_id = $Request->QueryString('record_id');
-}
-
-if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic preview page.
-	$record = new_form $class ($Request);
-	if ($record->{error_message}) {
-		$error_message = $record->{error_message};
-		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
-		$Response->End();
-	}
-	$record->{value} = &func::hex_decode($record->{value});
-} elsif ($Request->Form('submit_edit')) {
-
-	$record = new_form $class ($Request);
-
-	if ($record->{error_message}) {
-		$error_message = $record->{error_message};
-	} else {
-		if ($Request->Form('submit_edit') eq 'Commit Text') { # from topic preview page.
-			$record->{value} = &func::hex_decode($record->{value});
-		}
-		$record->save($dbh);
-		my $any_record = $record;
-		my $url = 'http://' . &func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
-
-		if ($class eq 'statement' || $class eq 'text') {
-			$url .= ('&statement_num=' . $any_record->{'statement_num'});
-		}
-
-		if ($class eq 'text' && $any_record->{'text_size'}) {
-			$url .= ('&long=' . $any_record->{'text_size'});
-		}
-
-		sleep(1); # or else it goes to the next page before the new data is live.
-
-		$Response->Redirect($url);
-		$Response->End();
-	}
-} elsif ($copy_record_id) {
-	$record = new_record_id $class ($dbh, $copy_record_id);
-	if ($record->{error_message}) {
-		$error_message = $record->{error_message};
-		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
-		$Response->End();
-	}
-	$record->{proposed} = 1;
-	$record->{note} = ''; # we don't want to copy the old note.
-	$subtitle = "Propose $class Modification";
-
-} else { # create a first version of a managed record (not a topic)
-
-	if (! int($Request->QueryString('topic_num'))) {
-		$error_message .= "Must have a topic_num in order to create a $class.<br>\n";
-	}
-
-	if ($class eq 'statement') {
-		if ($Request->QueryString('parent_statement_num')) {
-			$record = new_blank statement ();
-			$record->{topic_num} = int($Request->QueryString('topic_num'));
-			$record->{statement_num} = 0; # a new one will be created on insert.
-			$record->{parent_statement_num} = $Request->QueryString('parent_statement_num');
-			$record->{note} = 'First Version';
-			$record->{proposed} = 0;
-		} else {
-			$error_message .= "Must have a prent_statement_num in order to create a new statement.<br>\n";
-		}
-	} else {  # I am assuming 'topic' class will never come through this create new block so this is 'text' case.
-		if ($Request->QueryString('statement_num')) {
-			$record = new_blank text ();
-			$record->{topic_num} = $Request->QueryString('topic_num');
-			$record->{statement_num} = $Request->QueryString('statement_num');
-			$record->{note} = 'First Version';
-			$record->{proposed} = 0;
-			if ($Request->QueryString('long')) {
-				$record->{text_size} = int($Request->QueryString('long'));
-			} else {
-				$record->{text_size} = 0; # default to small text size.
-			}
-		} else {
-			$error_message .= "Must have a statement_num in order to create a text record.<br>\n";
-		}
-	}
-	if ($error_message) {
-		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
-		$Response->End();
-	}
-}
-
-local %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
-
-if ($nick_names{'error_message'}) {
-	$error_message = $nick_names{'error_message'};
-	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
-	$Response->End();
-}
-
-&display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&display_form]);
-
 %>
+
+<!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/search.asp"-->
+<!--#include file = "includes/main_ctl.asp"-->
+<!--#include file = "includes/error_page.asp"-->
+<!--#include file = "includes/must_login.asp"-->
 
