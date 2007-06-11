@@ -4,16 +4,44 @@ if(!$ENV{"HTTPS"}){
 	if ($ENV{'QUERY_STRING'}) {
 		$qs = '?' . $ENV{'QUERY_STRING'};
 	}
-        $Response->Redirect('https://' . &func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
+        $Response->Redirect('https://' . func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
 }
-%>
-
-
-<!--#include file = "includes/default/page.asp"-->
-
-<%
 
 local $message = '';
+
+########
+# main #
+########
+
+local $destination = ''; # make this globally accessible so subs can access it.
+
+# by default redirect back to where we came from.
+my $referer = $ENV{'HTTP_REFERER'};
+if ($referer =~ m|[^/]+//[^/]+(/.*)|) {
+	$destination = $1;
+}
+
+# be sure to add a '/' at the beginning of the destination value (should be a full path uri)
+if ($Request->QueryString('destination')) {
+	$destination = $ENV{'QUERY_STRING'}; # get the destination arguments too.
+	$destination =~ s|\&?destination=||gi;  # remove the only argument to login (all others get passed on.)
+}
+
+if ($Request->Form('destination')) {
+	$destination = $Request->Form('destination');
+}
+
+
+if ($Request->Form('submit')) {
+	do_login();
+}
+
+display_page('Login', [], [\&login_form]);
+
+
+########
+# subs #
+########
 
 sub login_form {
 
@@ -32,7 +60,7 @@ sub login_form {
     <tr><td>e-mail:</td><td><input type = text name = email value = "<%=$email%>" id = "email"></td></tr>
     <tr><td>password:</td><td><input type = password name = password value = "<%=$password%>"></td></tr>
     <tr><td>&nbsp;</td><td><input type = submit name = submit value = login></td></tr>
-    <tr><td>&nbsp;</td><td><a href = "http://<%=&func::get_host()%>/register.asp">Register</a> if you haven't yet.
+    <tr><td>&nbsp;</td><td><a href = "http://<%=func::get_host()%>/register.asp">Register</a> if you haven't yet.
   </table>
 </form>
 
@@ -42,6 +70,7 @@ sub login_form {
 
 <%
 }
+
 
 sub do_login {
 
@@ -55,10 +84,10 @@ sub do_login {
 	}
 
 	if ($email && $password) {
-		my $dbh = &func::dbh_connect(1);
+		my $dbh = func::dbh_connect(1);
 		if ($dbh) {
 
-			my $enc_password = &func::canon_encode($password);
+			my $enc_password = func::canon_encode($password);
 
 			my $selstmt = 'select cid from person where email = ? and password = ?';
 
@@ -69,7 +98,7 @@ sub do_login {
 			if ($rs = $sth->fetch()) { # log them in
 				if (my $cid = $rs->[0]) { # should always be true!
 					if ($Session->{'gid'}) { # got a cid so free the guest id if not already cleared
-						&free_gid($Session->{'gid'});
+						free_gid($Session->{'gid'});
 						$Session->{'gid'} = 0;
 					}
 					$Session->{'cid'} = $cid;
@@ -102,38 +131,12 @@ sub do_login {
 		if ($destination =~ m|secure|) {
 			$protocol = 'https://';
 		}
-		$Response->Redirect($protocol . &func::get_host() . $destination);
+		func::send_email("$email logged in", "$email logged in.\nfrom login.asp.\n");
+		$Response->Redirect($protocol . func::get_host() . $destination);
 	}
 }
 
-########
-# main #
-########
-
-local $destination = ''; # make this globally accessible so subs can access it.
-
-# by default redirect back to where we came from.
-my $referer = $ENV{'HTTP_REFERER'};
-if ($referer =~ m|[^/]+//[^/]+(/.*)|) {
-	$destination = $1;
-}
-
-# be sure to add a '/' at the beginning of the destination value (should be a full path uri)
-if ($Request->QueryString('destination')) {
-	$destination = $ENV{'QUERY_STRING'}; # get the destination arguments too.
-	$destination =~ s|\&?destination=||gi;  # remove the only argument to login (all others get passed on.)
-}
-
-if ($Request->Form('destination')) {
-	$destination = $Request->Form('destination');
-}
-
-
-if ($Request->Form('submit')) {
-	&do_login();
-}
-
-&display_page('Login', [], [\&login_form]);
-
 %>
+
+<!--#include file = "includes/default/page.asp"-->
 
