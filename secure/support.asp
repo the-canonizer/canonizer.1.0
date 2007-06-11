@@ -10,7 +10,7 @@ if(!$ENV{"HTTPS"}){
 	if ($ENV{'QUERY_STRING'}) {
 		$qs = '?' . $ENV{'QUERY_STRING'};
 	}
-        $Response->Redirect('https://' . &func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
+        $Response->Redirect('https://' . func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
 }
 my $error_message = '';
 
@@ -22,11 +22,11 @@ if (!$Session->{'logged_in'} || !$Session->{'cid'}) {
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$destination .= ('?' . $query_string);
 	}
-	&display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
-my $dbh = &func::dbh_connect(1) || die "support.asp unable to connect to database";
+my $dbh = func::dbh_connect(1) || die "support.asp unable to connect to database";
 
 my $topic_num = 0;
 if ($Request->Form('topic_num')) {
@@ -54,7 +54,7 @@ my $nick_clause = func::get_nick_name_clause(\%nick_names);
 
 if ($Request->QueryString('delete_id')) {
 	# does not return if successful (rederects to topic.asp for original statement.)
-	&delete_support();
+	delete_support();
 }
 
 my $delegate_id = 0; # 0 is direct support default.
@@ -82,12 +82,12 @@ if ($statement->{error_message}) {
 
 
 if ($error_message) {
-	&display_page('Support Errorr', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	display_page('Support Errorr', [\&identity, \&search, \&main_ctl], [\&error_page]);
 } elsif ($Request->Form('submit')) {
 	# does not return if successful (rederects to topic.asp for original statement.)
-	&save_support();
+	save_support();
 } else {
-	&display_page('Add Support<br>Topic: <font size=6>' . $topic->{name} . '</font><br>', [\&identity, \&search, \&main_ctl], [\&support_form]);
+	display_page('Add Support<br>Topic: <font size=6>' . $topic->{name} . '</font><br>', [\&identity, \&search, \&main_ctl], [\&support_form]);
 }
 
 
@@ -106,8 +106,9 @@ sub delete_support {
 		<h1><font color=red>Failed to delete support <%=$delete_id%>.</h1>
 		<%
 	} else {
+		func::send_email("Deleting support", "Deleting support id $delete_id with nick_clause $nick_clause.\nfrom support.asp.\n");
 		sleep(1);
-	        $Response->Redirect('https://' . &func::get_host() . "/topic.asp?topic_num=$topic_num&statement_num=$statement_num");
+	        $Response->Redirect('https://' . func::get_host() . "/topic.asp?topic_num=$topic_num&statement_num=$statement_num");
 	}
 	$Response->End();
 }
@@ -181,7 +182,7 @@ sub save_support {
 	# add the new and replacement records
 	# ???? got to add the delegate stuff ????
 	foreach $support_order (keys %form_support_hash) {
-		$support_id = &func::get_next_id($dbh, 'support', 'support_id');
+		$support_id = func::get_next_id($dbh, 'support', 'support_id');
 		$statement_num = $form_support_hash{$support_order};
 		my $real_support_order = $support_order;
 		if ($delegate_id) {
@@ -201,8 +202,9 @@ sub save_support {
 		}
 	}
 
+	func::send_email("Adding support", "Nick name id $nick_name_id is adding support for topic $topic_num, statement: $statement_num.\nfrom support.asp.\n");
 	sleep(1);
-        $Response->Redirect('https://' . &func::get_host() . "/topic.asp?topic_num=$topic_num&statement_num=$statement_num");
+        $Response->Redirect('https://' . func::get_host() . "/topic.asp?topic_num=$topic_num&statement_num=$statement_num");
 	$Response->End();
 
 	%>
@@ -385,16 +387,16 @@ sub support_form {
 						}
 						$replacement_str .= '<br>' . $old_statement->make_statement_path(1);
 					} else {
-						$Response->Write(&make_js_support_object_str($support_order_idx++, $old_statement, '', ''));
+						$Response->Write(make_js_support_object_str($support_order_idx++, $old_statement, '', ''));
 					}
 				}
 			}
 		}
 
 		if ($replacement_idx == -1) {
-			$Response->Write(&make_js_support_object_str($support_order_idx++, $statement, '<font color=green>New Support:</font><br>'));
+			$Response->Write(make_js_support_object_str($support_order_idx++, $statement, '<font color=green>New Support:</font><br>'));
 		} else {
-			$Response->Write(&make_js_support_object_str($replacement_idx, $statement, $replacement_hdr, $replacement_str));
+			$Response->Write(make_js_support_object_str($replacement_idx, $statement, $replacement_hdr, $replacement_str));
 		}
 
 		%>
