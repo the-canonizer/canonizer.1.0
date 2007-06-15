@@ -275,13 +275,15 @@ sub present_topic {
 		<%
 	}
 
+	my $score = func::c_num_format($topic_data->{'statement'}->{score});
+
 	%>
 	</ul>
 
 	<hr>
 	<font face=arial><b>Support tree for <font color=green><%=$topic_data->{'statement'}->{name}%></font> statement:</b></font><br>
 	<br>
-	Total support for this statement (including sub statements): <%=$topic_data->{'statement'}->{score}%>.
+	Total support for this statement (including sub statements): <%=$score%>.
 	<%
 	my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
 	$Response->Write($topic_data->{'statement'}->display_support_tree($topic_num, $statement_num, \%nick_names));
