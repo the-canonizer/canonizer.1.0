@@ -45,7 +45,7 @@ sub upload {
 	    <input type="file" size=30 name=file_name value="*.jpg"><br>
 
 	    <b>Name:</b></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type=text name=file_rename value="" size=30 maxlength=30>
+			<input type=text name=file_rename value="" size=50 maxlength=50>
 		  </td></tr>
 
 	<tr><td  align=center><br>
