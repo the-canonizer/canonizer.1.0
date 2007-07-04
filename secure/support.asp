@@ -375,6 +375,7 @@ sub support_form {
 		if ($old_support_array_ref) {
 			my statement $old_statement;
 			foreach $old_support (@{$old_support_array_ref}) {
+print(STDERR 'supporting statement: ' . $old_support->{statement_num} . ".\n");
 				if ($statement->{statement_num} == $old_support->{statement_num}) { # modify support
 					$replacement_idx = $support_order_idx++;
 					$replacement_hdr = '<font color=green>Modify Support</font><br>';
@@ -426,7 +427,14 @@ sub support_form {
 			render_str += "  <input type=hidden name=statement_num value=<%=$statement_num%>>\n";
 			render_str += "  <table border=1>\n";
 			var idx;
+
 			for (idx = 0; idx < support_array.length; idx++) {
+				if (! support_array[idx]) {
+					alert('in: ' + idx);
+					// shouldn't happen, but bad data (i.e. related support.) has happened.
+					continue;
+				}
+
 				support_object = support_array[idx];
 				render_str += "<tr>\n";
 				render_str += "  <td>" + idx + "</td>\n";
@@ -446,6 +454,7 @@ sub support_form {
 				render_str += "  <td align=center>Delete<br><input type=checkbox name=delete_" + idx + "></td>\n";
 				render_str += "</tr>\n";
 				render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.statement_num + ">\n";
+
 			}
 			render_str += "  </table>\n";
 			render_str += "  <br>\n";
@@ -472,6 +481,7 @@ sub support_form {
 			// alert(render_str);
 			document.all.support_block.innerHTML = render_str;
 		}
+
 		</script>
 
 		<span id = 'support_block'>
