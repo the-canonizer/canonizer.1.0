@@ -91,6 +91,5 @@ sub manage_record {
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
-<!--#include file = "includes/topic_tabs.asp"-->
 <!--#include file = "includes/error_page.asp"-->
 
