@@ -1,83 +1,62 @@
-
 <%
 
 sub display_page {
-	my $header	 = $_[0];
-	my $bar_subs	 = $_[1];
-	my $content_subs = $_[2];
-	my $tab_sub	 = $_[3];
+	my $page_header	     = $_[0];
+	my $bar_subs	     = $_[1];
+	my $content_subs     = $_[2];
+	my $tab_sub	     = $_[3];
 
 
-my $title = $header;
-$title =~ s|\<[^\>]*\>||g;
+	my $title = $page_header;
+	   $title =~ s|\<[^\>]*\>||g;
+	my $copyright_info = 'Copyright Canonizer LLC 2007';
+	my $support_email = 'support@canonizer.com'
 
 %>
 
-
-<html>
-<head>
-<title>CANONIZER: <%=$title%></title>
-
-</script>
-
-</head>
-<body bgcolor = white border = 0>
-<table border = 0 cellspacing = 0 cellpadding = 0>
-<tr>
-  <!-- td background = images/cp_t_l.jpg width = 200 height = 200></td -->
-  <td valign=bottom><img src=images/cp_t_l.jpg width=200 height=200></td>
-  <td background = images/cp_t.jpg width = 500 height = 200 align = center valign = bottom>
-	<center>
-	<font face = arial size = 5><b>
-	<%=$header%></b></font><br>
-	<br><br>
-	<%
-	if ($tab_sub) {
-		&$tab_sub();
-	} else {
-	}
-	%>
-	</center>
-  </td>
-  <td valign=bottom><img src = images/cp_t_r.jpg width = 200 height = 200></td>
-</tr>
-<tr>
-  <td background = images/cp_l.jpg valign = top>
-
 <%
-	my $sub;
-
-	foreach $sub (@$bar_subs) {
-		&$sub();
-	}
+print page_header($title);
 %>
 
-  </td>
-  <td valign = top>
+<div id="header">
+     <h1><%=$page_header%></h1>
+</div>
+
+<div id="block_tools">     
 
 <%
-	foreach $sub (@$content_subs) {
-		&$sub();
-	}
+my $sub;
+foreach $sub (@$bar_subs)
+{
+&$sub();
+}
+%>
+     
+</div>
+
+<div id="block_adverts">
+     <h1>Advertisement Space</h1>
+</div>
+
+<div id="main_content">
+
+<%
+foreach $sub (@$content_subs)
+{
+&$sub();
+}
 %>
 
-  </td>
-  <td background = images/cp_r.jpg></td>
-</tr>
-<tr>
-  <td><img src = images/cp_b_l.jpg width = 200 height = 200></td>
-  <td background = images/cp_b.jpg width = 500 height = 200 align = center>
+</div>
 
-    <font face = arial size = 6><b>CANONIZER</b></font><br>
+<div class="clear_floats">&nbsp;</div>
 
-    Comments: <a href = "mailto:support@canonizer.com">support@canonizer.com</a><br>
-    <font face = arial size = 1>Copyright Canonizer LLC 2007</font>
-</td>
-  <td><img src = images/cp_b_r.jpg width = 200 height = 200></td>
-</tr>
-</body>
-</html>
+<div id="footer">
+     <h3><%=$copyright_info%></h3>
+     <h3>Comments: <a href = "mailto:<%=$support_email%>"><%=$support_email%></a></h3>
+</div>
 
 <%
+print page_footer();
 }
 %>
