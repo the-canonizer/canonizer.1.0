@@ -6,8 +6,12 @@ if(!$ENV{"HTTPS"}){
 	}
         $Response->Redirect("https://" . $ENV{"SERVER_NAME"} . $ENV{"SCRIPT_NAME"} . $qs);
 }
+
+my $header = 'File Upload';
 %>
 <!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/page_sections.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
@@ -16,52 +20,64 @@ if(!$ENV{"HTTPS"}){
 
 <%
 
-
 sub upload {
+
+
+%>
+
+<div class="main_content_container">
+
+<div class="section_container">
+<div class="header_1">
+
+     <span id="title"><%=$header%></span>
+
+</div>
+
+<div class="content_1">
+
+<%
+
+
+
 
 	if ($error_message) {
 		%>
-		<h2><font color = red><%=$error_message%></font></h2>
+		<%=$error_message%>
 		<%	
 	}
 
 	%>
 
+<p>Click "Browse" to locate the file on your computer. Be sure to click "Upload" when you are done.
+If you do not enter a name, your file's name will be used.</p>
 
-	<table cellpadding=2 cellspacing=0 width="100%" border=0>
+<form method=post enctype="multipart/form-data">
+<p>File:</p>
+<p><input type="file" size=30 name=file_name value="*.jpg"></p>
+<p>Name:</p>
+<p><input type=text name=file_rename value="" size=50 maxlength=50></p>
+<p><input type="submit" name=upload value="Upload"></p>
+</form>
+<p>To see a list of files already uploaded (and file names already used) go <a href = http://canonizer.com/files>here.</a></p>
 
-	<tr valign=top><td ><font size=-1 face="Arial,Helvetica">
-	Click <b>Browse</b> to locate the file on your computer. Be sure to click <b>Upload</b> when you are done.
-	If you do not enter a name, your file's name will be used.
-	</font></td></tr>
+</div>
 
-	<tr height = 20></tr>
+     <div class="footer_1">
+     <span id="buttons">
+     
 
+&nbsp;    
+     
+     </span>
+     </div>
 
-	<form method=post action = "https://test.canonizer.com/secure/upload.asp" enctype="multipart/form-data">
+</div>
 
-	  <tr><td nowrap><font face="Arial,Helvetica"  size="-1">
-	    <b>File:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
-	    <input type="file" size=30 name=file_name value="*.jpg"><br>
+</div>
 
-	    <b>Name:</b></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type=text name=file_rename value="" size=50 maxlength=50>
-		  </td></tr>
+<%
 
-	<tr><td  align=center><br>
-
-	<input type="submit" name=upload value="upload">
-
-	</table>
-
-	</form>
-
-	<br>
-	<font size=-1 face="Arial,Helvetica">
-	To see a list of files already uploaded (and file names already used)
-	go <a href = http://canonizer.com/files>here.</a>
-	</font>
-	<%
 }
 
 
@@ -76,7 +92,7 @@ if (!$Session->{'logged_in'}) {
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$destination .= ('?' . $query_string);
 	}
-	&display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	&display_page('Upload File', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -119,8 +135,6 @@ if ($Request->Form('upload')) {
 		}
 	}
 }
-
-my $header = 'File Upload Page<br><br>';
 
 &display_page($header, [\&identity, \&search, \&main_ctl], [\&upload]);
 

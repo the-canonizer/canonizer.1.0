@@ -21,7 +21,7 @@ use text;
 my $error_message = '';
 
 if (!$Session->{'logged_in'}) {
-	&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -33,7 +33,7 @@ if ($Request->Form('class')) {
 }
 
 if (&managed_record::bad_managed_class($class)) {
-	$error_message = "Error: '$class' is an invalid edit class.<br>\n";
+	$error_message = "Error: '$class' is an invalid edit class.\n";
 	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
@@ -54,7 +54,7 @@ my $message = '';
 my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 if (!$record_id) {
-	&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&unknown_record_page]);
+	&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&unknown_record_page]);
 	$Response->End();
 }
 
@@ -62,7 +62,7 @@ my $record = new_record_id $class ($dbh, $record_id);
 
 if ($record->{error_message}) {
 	$error_message = $record->{error_message};
-	&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -77,7 +77,7 @@ if ($class eq 'topic') {
 
 if (! can_object($dbh, $topic_num, $statement_num, $record)) {
 	# can_object must set error mesage if can't object.
-	&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -91,7 +91,7 @@ if (time > $record->{go_live_time}) {
 }
 
 
-&display_page('<font size=6>Object to Modification</font>', [\&identity, \&search, \&main_ctl], [\&object_to_topic_page]);
+&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&object_to_topic_page]);
 
 
 
@@ -105,12 +105,11 @@ sub must_login {
 		$login_url .= ('?' . $query_string);
 	}
 %>
-	<br>
-	<h2>You must register and or login before you can object to a change.</h2>
-	<center>
-	<h2><a href="http://<%=&func::get_host()%>/register.asp">Register</a><h2>
-	<h2><a href="<%=$login_url%>">Login</a><h2>
-	</center>
+
+<p>You must register and/or login before you can object to a change.</p>
+<p><a href="http://<%=&func::get_host()%>/register.asp">Register</a></p>
+<p><a href="<%=$login_url%>">Login</a></p>
+
 <%
 }
 
@@ -119,20 +118,18 @@ sub unknown_record_page {
 
 	if ($record_id) {
 		%>
-		<br>
-		<h1>Unknown Record ID:&nbsp;<%=$record_id%>.</h1>
+		Unknown Record ID:&nbsp;<%=$record_id%>.
 		<%
 	} else {
 		%>
-		<br>
-		<h1>No Record ID specified.</h1>
+		No Record ID specified.
 		<%
 	}
 }
 
 
 sub after_go_live_message {
-	return ("\t<br><h2 color=red>You can't object to a record after its go live time.</h2>\n" );
+	return ("You can't object to a record after its go live time.\n" );
 }
 
 
@@ -296,10 +293,10 @@ sub object_form_message {
 	}
 
 	my $ret_val =
-"	<center>
+"
 	<form method=post>
-	<p><b>If anyone objects to a change the change will not go live.</b></p>
-	<p><b>Are you sure you want to object to this proposed change?</b></p>
+	If anyone objects to a change the change will not go live.
+	Are you sure you want to object to this proposed change?
 
 	<p>Objector Attribution Nick Name:
 	<select name=\"submitter\">
@@ -308,16 +305,16 @@ sub object_form_message {
 	my $id;
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $Request->Form('submitter')) {
-			$ret_val .= "\t\t<option value=$id selected>" . $nick_names{$id} . "\n";
+			$ret_val .= "<option value=$id selected>" . $nick_names{$id} . "\n";
 		} else {
-			$ret_val .= "\t\t<option value=$id>" . $nick_names{$id} . "\n";
+			$ret_val .= "<option value=$id>" . $nick_names{$id} . "\n";
 		}
 	}
 
 	$ret_val .=
-"	</select></p>
-	<p>Reason for objection: <font color = red>*</font><br>
-	<input type=string name=object_reason maxlength=65 size=65></p>
+"	</select>
+	Reason for objection: *
+	<input type=string name=object_reason maxlength=65 size=65>
 
 	<input type=hidden name=topic_num value=" . $record->{topic_num} . ">
 	<input type=hidden name=record_id value=" . $record->{record_id} . ">
@@ -327,7 +324,6 @@ sub object_form_message {
 
 	</form>
 
-	</center>
 ";
 	return($ret_val);
 }
@@ -337,12 +333,11 @@ sub object_to_topic_page {
 
 	%>
 	<%=$message%>
-	<br><br>
-	<table>
+
 	<%
 	$record->print_record($dbh, $history_class::proposed_color);
 	%>
-	</table>
+
 	<%
 }
 
@@ -357,16 +352,17 @@ sub do_object {
 	my $object_reason = $Request->Form('object_reason');
 
 	if (length($object_reason) < 1) {
-		$message = '<center><font size=5 color=red>Must have a reason!</font></center>';
+		$message = 'Must have a reason!';
 	}
 
 	my $objector = int($Request->Form('submitter'));
 	if ($objector < 1) {
-		$message .= "Invalid submitter id.<br>\n";
+		$message .= "Invalid submitter id.\n";
 	}
 
 	if (! $message) {
-		my $selstmt = "update $class set objector = $objector, object_time = " . time . ", object_reason = ? where record_id = " . $record->{record_id};
+		my $now_time = time;
+		my $selstmt = "update $class set objector = $objector, object_time = $now_time, go_live_time = $now_time, object_reason = ? where record_id = " . $record->{record_id};
 		# what a pain!! if ($dbh->do($selstmt, $object_reason))
 		my $sth = $dbh->prepare($selstmt);
 		if ($sth->execute($object_reason)) {
@@ -401,6 +397,8 @@ sub make_manage_url {
 %>
 
 <!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/page_sections.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->

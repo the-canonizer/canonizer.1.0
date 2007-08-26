@@ -10,6 +10,8 @@ if(!$ENV{"HTTPS"}){
 
 <!--#include file = "includes/default/page.asp"-->
 
+<!--#include file = "includes/page_sections.asp"-->
+
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
@@ -20,15 +22,8 @@ if(!$ENV{"HTTPS"}){
 sub profile_prefs {
 
 %>
-<form>
-<table border = 0>
 
-<br>
-
-<tr><th>This is where you set your preferences, such as what canonizers you'd like to use</th></tr>
-
-</table>
-</form>
+<p>This is where you set your preferences, such as what canonizers you'd like to use</p>
 
 <%
 }

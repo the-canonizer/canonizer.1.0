@@ -55,17 +55,13 @@ if ($topic_data->{'error_message'}) {
 } else {
 	if ($Request->Form('submit_edit')) {		# preview mode
 
-		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
-		$topic_data->{'statement'}->make_statement_path() . '</font><br>', [\&identity, \&search, \&main_ctl], [\&present_topic]);
+		&display_page('Topic: ' . 
+		$topic_data->{'topic'}->{name} . ' - Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&search, \&main_ctl], [\&present_topic]);
 	} else {					# normal mode
-		&display_page('<font size=5>Topic: </font>' . $topic_data->{'topic'}->{name} . '<br><font size=4>Statement: ' . 
-		$topic_data->{'statement'}->make_statement_path() . '</font><br>', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
+		&display_page('Topic: ' . 
+		$topic_data->{'topic'}->{name} . ' - Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
 	}
 }
-
-
-
-
 
 sub lookup_topic_data {
 	my $dbh           = $_[0];
@@ -181,14 +177,13 @@ sub present_topic {
 	}
 	</script>
 
-	<hr>
-
+<div class="main_content_container">
+        
 	<%
 
 	if ($Request->Form('submit_edit')) {
 		%>
-		<center>
-		<h3><font color=red>Preview Text Only</font></h3>
+		Preview Text Only
 		<form method=post action='https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>'>
 			<input type=hidden name=topic_num value="<%=$Request->Form('topic_num')%>">
 			<input type=hidden name=statement_num value="<%=$Request->Form('statement_num')%>">
@@ -203,107 +198,223 @@ sub present_topic {
 			<input type=submit name=submit_edit value="Edit Text">
 
 		</form>
-		</center>
-		<hr>
+		
+                 
+
 		<%
 	}
+	%>
 
-	my $html_text;
 
+	
+
+	
+	<%
+
+	my $html_text_short = '<p>No short statement has been provided.</p>';
+        my $html_text_long = '<p>No long statement has been provided.</p>';
+        
 	# short text:
 	if ($long_short == 0 || $long_short == 2) {
+	
+	
+				%>
+			
+                        <div class="section_container">
+
+			<div class="header_1">
+     <span id="title">Short Statement: <%=$topic_data->{'topic'}->{name}%> / <%=$topic_data->{'statement'}->{name}%></span>
+ </div>
+ 
+
+<%		
+if ($topic_data->{'short_text'}) {
+
+			$html_text_short = &func::wikitext_to_html($topic_data->{'short_text'}->{value});		
+		                              
+		           
+		          } %>
+		
+		
+<div class="content_1"><%=$html_text_short%></div>		
+		
+		
+		
+<div class="footer_1">
+     <span id="buttons">
+     
+     			<%
+	
 		if ($topic_data->{'short_text'}) {
 
-			$html_text = &func::wikitext_to_html($topic_data->{'short_text'}->{value});
+		
 
-			%>
-			<%=$html_text%>
-			<%
+
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<p align=right><font face=arial><b>
-				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage <%=$topic_data->{'statement'}->{name}%> statement text</a></b></font></p>
+				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement Text</a>
+		
 				<%
 			}
 			%>
-			<hr>
+
 			<%
 		} else {
 			%>
-			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add <%=$topic_data->{'statement'}->{name}%> statement text</a>.
-			<br>
-			<hr>
+			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add Statement Text</a>
+ 
 			<%
-		}
+		}%>
+		
+		
+		
+     
+     </span>
+     </div>
+		
+		
+		
+		
+		
+		</div><%
 	}
 
 	# long text:
 	if ($long_short == 1 || $long_short == 2) {
+	
+	           			%>
+			                       <div class="section_container">
+						<div class="header_1">
+     <span id="title">Long Statement: <%=$topic_data->{'topic'}->{name}%> / <%=$topic_data->{'statement'}->{name}%></span>
+     </div>
+     
+       	<%
+	
 		if ($topic_data->{'long_text'}) {
 
-			$html_text = &func::wikitext_to_html($topic_data->{'long_text'}->{value});
-
-			%>
-			<%=$html_text%>
+			$html_text_long = &func::wikitext_to_html($topic_data->{'long_text'}->{value});
+		
+			    
+		}%>
+                      <div class="content_1"><%=$html_text_long%></div>
+                      
+     <div class="footer_1">
+     <span id="buttons">
+     
+			
 			<%
+	
+		if ($topic_data->{'long_text'}) {
+
+			$html_text_long = &func::wikitext_to_html($topic_data->{'long_text'}->{value});
+
+
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<p align=right><font face=arial><b>
-				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage <%=$topic_data->{'statement'}->{name}%> long statement text</a></b></font></p>
+				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage Long Statement Text</a>
+			         
 				<%
 			}
 			%>
-			<hr>
+
 			<%
 		} else {
 			%>
-			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add <%=$topic_data->{'statement'}->{name}%> statement long text.</a> For additional data that doesn't fit on the one page statement page (not recomended.)
-			<br>
-			<hr>
+			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add Long Statement Text</a>
+                          	
+                
 			<%
 		}
+		%>
+		
+
+		</span></div></div><%
 	}
 	%>
-	<p><font face=arial><b>Canonizer Sorted Postion (POV) Statement tree:</b></font></p>
-	<ul>
+	
+	
+
+	
+
+
+	
+	
+	
+ 	
+
+	
+
+<div class="section_container">
+<div class="header_1">
+
+     <span id="title">Canonizer Sorted Postion (POV) Statement Tree</span>
+
+</div>
+	
+<div class="statement_tree" id="statement_tree">
 	<%
 	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{name}, $topic_num, 1)); # 1 -> no_active_link
-
-	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
-		%>
-		<p align=right><font face=arial><b><a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add new position statement under <%=$topic_data->{'statement'}->{name}%> statement.</a></b></font></p>
-		<%
-	}
 
 	my $score = func::c_num_format($topic_data->{'statement'}->{score});
 
 	%>
-	</ul>
+</div>
 
-	<hr>
-	<font face=arial><b>Support tree for <font color=green><%=$topic_data->{'statement'}->{name}%></font> statement:</b></font><br>
-	<br>
-	Total support for this statement (including sub statements): <%=$score%>.
+     <div class="footer_1">
+     <span id="buttons">
+     
+          	   	        <%
+		if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+		%>
+		<a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add New Position Statement Under "<%=$topic_data->{'statement'}->{name}%>" Statement</a>
+		<% } %>
+     
+     
+     </span>
+     </div>
+
+</div>
+
+<div class="section_container">
+<div class="header_1">
+
+     <span id="title">Support Tree for "<%=$topic_data->{'statement'}->{name}%>" Statement</span>
+
+</div>
+	
+  <div class="content_1">
+
+	<p>Total Support for This Statement (including sub-statements): <%=$score%></p>
+	
 	<%
 	my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
 	$Response->Write($topic_data->{'statement'}->display_support_tree($topic_num, $statement_num, \%nick_names));
 	%>
-	<br>
 
-	<%
+
+
+</div>
+
+
+     <div class="footer_1">
+     <span id="buttons">
+     
+
+
+     	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
-		if ((! $Session->{'cid'}) || $topic_data->{'statement'}->is_supporting(\%nick_names)) {
+		if (($Session->{'cid'}) && $topic_data->{'statement'}->is_supporting(\%nick_names)) {
 			%>
-			<p align=right><font face=arial><a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Modify support for this statement.</a></font></p>
+			<a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Modify Support for This Statement</a>
 			<%
 		} else {
 			%>
-			<p align=right><font face=arial><a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Directly support this statement.</a></font></p>
+			<a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Directly Support This Statement</a>
 			<%
 		}
 		%>
 
-<font size = 2><p align=right><b>Note:</b> If you directly support a
+<p>Note: If you directly support a
 statement, you are expected to be involved in the improvement of that
 and all super statements.  This includes receiving e-mail
 notifications of proposed modifications, reviewing such, and so on.
@@ -314,66 +425,108 @@ is better; your delegated support and all support delegated to you
 will follow that delegate.  Such delegates may periodically decide to
 inform their constituents of significant new events such as camp
 consolidations, improvements, conversions, information moving up or
-down the structure, and so on as they see fit.</p></font>
+down the structure, and so on as they see fit.</p>
 
-
-		<%
-
-	}
-	%>
-
-	<hr>
-	<table border=0>
-	<tr><td colspan=3><font face=arial><b>Topic:</b></font></td></tr>
-	<tr><td width=25></td><td width=100><font face=arial>Name:</font></td><td><font face=arial size=4><%=$topic_data->{'topic'}->{name}%></font></td></tr>
-	<tr><td></td><td><font face=arial>Name Space:</font></td><td><font face=arial size=4><%=$topic_data->{'topic'}->{namespace}%></font></td></tr>
-	</table>
-
-	<%
-	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
-		%>
-		<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/manage.asp?class=topic&topic_num=<%=$topic_num%>">Manage Topic.</a></font></p>
 		<%
 	}
 	%>
 
-	<hr>
+     </span>
+     </div>	
+</div>
 
-	<table border=0>
-	<tr><td colspan=3><font face=arial><b>Statement:</b></font></td></tr>
-	<tr><td width=25></td><td width=100><font face=arial>Name:</font></td><td><font face=arial size=4><%=$topic_data->{'statement'}->{name}%></font></td></tr>
-	<tr><td></td><td><font face=arial>One Line:</font></td><td><font face=arial size=4><%=$topic_data->{'statement'}->{one_line}%></font></td></tr>
-	<tr><td></td><td><font face=arial>Key Words:</font></td><td><font face=arial size=4><%=$topic_data->{'statement'}->{key_words}%></font></td></tr>
-	</table>
+<div class="section_container">
+<div class="header_1">
 
-	<%
+     <span id="title">Topic</span>
+    
+</div>
+ <div class="content_1">
+<p>Name: <%=$topic_data->{'topic'}->{name}%></p>
+<p>Name Space: <%=$topic_data->{'topic'}->{namespace}%></p>
+
+    </div>
+
+     <div class="footer_1">
+     <span id="buttons">
+     
+      	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<p align=right><font face=arial><a href="http://<%=&func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement.</a></font></p>
+		<a href="http://<%=&func::get_host()%>/manage.asp?class=topic&topic_num=<%=$topic_num%>">Manage This Topic</a>
 		<%
 	}
 	%>
+     
+     
+     </span>
+     </div>
 
-	<hr>
+
+</div>
+
+<div class="section_container">
+<div class="header_1">
+
+
+     <span id="title">Statement</span>
+
+
+</div>
+
+<div class="content_1">
+<p>Name: <%=$topic_data->{'statement'}->{name}%> </p>
+<p>One Line: <%=$topic_data->{'statement'}->{one_line}%></p>
+<p>Key Words: <%=$topic_data->{'statement'}->{key_words}%></p>
+ </div>
+
+     <div class="footer_1">
+     <span id="buttons">
+     
 
 	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<p>
+		<a href="http://<%=&func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage This Statement</a>
+		<%
+	}
+	%>     
+     
+     </span>
+     </div>
+
+</div>
+
+
+
+</div>
+
+
+
+		<%
+	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+		%>
+
 		<select name="long_short" onchange=javascript:change_long_short(value)>
 			<option value=0 <%=$short_sel_str%>>Short Statement Only
 			<option value=1 <%=$long_sel_str%>>Long Statement Only
 			<option value=2 <%=$long_short_sel_str%>>Long and Short Statement
 		</select>
-		</p>
+
+
+
 		<%
-	}
+	} %>
+
+
+
+<%
 }
-
-
 %>
 
 <!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/page_sections.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/canonizer.asp"-->

@@ -1,6 +1,6 @@
-
-
 <!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/page_sections.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/canonizer.asp"-->
@@ -12,6 +12,14 @@
 
 sub browse {
 	%>
+	
+<div class="main_content_container">
+
+<div class="section_container">
+<div class="header_1"><span id="title">Browse</span></div>
+<div class="content_1">
+<p>This is the top level browse page. Currently, this page only lists all topics in all namespaces, alphabetically. When there are more topics more browsing abilities will be added; including an automatic hierarchical category system, an ability to include and exclude namespaces from listings (only the main namespace will be listed by default) and a link to a hierarchical "list of lists" topic pages  (in the /topic/ namespace) which may include such things as a link to a hierarchical scientific taxonomy classification set of topics or listings of elements and so on.</p>
+	
 	<%
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
@@ -35,41 +43,30 @@ sub browse {
 	my $no_data = 1;
 	while ($rs = $sth->fetch()) {
 		$no_data = 0;
-		print('<li><a href="/topic.asp?topic_num=' . $rs->[0] . '">', $rs->[1], $rs->[2], '</a><br> &nbsp; &nbsp;', $rs->[3], "</li><br><br>\n");
+		print('<p class="browse_list"><a href="/topic.asp?topic_num=' . $rs->[0] . '">', $rs->[1], $rs->[2], '</a> ', $rs->[3], "</p>\n");
 	}
 
 	if ($no_data) {
 		%>
-		<h2>No topics YET.</h2>
+		<p>No topics YET.</p>
 		<%
 	}
 
 	%>
-	</ol>
+</div>
 
-	<br><br>
-	<hr>
+     <div class="footer_1">
+     <span id="buttons">
+     
 
-	<p>This is the top level browse page.</p>
+&nbsp;    
+     
+     </span>
+     </div>
+		
+</div>
+</div>
 
-	<p>Currently, this page only lists all topics in all namespaces, alphabetically.<p>
-
-	<p>When there are more topics more browsing abilities will be added including:</p>
-
-	<ul>
-	    <li>An automatic hierarchical category system.</li>
-
-	    <li>An ability to include and exclude namespaces from listings.
-		(Only the main namespace will be listed by default.)</li>
-
-	    <li>A link to a hierarchical "list of lists" topic pages
-		(in the /topic/ namespace) which may include such things as a link to
-		a hierarchical scientific taxonomy classification set of topics or
-		listings of elements and so on.</li>
-
-	</ul>
-
-	<ol>
 	<%
 }
 

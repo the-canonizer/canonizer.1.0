@@ -51,7 +51,7 @@ if ($Request->Form('class')) {
 }
 
 if (&managed_record::bad_managed_class($class)) {
-	$error_message = "Error: '$class' is an invalid edit class.<br>\n";
+	$error_message = "Error: '$class' is an invalid edit class.\n";
 	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
@@ -113,7 +113,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 } else { # create a first version of a managed record (not a topic)
 
 	if (! int($Request->QueryString('topic_num'))) {
-		$error_message .= "Must have a topic_num in order to create a $class.<br>\n";
+		$error_message .= "Must have a topic_num in order to create a $class.\n";
 	}
 
 	if ($class eq 'statement') {
@@ -125,7 +125,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 			$record->{note} = 'First Version';
 			$record->{proposed} = 0;
 		} else {
-			$error_message .= "Must have a prent_statement_num in order to create a new statement.<br>\n";
+			$error_message .= "Must have a prent_statement_num in order to create a new statement.\n";
 		}
 	} else {  # I am assuming 'topic' class will never come through this create new block so this is 'text' case.
 		if ($Request->QueryString('statement_num')) {
@@ -140,7 +140,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 				$record->{text_size} = 0; # default to small text size.
 			}
 		} else {
-			$error_message .= "Must have a statement_num in order to create a text record.<br>\n";
+			$error_message .= "Must have a statement_num in order to create a text record.\n";
 		}
 	}
 	if ($error_message) {
@@ -185,69 +185,77 @@ sub display_topic_form {
 
 %>
 
-<br>
+<div class="main_content_container">
+
+<div class="section_container">
+<div class="header_1">
+
+     <span id="title"><%=$subtitle%></span>
+
+</div>
+
+<div class="content_1">
+
 <%=$error_message%>
-<br>
 
 <form method=post>
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
 <input type=hidden name=topic_num value=<%=$record->{topic_num}%>>
 <input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
-<table>
-<tr>
-  <td><b>Topic Name: <font color = red>*</font> </b></td><td>Mazimum 25 characters.<br>
-	<input type=string name=name value="<%=$record->{name}%>" maxlength=25 size=25></td></tr>
-
-  <tr height = 20></tr>
-
-  <td><b>Namespace:</b></td><td>Nothing for main default namespace.  Begins and Ends with '/'.  Maximum 65 characters.<br>
-	<input type=string name=namespace value="<%=$record->{namespace}%>" maxlength=65 size=65></td></tr>
-
-  <tr height = 20></tr>
+<p>Topic Name: <span class="required_field">*</span></p>
+<p>Maximum 25 characters.</p>
+<p><input type=string name=name value="<%=$record->{name}%>" maxlength=25 size=25></p>
+<p>Namespace:</p>
+<p>Nothing for main default namespace. Begins and Ends with '/'. Maximum 65 characters.</p>
+<p><input type=string name=namespace value="<%=$record->{namespace}%>" maxlength=65 size=65></p>
 
 <%
-#  <td><b>AKA:</b></td><td>Comma separated - symbolic link created for each one.<br>
-#	<input type = string name = AKA maxlength = 255 size = 65></td></tr>
-#
-#  <tr height = 20></tr>
+# AKA: Comma separated - symbolic link created for each one.
+# <input type = string name = AKA maxlength = 255 size = 65>
 %>
 
-  <tr height = 20></tr>
+<p>Note: <span class="required_field">*</span></p>
+<p>Reason for submission. Maximum 65 characters.</p>
+<p><input type=string name=note value="<%=$record->{note}%>" maxlength=65 size=65></p>
+<p>Attribution Nick Name:</p>
 
-  <td><b>Note: <font color = red>*</font> </b></td><td>Reason for submission. Maximum 65 characters.<br>
-	<input type=string name=note value="<%=$record->{note}%>" maxlength=65 size=65></td></tr>
-
-  <tr height = 20></tr>
-
-  <td><b>Attribution Nick Name:</b></td>
-  <td>
-	<select name="submitter">
+	<p><select name="submitter">
 	<%
 	my $id;
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $record->{submitter}) {
 			%>
-			<option value=<%=$id%> selected><%=$nick_names{$id}%>
+			<option value=<%=$id%> selected><%=$nick_names{$id}%></option>
 			<%
 		} else {
 			%>
-			<option value=<%=$id%>><%=$nick_names{$id}%>
+			<option value=<%=$id%>><%=$nick_names{$id}%></option>
 			<%
 		}
 	}
 	%>
-	</select>
-</td></tr>
+	</select></p>
 
-  <tr height = 20></tr>
-
-</table>
-
-<input type=reset value="Reset">
-<input type=submit name=submit_edit value="<%=$submit_value%>">
+<p><input type=reset value="Reset"></p>
+<p><input type=submit name=submit_edit value="<%=$submit_value%>"></p>
 
 </form>
+
+</div>
+
+     <div class="footer_1">
+     <span id="buttons">
+     
+
+&nbsp;    
+     
+     </span>
+     </div>
+
+</div>
+
+</div>
 
 <%
 }
@@ -262,11 +270,11 @@ sub print_parent_option {
 
 	if ($num == $selected) {
 		%>
-		<option value=<%=$num%> selected><%=$indent . $statement_tree->{name}%>
+		<option value=<%=$num%> selected><%=$indent . $statement_tree->{name}%></option>
 		<%
 	} else {
 		%>
-		<option value=<%=$num%>><%=$indent . $statement_tree->{name}%>
+		<option value=<%=$num%>><%=$indent . $statement_tree->{name}%></option>
 		<%
 	}
 
@@ -275,7 +283,7 @@ sub print_parent_option {
 
 print(STDERR "$indent $child->{name}, id: $child->{record_id}.\n"); # ????
 
-		&print_parent_option($child, $selected, $indent . ' &nbsp; &nbsp; ');
+		&print_parent_option($child, $selected, $indent);
 	}
 }
 
@@ -300,9 +308,18 @@ sub display_statement_form {
 
 %>
 
-<br>
+ <div class="main_content_container">
+
+<div class="section_container">
+<div class="header_1">
+
+     <span id="title"><%=$subtitle%></span>
+
+</div>
+
+<div class="content_1">
+
 <%=$error_message%>
-<br>
 
 <form method=post>
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
@@ -317,71 +334,82 @@ if (!$statement_tree) {
 <input type=hidden name=statement_num value=<%=$record->{statement_num}%>>
 <input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
-<table>
-<tr>
-  <td><b>Statement Name: <font color = red>*</font> </b></td><td>Mazimum 25 characters.<br>
-	<input type=string name=name value="<%=$record->{'name'}%>" maxlength=25 size=25 <%=$agreement_disable_str%>></td></tr>
+<p>Statement Name: <span class="required_field">*</span></p>
+<p>Maximum 25 characters.</p>
+<p><input type=string name=name value="<%=$record->{'name'}%>" maxlength=25 size=25 <%=$agreement_disable_str%>></p>
 
-  <tr height = 20></tr>
+<hr>
 
-  <tr><td><b>One Line Description: <font color = red>*</font> </b></td><td>Maximum 65 characters, end with period.<br>
-	<input type=string name=one_line value="<%=$record->{'one_line'}%>" maxlength=65 size=65></td></tr>
+<p>Title: <span class="required_field">*</span></p>
+<p>Maximum 65 characters.</p>
+<p><input type=string name=one_line value="<%=$record->{'one_line'}%>" maxlength=65 size=65></p>
 
-  <tr height = 20></tr>
+<hr>
 
-  <tr><td><b>Key Words:</b></td><td>Maximum 65 characters, comma seperated.<br>
-	<input type=string name=key_words value="<%=$record->{'key_words'}%>" maxlength=65 size=65></td></tr>
-
-  <tr height = 20></tr>
+<p>Key Words:</p>
+<p>Maximum 65 characters, comma seperated.</p>
+<p><input type=string name=key_words value="<%=$record->{'key_words'}%>" maxlength=65 size=65></p>
 
 <%
 if ($statement_tree) {
 	%>
-	<tr><td><b>Parent:</b></td><td>
-	<select name="parent_statement_num">
+	Parent:
+	<p><select name="parent_statement_num">
 	<%
 	&print_parent_option($statement_tree, $record->{'parent_statement_num'}, '');
 	%>
-	</select>
-	</td></tr>
-	<tr height = 20></tr>
+	</select></p>
 <%
 }
 %>
 
-  <tr><td><b>Note: <font color = red>*</font> </b></td><td>Reason for submission. Maximum 65 characters.<br>
-	<input type=string name=note value="<%=$record->{note}%>" maxlength=65 size=65></td></tr>
+<hr>
 
-  <tr height = 20></tr>
+<p>Note: <span class="required_field">*</span></p>
+<p>Reason for submission. Maximum 65 characters.</p>
+<p><input type=string name=note value="<%=$record->{note}%>" maxlength=65 size=65></p>
 
-  <tr><td><b>Attribution Nick Name:</b></td>
-  <td>
-	<select name="submitter">
+<hr>
+
+<p>Attribution Nick Name:</p>
+<p><select name="submitter">
 	<%
 	my $id;
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $record->{'submitter'}) {
 			%>
-			<option value=<%=$id%> selected><%=$nick_names{$id}%>
+			<option value=<%=$id%> selected><%=$nick_names{$id}%></option>
 			<%
 		} else {
 			%>
-			<option value=<%=$id%>><%=$nick_names{$id}%>
+			<option value=<%=$id%>><%=$nick_names{$id}%></option>
 			<%
 		}
 	}
 	%>
-	</select>
-</td></tr>
+	</select></p>
 
-  <tr height = 20></tr>
+<hr>
 
-</table>
-
-<input type=reset value="Reset">
-<input type=submit name=submit_edit value="<%=$submit_value%>">
+<p><input type=reset value="Reset"></p>
+<p><input type=submit name=submit_edit value="<%=$submit_value%>"></p>
 
 </form>
+
+</div>
+
+     <div class="footer_1">
+     <span id="buttons">
+     
+
+&nbsp;    
+     
+     </span>
+     </div>
+
+</div>
+
+</div>
 
 <%
 }
@@ -420,9 +448,18 @@ sub display_text_form {
 	}
 	</script>
 
-	<br>
+        <div class="main_content_container">
+
+<div class="section_container">
+<div class="header_1">
+
+     <span id="title"><%=$subtitle%></span>
+
+</div>
+
+<div class="content_1">
+
 	<%=$error_message%>
-	<br>
 
 	<form method=post name=edit_text>
 	<input type=hidden name=record_id value=<%=$copy_record_id%>>
@@ -431,53 +468,63 @@ sub display_text_form {
 	<input type=hidden name=text_size value=<%=$record->{text_size}%>>
 	<input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
-	<b>Text: <font color = red>*</font></b><br>
+	<p>Text: <span class="required_field">*</span></p>
 
-	<textarea NAME="value" ROWS="30" COLS="65"><%=$record->{'value'}%></textarea>
+	<p><textarea NAME="value" ROWS="20" COLS="90"><%=$record->{'value'}%></textarea></p>
 
-	<table>
-	<tr>
-	  <td><b>Edit Note: <font color = red>*</font> </b></td><td>Reason for submission. Maximum 65 characters.<br>
-	<input type=string name=note value="<%=$record->{'note'}%>" maxlength=65 size=65></td></tr>
+	<hr>
 
-	<tr height = 20></tr>
+	<p>Edit Note: <span class="required_field">*</span></p>
+	<p>Reason for submission. Maximum 65 characters.</p>
+	<p><input type=string name=note value="<%=$record->{'note'}%>" maxlength=65 size=65></p>
 
-	<tr>
-	  <td><b>Attribution Nick Name:</b></td>
-	  <td>
-	    <select name="submitter">
+	<hr>
+
+	<p>Attribution Nick Name:</p>
+	
+	    <p><select name="submitter">
 	    <%
 	    my $id;
 	    foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $record->{'submitter'}) {
 			%>
-			<option value=<%=$id%> selected><%=$nick_names{$id}%>
+			<option value=<%=$id%> selected><%=$nick_names{$id}%></option>
 			<%
 		} else {
 			%>
-			<option value=<%=$id%>><%=$nick_names{$id}%>
+			<option value=<%=$id%>><%=$nick_names{$id}%></option>
 			<%
 		}
 	    }
 	    %>
-	    </select>
-	</td></tr>
+	    </select></p>
 
-	<tr height = 20></tr>
+	<hr>
 
-	</table>
-
-	<input type=reset value="Reset">
-	<input type=submit name=submit_edit value="Preview" onClick="return preview_text()">
-	<input type=submit name=submit_edit value="<%=$submit_value%>">
+	<p><input type=reset value="Reset"></p>
+	<p><input type=submit name=submit_edit value="Preview" onClick="return preview_text()"></p>
+	<p><input type=submit name=submit_edit value="<%=$submit_value%>"></p>
 
 	</form>
 
-	<p>
-	The Canonizer currently uses the Purple Wiki text parser/formatter.  For a reference see
+	</div>
+
+     <div class="footer_1">
+     <span id="buttons">
+     
+	<p>The Canonizer currently uses the Purple Wiki text parser/formatter. For a reference see
 	<a href="http://purplewiki.blueoxen.net/cgi-bin/wiki.pl?TextFormattingRules" target="_blank">
-	Purple Wiki TextFormattingRules</a>
-	</p>
+	Purple Wiki Text Formatting Rules</a></p>
+	
+
+&nbsp;    
+     
+     </span>
+     </div>
+
+</div>
+
+</div>
 
 	<%
 }
@@ -487,9 +534,10 @@ sub display_text_form {
 
 <!--#include file = "includes/default/page.asp"-->
 
+<!--#include file = "includes/page_sections.asp"-->
+
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 <!--#include file = "includes/error_page.asp"-->
 <!--#include file = "includes/must_login.asp"-->
-

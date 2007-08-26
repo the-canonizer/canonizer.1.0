@@ -1,4 +1,5 @@
 
+
 <%
 
 ########
@@ -32,9 +33,9 @@ $Response->Redirect($query_string);
 
 %>
 
-env: <%=$ENV{'QUERY_STRING'}%><br>
-Request->QueryString<%=$Request->QueryString('as_of')%><br>
-as_of: <%=$as_of%><br>
-as_of_mode: <%=$as_of_mode%>.<br>
-as_of_date: <%=$as_of_date%>.<br>
-<%=$query_string%><br>
+<p>env: <%=$ENV{'QUERY_STRING'}%></p>
+<p>Request->QueryString<%=$Request->QueryString('as_of')%></p>
+<p>as_of: <%=$as_of%></p>
+<p>as_of_mode: <%=$as_of_mode%></p>
+<p>as_of_date: <%=$as_of_date%></p>
+<p><%=$query_string%>></p>

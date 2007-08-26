@@ -44,7 +44,7 @@ if ($Session->{'cid'} and ! $Session->{'logged_in'}) {
 	display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
 } else {
 %>
-	<h1>How did you get here anyway?</h1>
+	How did you get here anyway?
 <%
 }
 
@@ -57,25 +57,23 @@ sub must_search_first {
 
 %>
 
-<p>This is where you go to edit your personal identity data or to
+This is where you go to edit your personal identity data or to
 enter it the first time when you register.  If you are already a
-member you must first <a href =
-"login.asp?destination=/secure/profile_id.asp">login</a>.</p>
+member you must first <a href = "login.asp?destination=/secure/profile_id.asp">login</a>
 
-<p>If you are attempting to register for the first time, you must
+If you are attempting to register for the first time, you must
 first read the registration warning and do a search to ensure there is
 no existing record for you at canonizer.  We have no record of you
-doing this.  You can do all this <a href =
-"http://<%=func::get_host()%>/register.asp">here</a>.</p>
+doing this.  You can do all this <a href = "http://<%=func::get_host()%>/register.asp">here</a>
 
 <%
 }
 
 sub format_error {
-	return('<h3><font color = red>' . $_[0] . "</font></h3>\n");
+	return('<p class="error_message">' . $_[0] . '</p>');
 }
 sub format_success {
-	return('<h3><font color = green>' . $_[0] . "</font></h3>\n");
+	return($_[0]);
 }
 
 sub save_values {
@@ -100,7 +98,7 @@ sub save_values {
 		$message .= format_error("Last Name is required.");
 	}
 	if (length($form_state{'email'} = $Request->Form('email')) < 1) {
-		$message .= format_error("e-mail is required.");
+		$message .= format_error("E-mail is required.");
 	} else { # check for unique e-mail
 		$selstmt = 'select cid from person where email = ?';
 		if ($cid) {
@@ -199,7 +197,7 @@ sub save_values {
 			func::send_email($form_state{'first_name'} . ' registered.', "from profile_id.asp.\n");
 			$message .= format_success("Registration Completed.");
 		} else {
-			$message .= format_error("DB Insert Failed.<br>\n");
+			$message .= format_error("DB Insert Failed.\n");
 		}
 
 		$sth->finish();
@@ -321,7 +319,7 @@ sub profile_id {
 	if ($Session->{'cid'}) {
 		$pass_comment = '(if changing)';
 	} else { # registring for the first time so required
-		$pass_comment = '<font color = red>*</font>';
+		$pass_comment = '';
 	}
 
 	my @nick_names = ();
@@ -345,92 +343,82 @@ sub profile_id {
 
 %>
 
-<br>
-
 <%=$message%>
 
 <form method=post>
-<table border = 0>
-
-<tr><td colspan = 2><b>Name:</b> Checks will be made out to this name.</td></tr>
-<tr><td>Legal First Name: <font color = red>*</font> </td><td><input type = string name = first_name value = "<%=$form_state{'first_name'}%>"></td></td></tr>
-<tr><td>Legal Middle Name:</td><td><input type = string name = middle_name value = "<%=$form_state{'middle_name'}%>"></td></td></tr>
-<tr><td>Legal Last Name: <font color = red>*</font> </td><td><input type = string name = last_name value = "<%=$form_state{'last_name'}%>"></td></td></tr>
-
-<tr height = <%=$spacer%>><td colspan = 2></td></tr>
-<tr><td>e-mail: <font color = red>*</font> </td><td><input type = string name = email value = "<%=$form_state{'email'}%>"></td></td></tr>
-<tr><td>Password: <%=$pass_comment%> </td><td><input type = password name = password></td></td></tr>
-<tr><td>Password: (confirmation)</td><td><input type = password name = password_confirm></td></td></tr>
-
-
-<tr height = <%=$spacer%>><td colspan = 2></td></tr>
-
-<tr><td colspan = 2><b>Address: <font color = red>*</font> </b> Checks will be mailed to this address.</td></tr>
-<tr><td>Address 1: <font color = red>*</font> </td><td><input type = string name = address_1 value = "<%=$form_state{'address_1'}%>"></td></td></tr>
-<tr><td>Address 2:</td><td><input type = string name = address_2 value = "<%=$form_state{'address_2'}%>"></td></td></tr>
-<tr><td>City: <font color = red>*</font> </td><td><input type = string name = city value = "<%=$form_state{'city'}%>"></td></td></tr>
-<tr><td>State: <font color = red>*</font> </td><td><input type = string name = state value = "<%=$form_state{'state'}%>"></td></td></tr>
-<tr><td>Postal Code: <font color = red>*</font> </td><td><input type = string name = postal_code value = "<%=$form_state{'postal_code'}%>"></td></td></tr>
-<tr><td>Country: <font color = red>*</font> </td><td><input type = string name = country value = "<%=$form_state{'country'}%>"></td></td></tr>
-
-<tr height = <%=$spacer%>><td colspan = 2></td></tr>
-
-<tr><td><b>Social Security Number:</b> <font color = blue>*</font> </td><td><input type = string name = country value = ""></td></td></tr>
-
-<tr><td colspan = 2><font color = blue>*</font>
-
-A Social Security number is not required to register and fully
+<p>Name:</p>
+<p>Checks will be made out to this name.</p>
+<p>Legal First Name: <span class="required_field">*</span></p>
+<p><input type = string name = first_name value = "<%=$form_state{'first_name'}%>"></p>
+<p>Legal Middle Name:</p>
+<p><input type = string name = middle_name value = "<%=$form_state{'middle_name'}%>"></p>
+<p>Legal Last Name: <span class="required_field">*</span></p>
+<p><input type = string name = last_name value = "<%=$form_state{'last_name'}%>"></p>
+<p>E-Mail: <span class="required_field">*</span></p>
+<p><input type = string name = email value = "<%=$form_state{'email'}%>"></p>
+<p>Password: <span class="required_field">*</span><%=$pass_comment%></p>
+<p><input type = password name = password></p>
+<p>Password Confirmation: <span class="required_field">*</span></p>
+<p><input type = password name = password_confirm></p>
+<p>Address: <span class="required_field">*</span></p>
+<p>Checks will be mailed to this address.</p>
+<p>Address 1: <span class="required_field">*</span></p>
+<p><input type = string name = address_1 value = "<%=$form_state{'address_1'}%>"></p>
+<p>Address 2:</p>
+<p><input type = string name = address_2 value = "<%=$form_state{'address_2'}%>"></p>
+<p>City: <span class="required_field">*</span></p>
+<p><input type = string name = city value = "<%=$form_state{'city'}%>"></p>
+<p>State: <span class="required_field">*</span></p>
+<p><input type = string name = state value = "<%=$form_state{'state'}%>"></p>
+<p>Postal Code: <span class="required_field">*</span></p>
+<p><input type = string name = postal_code value = "<%=$form_state{'postal_code'}%>"></p>
+<p>Country: <span class="required_field">*</span></p>
+<p><input type = string name = country value = "<%=$form_state{'country'}%>"></p>
+<p>Social Security Number: <span class="required_field">*</span></p>
+<p><input type = string name = country value = ""></p>
+<p><span class="required_field">*</span> A Social Security number is not required to register and fully
 participate with the Canonizer.  However, if your contributions start
 earning monetary rewards, we will not be able to pay you these until
-you provide it here.
+you provide it here.</p>
 
-</td></tr>
+<p>Permanent Nick Names:</p>
 
-<tr height = <%=$spacer%>><td colspan = 2></td></tr>
-
-<tr><td colspan = 2><b>Permanent Nick Names:</b><br>
-
-You can have multiple Nick Names.  Some of them may obviously be you,
+<p>You can have multiple Nick Names.  Some of them may obviously be you,
 while others may be anonymous pen names possibly used to support
 various controversial positions.  You must provide one to start.  You
-may return to this page to add more.
-
-</td></tr>
-<tr><td height=20></td></tr>
+may return to this page to add more.</p>
 
 <%
 if ($#nick_names >= 0) {
 	my $idx;
 	for ($idx = 0; $idx <= $#nick_names; $idx++) {
 		%>
-		<tr><td>&nbsp;</td><td><b><%=$nick_names[$idx]%></b></td></td></tr>
+		<%=$nick_names[$idx]%>
 		<%
 	}
 } else {
 	%>
-	<tr><td>&nbsp;<td>No Nick Names Specified Yet.</td></tr>
+	<p>No Nick Names Specified Yet.</p>
 	<%
 }
 %>
 
-<tr height = <%=$spacer%>><td colspan = 2></td></tr>
+<p>Add New Permanent Nick Name:
 
-<tr><td nowrap>Add New Permanent Nick Name: 
 <%
 if (! ($#nick_names >= 0)) {
 	%>
-	<font color=red>*</font>
+	<span class="required_field"> *</span>
 	<%
 }
+</p>
 %>
 
-</td><td><input type = string name = new_nick_name maxlength=25 size=25 value="<%=$form_state{'new_nick_name'}%>">
-	<!-- button name=nick_name_check>Check Nick Name</button> </td></td></tr not yet implemented -->
+<p><input type = string name = new_nick_name maxlength=25 size=25 value="<%=$form_state{'new_nick_name'}%>"></p>
 
-<tr height = <%=$spacer%>><td colspan = 2></td></tr>
+<p><input type=reset value="Reset Form"></p>
+<p><input type = submit name = submit value = "<%=$submit_value%>"></p>
 
-<tr><td colspan = 2 align = center><input type=reset value="Reset Form">&nbsp; &nbsp; &nbsp;<input type = submit name = submit value = "<%=$submit_value%>"></td></tr>
-</table>
 </form>
 
 <%
@@ -441,7 +429,7 @@ sub temp_send_email {
 
 	open(MAIL, "| /bin/mail -s new_user brent\@canonizer.com") || die "can't open mail.\n";
 
-	print(MAIL "A new user, $name,  signed up!\n.\n\n");
+	print(MAIL "A new user, $name, signed up!\n.\n\n");
 
 	close(MAIL);
 
@@ -454,9 +442,9 @@ sub temp_send_email {
 
 <!--#include file = "includes/default/page.asp"-->
 
+<!--#include file = "includes/page_sections.asp"-->
+
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
 <!--#include file = "includes/profile_tabs.asp"-->
-
-

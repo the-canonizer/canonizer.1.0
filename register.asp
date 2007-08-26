@@ -1,5 +1,6 @@
-
 <!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/page_sections.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->
@@ -11,10 +12,13 @@ sub register_warning {
 
 %>
 
-<br>
-
-<p><b>You should read and thoroughly understand this before
-registering:</b></p>
+<div class="main_content_container">
+     <div class="section_container">
+     	  <div class="header_1"><span id="title">Registration</span></div>
+     	  
+<div class="content_1">
+<p>You should read and thoroughly understand this before
+registering:</p>
 
 <p>There is a strict single identity per user policy at canonizer.  If
 you have ever registered with canonizer before, you must use that same
@@ -47,16 +51,29 @@ identity page if the system doesn't already know about you.</p>
 
 <form method = post>
 
-<table border=0>
-<tr><td>Legal First Name:</td><td><input type=text name=first_name></td></tr>
-<tr><td>Legal Last Name:</td><td><input type=text name=last_name></td></tr>
-<tr><th colspan=2 align=center>Or</th></tr>
-<tr><td>Canonizer ID Number:</td><td><input type=text name=search_cid></td></tr>
-<tr><td colspan=2 align=center><input type=submit name=submit value="Do Search"></td></tr>
-</table>
+<p>Legal First Name: <input type=text name=first_name></p>
+<p>Legal Last Name: <input type=text name=last_name></p>
+<p>Or</p>
+<p>Canonizer ID Number: <input type=text name=search_cid></p>
+<p><input type=submit name=submit value="Do Search"></p>
+
+</div>
 
 </form>
 
+     <div class="footer_1">
+     <span id="buttons">
+     
+
+&nbsp;    
+     
+     </span>
+     </div>
+
+
+
+</div>
+</div>
 <%
 }
 
@@ -76,15 +93,15 @@ sub make_found_users_str {
 	}
 
 	if ($ret_str) {
-		$ret_str = "<table border = 1>\n" .
+		$ret_str = "<table class='identity_list' cellpadding='0' cellspacing='0'>\n" .
 			   "<tr><td colspan=4>\n" .
-			   "The identities below already have a registered e-mail address and password.<br>\n" .
-			   "The send password link will send that person's password to that person's e-mail.<br>\n" .
-			   "If one of them represents you, it is considered cheating to register as another identity.\n" .
+			   "<p>The identities below already have a registered e-mail address and password.</p>\n" .
+			   "<p>The send password link will send that person's password to that person's e-mail.</p>\n" .
+			   "<p>If one of them represents you, it is considered cheating to register as another identity.</p>\n" .
 			   "</td></tr>\n" .
-			   "  <tr><th>First Name</th><th>Middle Name</th><th>Last Name</th><th>&nbsp</th></tr>\n" .
+			   "  <tr><td>First Name</td><td>Middle Name</td><td>Last Name</td><td>&nbsp</td></tr>\n" .
 			   $ret_str .
-			   "</table><br><br>\n";
+			   "</table>\n";
 	}
 	return($ret_str);
 }
@@ -100,20 +117,19 @@ sub make_found_proxies_str {
 		if (length($middle_name) < 1) {$middle_name = '&nbsp';}
 		$ret_str .= '<tr><td>' . $users_hash_ref->{$cid}->{'first_name'} . "</td>\n" .
  			    '    <td>' . $middle_name . "</td>\n" .
-			    '    <td>' . $users_hash_ref->{$cid}->{'last_name'} . "</td>\n" .
-			    "    <td><a href = \"https://" . &func::get_host() . "/secure/profile_id.asp?takeover_cid=$cid\">Take Ownership</a></td></tr>\n";
+			    '    <td>' . $users_hash_ref->{$cid}->{'last_name'} . "</td>\n"
+#			    "    <td><a href = \"https://" . &func::get_host() . "/secure/profile_id.asp?takeover_cid=$cid\">Take Ownership</a></td></tr>\n";
 	}
 
 	if ($ret_str) {
-		$ret_str = "<table border = 1>\n" .
-			   "<tr><td colspan=4>\n" .
-			   "If one of these identities represents you, " .
-			   "you can take ownership of the information by following the Take Ownership link, " .
-			   "attaching your e-mail with the information and adding a password.\n" .
+		$ret_str = "<table class='identity_list' cellpadding='0' cellspacing='0'>\n" .
+			   "<tr><td colspan=3>\n" .
+			   "<p>If one of these identities represents you, \n" .
+			   "and you don't know the password, contact stupport\@canonizer.com to get it reset.</p>\n" .
 			   "</td></tr>\n" .
-			   "  <tr><th>First Name</th><th>Middle Name</th><th>Last Name</th><th>&nbsp</th></tr>\n" .
+			   "<tr><td>First Name</td><td>Middle Name</td><td>Last Name</td></tr>\n" .
 			   $ret_str .
-			   "</table><br><br>\n";
+			   "</table>\n";
 	}
 	return($ret_str);
 }
@@ -203,7 +219,7 @@ sub search_results {
 		}
 		$sth->finish();
 	} else {
-		$message = "<h3><font color = red>Nothing given to search for.</font></h3>";
+		$message = "<p>Nothing given to search for.</p>";
 	}
 
 
@@ -232,18 +248,16 @@ if ($found_str) {
 
 <form method = post>
 
-<table border = 0>
-<tr><td>Legal First Name:</td><td><input type = text name = first_name></td></tr>
-<tr><td>Legal Last Name:</td><td><input type = text name = last_name></td></tr>
-<tr><th colspan = 2 align = center>Or</th></tr>
-<tr><td>Canonizer ID Number:</td><td><input type = text name = search_cid></td></tr>
-<tr><td colspan = 2 align = center><input type = submit name = submit value = "Do Search"></td></tr>
-</table>
+<p>Legal First Name:</p>
+<p><input type = text name = first_name></p>
+<p>Legal Last Name:</p>
+<p><input type = text name = last_name></p>
+<p>Or</p>
+<p>Canonizer ID Number:</p>
+<p><input type = text name = search_cid></p>
+<p><input type = submit name = submit value = "Do Search"></p>
 
 </form>
-
-<br>
-<br>
 
 <p>Or if none of the found identities represent you and you are sure there are no identities on the system
 that do represent you, you can go onto the Register New Identity page.</p>
@@ -253,10 +267,6 @@ that do represent you, you can go onto the Register New Identity page.</p>
 
 
 <form>
-<br>
-
-<p>And as always, if there is a problem please contact <a href = 
-"mailto:support@canonizer.com">support@canonzier.com</a>.</p>
 
 <%
 

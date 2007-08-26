@@ -45,7 +45,6 @@ if ($clear_flag) {
 
 # no need to check for secure in destination here because that removed from $destination above.
 # can't go there after logging out.
-
 $Response->Redirect('http://' . &func::get_host() . $destination);
 
 %>

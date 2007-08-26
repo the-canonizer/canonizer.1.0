@@ -70,14 +70,14 @@ sub save_topic {
 
 	$form_state{'topic_name'} = $Request->Form('topic_name');
 	if (length($form_state{'topic_name'}) < 1) {
-		$message .= "<h2><font color=red>A Topic Name is required.</font></h2>\n";
+		$message .= "A Topic Name is required.\n";
 	}
 
 	$form_state{'namespace'} = $Request->Form('namespace');
 
 	$form_state{'one_line'}  = $Request->Form('one_line');
 	if (length($form_state{'one_line'}) < 1) {
-		$message .= "<h2><font color=red>A One Line Description is required.</font></h2>\n";
+		$message .= "A Topic is required.\n";
 	}
 
 	$form_state{'key_words'} = $Request->Form('key_words');
@@ -121,13 +121,9 @@ sub must_login {
 		$login_url .= ('?' . $query_string);
 	}
 %>
-
-	<br>
-	<h2>You must register and or login before you can edit topics.</h2>
-	<center>
-	<h2><a href="http://<%=func::get_host()%>/register.asp">Register</a><h2>
-	<h2><a href="<%=$login_url%>">Login</a><h2>
-	</center>
+<p>You must register and/or login before you can edit topics.</p>
+<p><a href="http://<%=func::get_host()%>/register.asp">Register</a></p>
+<p><a href="<%=$login_url%>">Login</a></p>
 <%
 }
 
@@ -136,84 +132,96 @@ sub new_topic_form {
 
 %>
 
+<div class="main_content_container">
+
+<div class="section_container">
+<div class="header_1">
+
+     <span id="title"><%=$subtitle%></span>
+
+</div>
+
+<div class="content_1">
+
 <%=$message%>
-<br>
 
 <form method=post>
+<p>Name: <span class="required_field">*</span></p>
+<p>Maximum 25 characters.</p>
+<p><input type=string name=topic_name value="<%=$form_state{'topic_name'}%>" maxlength=25 size=25 /></p>
 
-<table>
+<hr>
 
-  <tr height = 20><td colspan=2><hr><p><font color=blue>Topic Values:</font></p></td></tr>
-  <tr height = 20></tr>
+<p>Namespace:</p>
+<p>Nothing for main default namespace. Path that begins, seperated by, and ends with '/'. Maximum 65 characters.</p>
+<p><input type=string name=namespace value="<%=$form_state{'namespace'}%>" maxlength=65 size=65></p>
 
-<tr>
-  <td><b>Name: <font color = red>*</font> </b></td><td>Mazimum 25 characters.<br>
-	<input type=string name=topic_name value="<%=$form_state{'topic_name'}%>" maxlength=25 size=25></td></tr>
-
-  <tr height = 20></tr>
-
-  <td><b>Namespace:</b></td><td>Nothing for main default namespace.  Path that begins, seperated by, and ends with '/'.  Maximum 65 characters.<br>
-	<input type=string name=namespace value="<%=$form_state{'namespace'}%>" maxlength=65 size=65></td></tr>
-
-  <tr height = 20></tr>
-  <tr height = 20><td colspan=2><hr><p><font color=blue>Agreement Statement Values:</font></p></td></tr>
-  <tr height = 20></tr>
-
+<hr>
 <%
-#  <td><b>AKA:</b></td><td>Comma separated - symbolic link created for each one.<br>
-#	<input type = string name = AKA maxlength = 255 size = 65></td></tr>
-#
-#  <tr height = 20></tr>
+# <p>Agreement Statement Values:</p>
+#AKA: Comma separated - symbolic link created for each one.
+#<input type = string name = AKA maxlength = 255 size = 65>
 %>
 
+<p>Title: <span class="required_field">*</span></p>
+<p>Maximum 65 characters.</p>
+<p><input type=string name=one_line value="<%=$form_state{'one_line'}%>" maxlength=65 size=65></p>
 
-  <td><b>One Line Description: <font color = red>*</font> </b></td><td>Maximum 65 characters.<br>
-	<input type=string name=one_line value="<%=$form_state{'one_line'}%>" maxlength=65 size=65></td></tr>
+<hr>
 
-  <tr height = 20></tr>
+<p>Key Words:</p>
+<p>Maximum 65 characters, comma seperated.</p>
+<p><input type=string name=key_words value="<%=$form_state{'key_words'}%>" maxlength=65 size=65></p>
 
-  <td><b>Key Words:</b></td><td>Maximum 65 characters, comma seperated.<br>
-	<input type=string name=key_words value="<%=$form_state{'key_words'}%>" maxlength=65 size=65></td></tr>
+<hr>
 
-  <tr height = 20></tr>
-  <tr height = 20><td colspan=2><hr></td></tr>
-
-  <td><b>Attribution Nick Name:</b></td>
-  <td>
-	<select name="submitter">
+<p>Attribution Nick Name:</p>
+<p><select name="submitter">
 	<%
 	my $id;
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $form_state{'submitter'}) {
 			%>
-			<option value=<%=$id%> selected><%=$nick_names{$id}%>
+			<option value=<%=$id%> selected><%=$nick_names{$id}%></option>
 			<%
 		} else {
 			%>
-			<option value=<%=$id%>><%=$nick_names{$id}%>
+			<option value=<%=$id%>><%=$nick_names{$id}%></option>
 			<%
 		}
 	}
 	%>
-	</select>
-</td></tr>
+	</select></p>
 
-  <tr height = 20></tr>
+<hr>
 
-</table>
-
-<input type=reset value="Reset">
-<input type=submit name=submit value="Create Topic">
+<p><input type=reset value="Reset"></p>
+<p><input type=submit name=submit value="Create Topic"></p>
 
 </form>
+
+</div>
+
+     <div class="footer_1">
+     <span id="buttons">
+     
+
+&nbsp;    
+     
+     </span>
+     </div>
+
+</div>
+
+</div>
 
 <%
 }
 
-
-
 %>
 <!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/page_sections.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/search.asp"-->

@@ -55,13 +55,15 @@ sub login_form {
 %>
 
 <form method = post>
-  <input type = hidden name = destination value = "<%=$destination%>">
-  <table>
-    <tr><td>e-mail:</td><td><input type = text name = email value = "<%=$email%>" id = "email"></td></tr>
-    <tr><td>password:</td><td><input type = password name = password value = "<%=$password%>"></td></tr>
-    <tr><td>&nbsp;</td><td><input type = submit name = submit value = login></td></tr>
-    <tr><td>&nbsp;</td><td><a href = "http://<%=func::get_host()%>/register.asp">Register</a> if you haven't yet.
-  </table>
+<input type = hidden name = destination value = "<%=$destination%>">
+
+<p>E-Mail:</p>
+<p><input type = text name = email value = "<%=$email%>" id = "email"></p>
+<p>Password:</p>
+<p><input type = password name = password value = "<%=$password%>"></p>
+<p><input type = submit name = submit value = Login></p>
+<p><a href = "http://<%=func::get_host()%>/register.asp">Register</a> if you haven't yet.</p>
+
 </form>
 
 <script language="JavaScript">
@@ -136,15 +138,15 @@ sub do_login {
 				}
 
 			} else {
-				$message = "<h2><font color = red>Invalid e-mail or password.</font></h2>";
+				$message = "Invalid e-mail or password.";
 			}
 			$sth->finish();
 		} else {
-			$message = "<h2><font color = red>A database problem occured.  Please try again later $dbh.</font></h2>";
+			$message = "A database problem occured. Please try again later $dbh.";
 		}
 
 	} else {
-		$message = '<h2><font color = red>Invalid e-mail or password.</font></h2>';
+		$message = 'Invalid e-mail or password.';
 	}
 
 	if (!$message) { # only redirect to destination if there is no message.
@@ -160,4 +162,6 @@ sub do_login {
 %>
 
 <!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/page_sections.asp"-->
 

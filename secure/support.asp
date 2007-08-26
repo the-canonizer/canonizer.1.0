@@ -36,7 +36,7 @@ if ($Request->Form('topic_num')) {
 }
 
 if (!$topic_num) { # this is the only required one.
-	$error_message .= "No topic specified to support<br>\n";
+	$error_message .= "No topic specified to support\n";
 }
 
 my $statement_num = 1; # 1 is the default ageement statement;
@@ -73,9 +73,7 @@ if ($topic->{error_message}) {
 my statement $statement = new_tree statement ($dbh, $topic_num, $statement_num);
 if ($statement->{error_message}) {
 	%>
-	<br>
-	<h1><font color=red><%=$statement->{error_message}%></font></h1>
-	<br>
+	<%=$statement->{error_message}%>
 	<%
 	return();
 }
@@ -87,7 +85,7 @@ if ($error_message) {
 	# does not return if successful (rederects to topic.asp for original statement.)
 	save_support();
 } else {
-	display_page('Add Support<br>Topic: <font size=6>' . $topic->{name} . '</font><br>', [\&identity, \&search, \&main_ctl], [\&support_form]);
+	display_page('Add Support Topic: ' . $topic->{name}, [\&identity, \&search, \&main_ctl], [\&support_form]);
 }
 
 
@@ -103,7 +101,7 @@ sub delete_support {
 	my %dummy;
 	if ($dbh->do($selstmt) eq '0E0') {
 		%>
-		<h1><font color=red>Failed to delete support <%=$delete_id%>.</h1>
+		Failed to delete support <%=$delete_id%>.
 		<%
 	} else {
 		func::send_email("Deleting support", "Deleting support id $delete_id with nick_clause $nick_clause.\nfrom support.asp.\n");
@@ -137,7 +135,7 @@ sub save_support {
 					# and we need this support record below.
 				} else {
 					%>
-					<h1>Can't find delegate <%=$delegate_id%> on this topic.<h1>
+					Can't find delegate <%=$delegate_id%> on this topic.
 					<%
 					return();
 				}
@@ -208,11 +206,11 @@ sub save_support {
 	$Response->End();
 
 	%>
-	<h1>Submitted</h1>
-	topic: <%=$topic_num%><br>
-	nick id: <%=$nick_name_id%><br>
-	New statement num: <%=$statement_num%><br>
-	selstmt: <%=$selstmt%><br>
+	Submitted
+	topic: <%=$topic_num%>
+	nick id: <%=$nick_name_id%>
+	New statement num: <%=$statement_num%>
+	selstmt: <%=$selstmt%>
 	Adding support for: 
 	<%
 	my $support_order;
@@ -246,9 +244,7 @@ sub support_form {
 			$old_support_array_ref = $statement->{support_hash}->{$old_support->{support_order}};
 			if (! $old_support_array_ref) {
 				%>
-				<br>
-				<h1><font color=red>support <%=$nick_name_id%> is delegated to non existant root support id: <%=$old_support->{support_order}%></font></h1>
-				<br>
+				support <%=$nick_name_id%> is delegated to non existant root support id: <%=$old_support->{support_order}%>
 				<%
 				return();
 			}
@@ -267,9 +263,7 @@ sub support_form {
 
 		if (! $new_support_array_ref) {
 			%>
-			<br>
-			<h1><font color=red>Attempting to delegate support to non existant supporter: <%=$delegate_id%>.</font></h1>
-			<br>
+			Attempting to delegate support to non existant supporter: <%=$delegate_id%>.
 			<%
 			return();
 		}
@@ -283,29 +277,25 @@ sub support_form {
 			if ($old_delegate_nick_name_id) {
 				my $old_delegate_name = $statement->{support_hash}->{$old_delegate_nick_name_id}->[0]->{nick_name};
 				%>
-				<p>Previously, you were delegating the following support from <%=$$old_delegate_name%>.</p>
+				Previously, you were delegating the following support from <%=$$old_delegate_name%>.
 				<%
 			} else {
 				%>
-				<p>Previously, you were directly supporting the folowing statement<%=$old_plural%>.</p>
+				Previously, you were directly supporting the folowing statement<%=$old_plural%>.
 				<%
 			}
 			%>
-			<center>
-			<table border=1>
+
 			<%
 			my $idx;
 			for ($idx = 0; $idx <= $#{$old_support_array_ref}; $idx++) {
 				%>
-				<tr><td><%=$idx%></td><td>
+				<%=$idx%>
 				<%=$statement->{statement_tree_hash}->{$old_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%>
-				</td></tr>
 				<%
 			}
 			%>
-			</table>
-			</center>
-			<br><br>
+
 			<%
 		}
 
@@ -316,24 +306,19 @@ sub support_form {
 		}
 
 		%>
-		<p>After committing this delegated support to <%=$delegate_name%> you will be supporting the below statement<%=$new_plural%>.  If <%=$delegate_name%> changes camps your support will follow as long as it is so delegated.
-		<center>
-		<form method=post>
+		After committing this delegated support to <%=$delegate_name%> you will be supporting the below statement<%=$new_plural%>.  If <%=$delegate_name%> changes camps your support will follow as long as it is so delegated.
+                <form method=post>
 		<input type=hidden name=support_0 value=<%=$statement_num%>
 		<input type=hidden name=delegate_id value=<%=$delegate_id%>>
-		<table border=1>
 		<%
 		my $idx;
 		for ($idx = 0; $idx <= $#{$new_support_array_ref}; $idx++) {
 			%>
-			<tr><td><%=$idx%></td><td>
+			<%=$idx%>
 			<%=$statement->{statement_tree_hash}->{$new_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%>
-			</td></tr>
 			<%
 		}
 		%>
-		</table>
-		<br><br>
 		Support Nick Name: 
 		<select name=nick_name>
 		<%
@@ -351,10 +336,8 @@ sub support_form {
 		}
 		%>
 		</select>
-		<br><br>
 		<input type=submit name=submit value="Commit Delegated Support">
 		</form>
-		</center>
 		<%
 		# this is where we display both lists!! ???? (after we check for delegate support to deref);
 
@@ -378,15 +361,15 @@ sub support_form {
 print(STDERR 'supporting statement: ' . $old_support->{statement_num} . ".\n");
 				if ($statement->{statement_num} == $old_support->{statement_num}) { # modify support
 					$replacement_idx = $support_order_idx++;
-					$replacement_hdr = '<font color=green>Modify Support</font><br>';
+					$replacement_hdr = 'Modify Support';
 				} else {
 					$old_statement = $statement->{statement_tree_hash}->{$old_support->{statement_num}};
 					if ($statement->is_related($old_statement->{statement_num})) {
 						if ($replacement_idx == -1) {
 							$replacement_idx = $support_order_idx++;
-							$replacement_str = '<br><br><font color=green>This new support will replace the existing support for the following related statements:</font>';
+							$replacement_str = 'This new support will replace the existing support for the following related statements:';
 						}
-						$replacement_str .= '<br>' . $old_statement->make_statement_path(1);
+						$replacement_str .= $old_statement->make_statement_path(1);
 					} else {
 						$Response->Write(make_js_support_object_str($support_order_idx++, $old_statement, '', ''));
 					}
@@ -479,13 +462,77 @@ print(STDERR 'supporting statement: ' . $old_support->{statement_num} . ".\n");
 			render_str += "</form>\n";
 			render_str += "</center>\n";
 			// alert(render_str);
-			document.all.support_block.innerHTML = render_str;
+			document.getElementById("support_block").innerHTML = render_str;
+		}
+
+		function render_support_karolis_version() {
+			var render_str = "";
+			render_str += "\n";
+			render_str += "\n";
+			render_str += "<form method=post>\n";
+			render_str += "  <input type=hidden name=topic_num value=<%=$topic_num%>>\n";
+			render_str += "  <input type=hidden name=statement_num value=<%=$statement_num%>>\n";
+			render_str += "\n";
+			var idx;
+
+			for (idx = 0; idx < support_array.length; idx++) {
+				if (! support_array[idx]) {
+					alert('in: ' + idx);
+					// shouldn't happen, but bad data (i.e. related support.) has happened.
+					continue;
+				}
+
+				support_object = support_array[idx];
+				render_str += "\n";
+				render_str += "" + idx + "\n";
+				render_str += "" + support_object.statement_info + "\n";
+				if (support_array.length > 1) { // no move buttons if only supporting one.
+					if (idx < (support_array.length - 1)) {
+						render_str += "  <button onclick=move_down(" + idx + ")>v</button>";
+					} else {
+						render_str += "  ";
+					}
+					if (idx > 0) {
+						render_str += "  <button onclick=move_up(" + idx + ")>^</button>\n"; // the move buttons go here.
+					} else {
+						render_str += "  \n"; // the move buttons go here.
+					}
+				}
+				render_str += "Delete <input type=checkbox name=delete_" + idx + ">\n";
+				render_str += "\n";
+				render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.statement_num + ">\n";
+
+			}
+			render_str += "  \n";
+			render_str += "  \n";
+			render_str += "  Support Nick Name: ";
+			render_str += "  <select name=nick_name>";
+			<%
+			my $id;
+			foreach $id (sort {$a <=> $b} (keys %nick_names)) {
+				if ($id == -1) { # some day propegate the previous support nick selection????
+					%>
+					render_str += "<option value=<%=$id%> selected><%=$nick_names{$id}%>\n";
+					<%
+				} else {
+					%>
+					render_str += "<option value=<%=$id%>><%=$nick_names{$id}%>\n";
+					<%
+				}
+			}
+			%>
+			render_str += "</select>\n";
+			render_str += "<input type=submit name=submit value=\"Commit Direct Support\">\n";
+			render_str += "</form>\n";
+			render_str += "\n";
+			alert(render_str);
+
+			document.getElementById("support_block").innerHTML = render_str;
 		}
 
 		</script>
 
-		<span id = 'support_block'>
-		</span>
+		<span id = 'support_block'></span>
 
 		<script language=javascript>
 		render_support();
@@ -520,6 +567,9 @@ sub make_js_support_object_str {
 %>
 
 <!--#include file = "includes/default/page.asp"-->
+
+<!--#include file = "includes/page_sections.asp"-->
+
 <!--#include file = "includes/must_login.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
