@@ -1,0 +1,748 @@
+@charset "utf-8";
+
+/* GLOBAL-------------------------------------------------------------------- */
+
+*
+{
+	zoom: 1; /* Fix Internet Explorer Bug */
+	font: 98% "Arial";
+	
+}
+
+body
+{
+	background: #FFFFFF;
+	color: #000000;
+	text-align: center;
+	padding:0;
+	margin: 0;
+}
+
+#container
+{ 
+	width: 100%;
+	background: #FFFFFF;
+	text-align: left;
+	padding:0;
+	margin: 0;
+}
+
+#logo
+{
+	background: url(../images/logo.png) no-repeat;
+	height: 97px;
+	width: 150px;
+	margin: 0 15px 20px 25px;
+
+}
+
+select
+{
+	width: 10em;
+}
+
+.error_message
+{
+	font-size: 90%;
+	color: red;
+}
+
+.required_field
+{
+	color: red;
+}
+
+/* PAGE SECTIONS------------------------------------------------------------- */
+
+#header
+{ 
+    padding: 15px 8px 15px 8px;
+    margin: 0 0 15px 0;
+	background: #ffffff;
+	border-bottom: 1px solid silver;
+}
+
+#footer
+{
+	padding: 15px 8px 15px 8px;
+	background: #ffffff;
+	text-align: right;
+	border-top: 1px solid silver;
+} 
+
+#main_content
+{ 
+	margin: 0 9em 0 14em;
+	padding: 0 15px 0 15px;
+	border-left: 1px solid silver;	
+	border-right: 1px solid silver;
+}
+
+#block_tools
+{
+	float: left;
+	width: 14em;
+	padding: 0px 0;
+	background: #FFFFFF;
+}
+
+#block_adverts
+{
+	float: right;
+	width: 9em;
+	padding: 0px 0px;
+	background: #FFFFFF;
+}
+
+/* PAGE SECTION ELEMENTS----------------------------------------------------- */
+
+#header h1
+{
+	font-size: 110%;
+	font-weight: bold;
+	padding:0;
+	margin: 0;
+}
+
+#header h1 a
+{
+ 	color: blue;
+	padding:0;
+	margin: 0;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#header h1 a:hover
+{
+ 	color: red;
+	padding:0;
+	margin: 0;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#footer h1
+{
+	font-size: 110%;
+	font-weight: bold;
+	padding:0;
+	margin: 0;
+}
+
+#footer h3
+{
+	font-size: 80%;
+	font-weight: normal;
+	padding:0;
+	margin: 0;
+}
+
+#block_adverts h1
+{
+	font-size: 100%;
+	color: #CC0000;
+	margin: 0 0 5px 15px;
+	font-weight: normal;
+}
+
+/* THE BLOCK ELEMENTS ;)----------------------------------------------------- */
+
+.main_ctl
+{
+	font-size: 100%;
+	color: #CC0000;
+	margin: 0 15px 20px 15px;
+	padding: 0;
+	font-weight: normal;
+	background: #ffffff url(../images/block_bg_1.png) bottom no-repeat right;
+	border-bottom: 1px solid #76993A;
+}
+
+.main_ctl h1
+{
+	font-size: 110%;
+	color: #76993A;
+	font-weight: bold;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border-bottom: 1px solid #76993A;
+}
+
+.main_ctl p
+{
+	font-size: 90%;
+	color: #000000;
+	font-weight: normal;
+	margin: 0;
+	padding: 0 0 5px 5px;
+}
+
+.main_ctl #selected
+{
+	font-size: 90%;
+	color: #105CB6;
+	font-weight: bold;
+	margin: 0;
+	padding: 0 0 5px 5px;	
+}
+
+.main_ctl p a
+{
+	color: #105CB6;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.main_ctl p a:hover
+{
+	color: #FF0000;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.identity
+{
+	font-size: 100%;
+	color: #CC0000;
+	margin: 0 15px 20px 15px;
+	padding: 0;
+	font-weight: normal;
+	background: #ffffff url(../images/block_bg_2.png) bottom no-repeat right;
+	border-bottom: 1px solid #6E458B;
+}
+
+.identity h1
+{
+	font-size: 110%;
+	color: #6E458B;
+	font-weight: bold;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border-bottom: 1px solid #6E458B;
+}
+
+.identity p
+{
+	font-size: 90%;
+	color: #000000;
+	font-weight: normal;
+	margin: 0;
+	padding: 0 0 5px 5px;
+}
+
+.identity #selected
+{
+	font-size: 90%;
+	color: #105CB6;
+	font-weight: bold;
+	margin: 0;
+	padding: 0 0 5px 5px;	
+}
+
+.identity p a
+{
+	color: #105CB6;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.identity p a:hover
+{
+	color: #FF0000;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.search
+{
+	font-size: 100%;
+	color: #CC0000;
+	margin: 0 15px 20px 15px;
+	padding: 0;
+	font-weight: normal;
+	background: #ffffff url(../images/block_bg_3.png) bottom no-repeat right;
+	border-bottom: 1px solid #F49519;
+}
+
+.search h1
+{
+	font-size: 110%;
+	color: #F49519;
+	font-weight: bold;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border-bottom: 1px solid #F49519;
+}
+
+.search p
+{
+	font-size: 90%;
+	color: #000000;
+	font-weight: normal;
+	margin: 0;
+	padding: 0 0 5px 5px;
+}
+
+.search #selected
+{
+	font-size: 90%;
+	color: #105CB6;
+	font-weight: bold;
+	margin: 0;
+	padding: 0 0 5px 5px;	
+}
+
+.search p a
+{
+	color: #105CB6;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.search p a:hover
+{
+	color: #FF0000;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.canonizer
+{
+	font-size: 100%;
+	color: #CC0000;
+	margin: 0 15px 20px 15px;
+	padding: 0;
+	font-weight: normal;
+	background: #ffffff url(../images/block_bg_4.png) bottom no-repeat right;
+	border-bottom: 1px solid #0051FF;
+}
+
+.canonizer h1
+{
+	font-size: 110%;
+	color: #0051FF;
+	font-weight: bold;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border-bottom: 1px solid #0051FF;
+}
+
+.canonizer p
+{
+	font-size: 90%;
+	color: #000000;
+	font-weight: normal;
+	margin: 0;
+	padding: 0 0 5px 5px;
+}
+
+.canonizer #selected
+{
+	font-size: 90%;
+	color: #105CB6;
+	font-weight: bold;
+	margin: 0;
+	padding: 0 0 5px 5px;	
+}
+
+.canonizer p a
+{
+	color: #105CB6;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.canonizer p a:hover
+{
+	color: #FF0000;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.as_of
+{
+	font-size: 100%;
+	color: #CC0000;
+	margin: 0 15px 20px 15px;
+	padding: 0;
+	font-weight: normal;
+	background: #ffffff url(../images/block_bg_5.png) bottom no-repeat right;
+	border-bottom: 1px solid #28A000;
+}
+
+.as_of h1
+{
+	font-size: 110%;
+	color: #28A000;
+	font-weight: bold;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border-bottom: 1px solid #28A000;
+}
+
+.as_of p
+{
+	font-size: 90%;
+	color: #000000;
+	font-weight: normal;
+	margin: 0;
+	padding: 0 0 5px 5px;
+}
+
+.as_of #selected
+{
+	font-size: 90%;
+	color: #105CB6;
+	font-weight: bold;
+	margin: 0;
+	padding: 0 0 5px 5px;	
+}
+
+.as_of p a
+{
+	color: #105CB6;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+.as_of p a:hover
+{
+	color: #FF0000;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* MAIN CONTENT ELEMETNS----------------------------------------------------- */
+
+.main_content_container
+{
+	font-size: 90%;
+}
+
+.main_content_container h1
+{
+	font-size: 120%;
+}
+
+.main_content_container a
+{
+	color: #0000FF;
+	text-decoration: none;
+}
+
+.main_content_container a:hover
+{
+	color: #FF0000;
+	text-decoration: none;
+}
+
+.main_content_container .section_container
+{
+	margin: 0 0 20px 0;
+	padding: 0 0 0 0;
+	background: #ffffff;
+	border-left: 1px solid silver;
+	border-right: 1px solid silver;
+	/*background: #ffffff url(../images/bg1.png) bottom no-repeat right;/*
+	/*conflicted with images in the statement*/
+}
+
+.main_content_container .section_container .header_1
+{       
+	border-top: 1px solid silver;	
+	border-bottom: 1px solid silver;
+	margin: 0 0 0 0;
+	padding: 10px 10px 10px 10px;
+ 	background: #F8F9DC; /*url(../images/header_1_bg.png) left no-repeat top;*/
+ 
+}
+
+.main_content_container .section_container .header_1 #title
+{
+	text-align: left;
+	margin: 0;
+	padding: 0;
+	font-size: 130%;
+	font-weight: bold;
+}
+
+
+.main_content_container .section_container .footer_1
+{
+	border-top: 1px solid silver;
+	border-bottom: 1px solid silver;
+	margin: 0 0 0 0;
+	padding: 10px 10px 10px 10px;  
+	background: #F8F9DC;
+	text-align: right;
+	
+}
+
+.main_content_container .section_container .footer_1 #buttons
+{
+	text-align: right;
+ 	font-size: 100%;
+        margin: 0;
+        padding: 0;
+}
+
+.main_content_container .section_container .footer_1 a
+{
+ 	font-size: 100%;
+        margin: 0;
+        padding: 0;
+}
+
+.main_content_container .section_container .content_1
+{
+	padding: 10px;
+	margin: 0 0 0 0;
+	background: #FFFFFF;
+}
+
+.main_content_container .section_container .content_1 p
+{
+	font-size: 100%;
+	line-height: 200%;
+	padding: 0 0 10px 0;
+	margin: 0; 
+}
+
+.main_content_container .section_container .content_1 a
+{
+	color: #0000FF;
+	text-decoration: none;
+}
+
+.main_content_container .section_container .content_1 a:hover
+{
+	color: #FF0000;
+	text-decoration: none;
+}
+
+.main_content_container .section_container .content_1 h2
+{
+	font-size: 120%;
+	line-height: 100%;
+	margin: 0 0 10px 0;
+	padding: 0;
+	font-weight: bold;
+}
+
+.main_content_container .section_container .content_1 h3
+{
+	font-size: 110%;
+	line-height: 100%;
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+}
+
+.main_content_container .section_container .content_1 .browse_list
+{
+	font-size: 100%;
+	padding: 10px 0 0 0;
+	margin: 0; 
+}
+
+/* MAIN CONTENT STATEMENT TREE----------------------------------------------- */
+
+.main_content_container .section_container .statement_tree
+{
+	font-size: 100%;
+	margin: 0 0 0 0;
+	padding: 10px;
+	background: #FFFFFF;
+}
+
+.main_content_container .section_container .statement_tree .top_branch
+{
+	font-size: 100%;
+	font-weight: bold;
+	color: #000099;
+	margin: 0 0 0 0;
+	padding-bottom: 5px;
+}
+
+.main_content_container .section_container .statement_tree .top_branch a
+{
+	font-size: 100%;
+	font-weight: bold;
+	color: #000099;
+}
+
+.main_content_container .section_container .statement_tree .branch
+{
+	font-size: 100%;
+	margin: 0 0 0 20px;
+	padding: 0;
+}
+
+.main_content_container .section_container .statement_tree .branch div
+{
+	padding-bottom: 5px;
+}
+
+.main_content_container .section_container .statement_tree #score
+{
+	color: #000000;
+}
+
+.main_content_container .section_container .statement_tree #statement
+{
+	color: green;
+	font-weight: bold;
+}
+
+.main_content_container .section_container .statement_tree a
+{
+	color: #0000FF;
+	text-decoration: none;
+}
+
+.main_content_container .section_container .statement_tree a:hover
+{
+	color: #FF0000;
+	text-decoration: none;
+}
+
+/* MAIN CONTENT SUPPORT TREE------------------------------------------------- */
+
+.main_content_container .section_container .support_tree
+{
+	list-style: none;	
+	font-size: 100%;
+	margin: 0 0 0 0;
+	padding: 0 10px 10px 10px;
+}
+
+.main_content_container .section_container .support_tree .branch
+{
+	list-style: none;
+	font-size: 100%;
+	margin: 0 0 0 20px;
+	padding: 0;
+}
+
+.main_content_container .section_container .support_tree #score
+{
+	color: #0000FF;
+}
+
+.main_content_container .section_container .support_tree #name
+{
+	font-weight: bold;
+}
+
+.main_content_container .section_container .support_tree a
+{
+	color: #0000FF;
+	text-decoration: none;
+}
+
+.main_content_container .section_container .support_tree a:hover
+{
+	color: #FF0000;
+	text-decoration: none;
+}
+
+/* TABLES ------------------------------------------------------------------- */
+
+.main_content_container table
+{
+	border-collapse: collapse;
+	margin: 0 0 10px 0;
+	padding: 0 0 0 0;
+}
+
+.identity_list
+{
+	padding: 0;
+	margin: 0;
+	border-collapse: collapse;	
+}
+
+.identity_list td
+{
+	border: 1px solid black;
+	padding: 5px;
+	margin: 0;
+}
+
+/* MANAGE TOPIC TABLES------------------------------------------------------- */
+
+.main_content_container .proposed_record td
+{
+	background: #FFFFCC;
+	margin: 0 0 0 0;
+	padding: 5px;
+	border: 2px solid black;
+}
+
+.main_content_container .active_record td
+{
+	background: #CCFFCC;
+	margin: 0 0 0 0;
+	padding: 5px;
+	border: 2px solid black;
+}
+
+.main_content_container .objected_record td
+{
+	background: #FFCCFF;
+	margin: 0 0 0 0;
+	padding: 5px;
+	border: 2px solid black;
+}
+
+.main_content_container .history_record td
+{
+	background: #CCCCFF;
+	margin: 0 0 0 0;
+	padding: 5px;
+	border: 2px solid black;
+}
+
+/* FORMS -------------------------------------------------------------------- */
+
+.general_form
+{
+}
+
+.general_form input
+{
+}
+
+.general_form select
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+.clear_floats
+{
+ 	clear: both;
+	line-height: 1px;
+	font-size: 1%;      
+}
