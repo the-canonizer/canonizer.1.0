@@ -12,22 +12,19 @@ function change_canonizer(new_canonizer) {
 }
 
 </script>
+	 
+	<div class="canonizer">
+	
+	<h1>Canonizer</h1>
 
-  <table border = 1 width = 180>
-    <tr>
-      <td>
-	Canonizer:<br>
-	<select name = canonizer onchange = javascript:change_canonizer(value)>
+	<p>Canonizer:</p>
+	<p><select name = canonizer onchange = javascript:change_canonizer(value)>
 	  <option>Blind Popularity</option>
-	  <option>MTA</option>
-	  <option>Atheist Popularity</option>
-	  <option>LDS</option>
-	  <option>Canonizer Canonizer</option>
-	</select>
-	(Not Yet Implemented)
-      </td>
-    </tr>
-  </table>
+	  <option>not implemented yet</option>
+	</select></p>
+	
+	</div>
+
 
 <%
 }

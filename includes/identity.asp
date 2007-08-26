@@ -112,33 +112,31 @@ NO_CID:		my $gid = $Session->{'gid'};
 
 %>
 
-  <table border = 1 width = 180>
-    <tr>
-      <td>
-	<%=$mode_prompt%> <b><%=$logged_in_as%></b><br>
+  	<div class="identity">
+  	
+	<h1>Identity</h1>
+
+	<p><%=$mode_prompt%> <%=$logged_in_as%></p>
 <%
 	if ($mode == 2) {
 %>
-		<a href = "<%=$logout_url%>">Logout</a><br>
-		<a href = "<%=$clear_url%>">Clear Browser</a>
+		<p><a href = "<%=$logout_url%>">Logout</a></p>
+		<p><a href = "<%=$clear_url%>">Clear Browser</a></p>
 <%
 	} elsif ($mode == 1) {
 %>
-		<a href = "<%=$login_url%>">Login</a><br>
-		<a href = "<%=$clear_url%>&clear=1">Clear Browser</a>
+		<p><a href = "<%=$login_url%>">Login</a>
+		<p><a href = "<%=$clear_url%>&clear=1">Clear Browser</a></p>
 <%
 	} else {
 %>
-		<a href = "<%=$login_url%>">Login</a><br>
-		<a href = "http://<%=&func::get_host()%>/register.asp">Register</a>
+		<p><a href = "<%=$login_url%>">Login</a>
+		<p><a href = "http://<%=&func::get_host()%>/register.asp">Register</a></p>
 <%
 	}
 %>
-	</center>
-      </td>
-    </tr>
 
-  </table>
+  	</div>
 
 <%
 

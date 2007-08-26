@@ -45,27 +45,18 @@ sub as_of {
         }
 </script>
 
-  <table border = 1 width = 180>
-  <form name=as_of_form><tr><td>
-  <table>
-    <tr>
-      <td colspan=2>
-	Moral state of the art:<br>
-      </td>
-    </tr>
-    <tr>
-	<td><input type=radio value=review name=as_of <%=$review_checked%> onclick=javascript:change_as_of('review/'+document.as_of_form.as_of_date.value)></td><td>include review</td>
-    </tr>
-    <tr>
-	<td><input type=radio value=default name=as_of <%=$default_checked%> onclick=javascript:change_as_of('default/'+document.as_of_form.as_of_date.value)></td><td>default</td>
-    </tr>
-    <tr>
-	<td><input type=radio value=as_of name=as_of <%=$as_of_checked%> onclick=javascript:change_as_of('as_of/'+document.as_of_form.as_of_date.value)></td><td>as of (yy/mm/dd):<br>
-		<input type=text name=as_of_date value='<%=$as_of_date_value%>' size=8 maxlength=8 onchange=javascript:change_as_of('as_of/'+document.as_of_form.as_of_date.value)></td>
-    </tr>
-  </table>
-  </td></tr></form>
-  </table>
+<div class="as_of">
+
+<h1>As Of</h1>
+
+<form name=as_of_form>
+<p><input type=radio value=review name=as_of <%=$review_checked%> onclick=javascript:change_as_of('review/'+document.as_of_form.as_of_date.value)>include review</p>
+<p><input type=radio value=default name=as_of <%=$default_checked%> onclick=javascript:change_as_of('default/'+document.as_of_form.as_of_date.value)>default</p>
+<p><input type=radio value=as_of name=as_of <%=$as_of_checked%> onclick=javascript:change_as_of('as_of/'+document.as_of_form.as_of_date.value)>as of (yy/mm/dd):</p>
+<p><input type=text name=as_of_date value='<%=$as_of_date_value%>' size=8 maxlength=8 onchange=javascript:change_as_of('as_of/'+document.as_of_form.as_of_date.value)></p>
+</form>
+
+</div>
 
 <%
 

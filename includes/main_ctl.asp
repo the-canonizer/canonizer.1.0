@@ -1,88 +1,82 @@
-
-
 <%
-
 sub main_ctl {
 
 	my $uri = $ENV{'REQUEST_URI'};
-
 %>
-
-  <table border = 1 width = 180>
-  <tr><td>
-    <table border = 0 width = 100%>
-
-	<%
+  	<div class="main_ctl">
+  	
+  	<h1>Navigation</h1>
+  	
+  	<%
 	if (($uri eq '/') || ($uri =~ 'index.asp')) {
 	    %>
-	    <tr><td bgcolor=white>Main (Top 10)</td></tr>
+	    <p id="selected">Main (Top 10)</p>
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href='http://<%=&func::get_host()%>/'>Main (Top 10)</a></td></tr>
+	    <p><a href='http://<%=&func::get_host()%>/'>Main (Top 10)</a></p>
 	    <%
 	}
 
 	if ($uri =~ '/secure/profile_') {
 	    %>
-	    <tr><td bgcolor=white>Personal Info</td></tr>
+	    <p id="selected">Personal Info</p>
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href='https://<%=&func::get_host()%>/secure/profile_prefs.asp'>Personal Info</a></td></tr>
+	    <p><a href='https://<%=&func::get_host()%>/secure/profile_prefs.asp'>Personal Info</a></p>
 	    <%
 	}
 
 
 	if ($uri =~ m|^/topic\.asp\?topic_num=10|) {
 	    %>
-	    <tr><td bgcolor=white>What Is The Canonizer</td></tr>
+	    <p id="selected">What Is The Canonizer</p>
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href = 'http://<%=&func::get_host()%>/topic.asp?topic_num=10'>What Is The Canonizer</a></td></tr>
+	   <p><a href = 'http://<%=&func::get_host()%>/topic.asp?topic_num=10'>What Is The Canonizer</a></p>
 	    <%
 	}
 
 	if ($uri =~ m|^/browse.asp|) {
 		%>
-		<tr><td bgcolor=white>Browse</td></tr>
+	<p id="selected">Browse</p>
 		<%
 	} else {
 		%>
-		<tr><td><a href = "http://<%=func::get_host()%>/browse.asp">Browse</a></td></tr>
+		<p><a href = "http://<%=func::get_host()%>/browse.asp">Browse</a>
 		<%
 	}
 
 	if ($uri =~ 'new_topic.asp') {
 	    %>
-	    <tr><td bgcolor=white>Create New Topic</td></tr>
+	    <p id="selected">Create New Topic</p>
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href='https://<%=&func::get_host()%>/secure/new_topic.asp'>Create New Topic</a></td></tr>
+	    <p><a href='https://<%=&func::get_host()%>/secure/new_topic.asp'>Create New Topic</a></p>
 	    <%
 	}
 
 	if ($uri =~ 'upload.asp') {
 	    %>
-	    <tr><td bgcolor=white>Upload File</td></tr>
+	    <p id="selected">Upload File</p>
 	    <%
 	} else {
 	    %>
-	    <tr><td><a href='https://<%=&func::get_host()%>/secure/upload.asp'>Upload File</a></td></tr>
+	    <p><a href='https://<%=&func::get_host()%>/secure/upload.asp'>Upload File</a></p>
 	    <%
 	}
+
+
+#	<a href="">Organizations</a>
+#	<a href="">Personal Pages</a>
+
+
 	%>
-
-	<tr><td><a href="">Organizations</a></td></tr>
-	<tr><td><a href="">Personal Pages</a></td></tr>
-
-    </table>
-  </td></tr>
-  </table>
-
-<%
+	</div>
+	<%
 
 }
 

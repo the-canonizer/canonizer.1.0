@@ -13,40 +13,38 @@ sub profile_tabs {
 
 	%>
 
-	<table cellpadding=10 border=1>
-	    <tr>
 		<%
 		if ($uri =~ 'profile_prefs.asp') {
 		    %>
-		    <th bgcolor = white><font face=arial>Preferences</font></td>
+			<p>Preferences</p>
 		    <%
 		} else {
 		    %>
-		    <th><font face=areal><a href = "profile_prefs.asp">Preferences</a></font></td>
+			<p>Preferences</p>
 		    <%
 		}
 
 		if ($uri =~ 'profile_id.asp') {
 		    %>
-		    <th bgcolor = white><font face=arial>Identity</font></td>
+			<p>Identity</p>
 		    <%
 		} else {
 		    %>
-		    <th><font face=arial><a href = "profile_id.asp">Identity</a></font></td>
+			<p>Identity</p>
 		    <%
 		}
 
 		if ($uri =~ 'profile_attrib.asp') {
 		    %>
-		    <th bgcolor = white><font face=arial>Attributes</font></th>
+			<p>Attributes</p>
 		    <%
 		} else {
 		    %>
-		    <th><font face-arial><a href = "profile_attrib.asp">Attributes</a></font></th>
+			<p>Attributes</p>
 		    <%
 		}
 		%>
-	</table>
+
 	<%
 }
 
