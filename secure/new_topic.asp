@@ -148,13 +148,13 @@ sub new_topic_form {
 <form method=post>
 <p>Name: <span class="required_field">*</span></p>
 <p>Maximum 25 characters.</p>
-<p><input type=string name=topic_name value="<%=$form_state{'topic_name'}%>" maxlength=25 size=25 /></p>
+<p><input type=string name=topic_name value="<%=func::escape_double($form_state{'topic_name'})%>" maxlength=25 size=25 /></p>
 
 <hr>
 
 <p>Namespace:</p>
 <p>Nothing for main default namespace. Path that begins, seperated by, and ends with '/'. Maximum 65 characters.</p>
-<p><input type=string name=namespace value="<%=$form_state{'namespace'}%>" maxlength=65 size=65></p>
+<p><input type=string name=namespace value="<%=func::escape_double($form_state{'namespace'})%>" maxlength=65 size=65></p>
 
 <hr>
 <%
@@ -165,13 +165,13 @@ sub new_topic_form {
 
 <p>Title: <span class="required_field">*</span></p>
 <p>Maximum 65 characters.</p>
-<p><input type=string name=one_line value="<%=$form_state{'one_line'}%>" maxlength=65 size=65></p>
+<p><input type=string name=one_line value="<%=func::escape_double($form_state{'one_line'})%>" maxlength=65 size=65></p>
 
 <hr>
 
 <p>Key Words:</p>
 <p>Maximum 65 characters, comma seperated.</p>
-<p><input type=string name=key_words value="<%=$form_state{'key_words'}%>" maxlength=65 size=65></p>
+<p><input type=string name=key_words value="<%=func::escape_double($form_state{'key_words'})%>" maxlength=65 size=65></p>
 
 <hr>
 
