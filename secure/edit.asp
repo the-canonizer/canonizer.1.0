@@ -342,7 +342,7 @@ if (!$statement_tree) {
 
 <p>Title: <span class="required_field">*</span></p>
 <p>Maximum 65 characters.</p>
-<p><input type=string name=one_line value="<%=$record->{'one_line'}%>" maxlength=65 size=65></p>
+<p><input type=string name=one_line value="<%=&func::escape_double($record->{'one_line'})%>" maxlength=65 size=65></p>
 
 <hr>
 
