@@ -33,7 +33,7 @@ if (!$Session->{'logged_in'}) {
 	$Response->End();
 }
 
-local $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+local $dbh = func::dbh_connect(1) || die "unable to connect to database";
 
 local $error_message = '';
 
@@ -71,7 +71,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
 		$Response->End();
 	}
-	$record->{value} = &func::hex_decode($record->{value});
+	$record->{value} = func::hex_decode($record->{value});
 } elsif ($Request->Form('submit_edit')) {
 
 	$record = new_form $class ($Request);
@@ -80,11 +80,11 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 		$error_message = $record->{error_message};
 	} else {
 		if ($Request->Form('submit_edit') eq 'Commit Text') { # from topic preview page.
-			$record->{value} = &func::hex_decode($record->{value});
+			$record->{value} = func::hex_decode($record->{value});
 		}
 		$record->save($dbh);
 		my $any_record = $record;
-		my $url = 'http://' . &func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
+		my $url = 'http://' . func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
 
 		if ($class eq 'statement' || $class eq 'text') {
 			$url .= ('&statement_num=' . $any_record->{'statement_num'});
@@ -149,7 +149,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 	}
 }
 
-local %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
+local %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
 
 if ($nick_names{'error_message'}) {
 	$error_message = $nick_names{'error_message'};
@@ -205,10 +205,10 @@ sub display_topic_form {
 
 <p>Topic Name: <span class="required_field">*</span></p>
 <p>Maximum 25 characters.</p>
-<p><input type=string name=name value="<%=$record->{name}%>" maxlength=25 size=25></p>
+<p><input type=string name=name value="<%=func::escape_double($record->{name})%>" maxlength=25 size=25></p>
 <p>Namespace:</p>
 <p>Nothing for main default namespace. Begins and Ends with '/'. Maximum 65 characters.</p>
-<p><input type=string name=namespace value="<%=$record->{namespace}%>" maxlength=65 size=65></p>
+<p><input type=string name=namespace value="<%=func::escape_double($record->{namespace})%>" maxlength=65 size=65></p>
 
 <%
 # AKA: Comma separated - symbolic link created for each one.
@@ -217,7 +217,7 @@ sub display_topic_form {
 
 <p>Note: <span class="required_field">*</span></p>
 <p>Reason for submission. Maximum 65 characters.</p>
-<p><input type=string name=note value="<%=$record->{note}%>" maxlength=65 size=65></p>
+<p><input type=string name=note value="<%=func::escape_double($record->{note})%>" maxlength=65 size=65></p>
 <p>Attribution Nick Name:</p>
 
 	<p><select name="submitter">
@@ -336,19 +336,19 @@ if (!$statement_tree) {
 
 <p>Statement Name: <span class="required_field">*</span></p>
 <p>Maximum 25 characters.</p>
-<p><input type=string name=name value="<%=$record->{'name'}%>" maxlength=25 size=25 <%=$agreement_disable_str%>></p>
+<p><input type=string name=name value="<%=func::escape_double($record->{'name'})%>" maxlength=25 size=25 <%=$agreement_disable_str%>></p>
 
 <hr>
 
 <p>Title: <span class="required_field">*</span></p>
 <p>Maximum 65 characters.</p>
-<p><input type=string name=one_line value="<%=&func::escape_double($record->{'one_line'})%>" maxlength=65 size=65></p>
+<p><input type=string name=one_line value="<%=func::escape_double($record->{'one_line'})%>" maxlength=65 size=65></p>
 
 <hr>
 
 <p>Key Words:</p>
 <p>Maximum 65 characters, comma seperated.</p>
-<p><input type=string name=key_words value="<%=$record->{'key_words'}%>" maxlength=65 size=65></p>
+<p><input type=string name=key_words value="<%=func::escape_double($record->{'key_words'})%>" maxlength=65 size=65></p>
 
 <%
 if ($statement_tree) {
@@ -367,7 +367,7 @@ if ($statement_tree) {
 
 <p>Note: <span class="required_field">*</span></p>
 <p>Reason for submission. Maximum 65 characters.</p>
-<p><input type=string name=note value="<%=$record->{note}%>" maxlength=65 size=65></p>
+<p><input type=string name=note value="<%=escape_double($record->{note})%>" maxlength=65 size=65></p>
 
 <hr>
 
@@ -442,8 +442,8 @@ sub display_text_form {
 			alert("Must have a note.");
 			return false;
 		}
-		document.edit_text.action = 'https://<%=&func::get_host()%>/topic.asp';
-		// document.edit_text.action = 'https://<%=&func::get_host()%>/env.asp'; // for testing.
+		document.edit_text.action = 'https://<%=func::get_host()%>/topic.asp';
+		// document.edit_text.action = 'https://<%=func::get_host()%>/env.asp'; // for testing.
 		return true;
 	}
 	</script>
@@ -476,7 +476,7 @@ sub display_text_form {
 
 	<p>Edit Note: <span class="required_field">*</span></p>
 	<p>Reason for submission. Maximum 65 characters.</p>
-	<p><input type=string name=note value="<%=$record->{'note'}%>" maxlength=65 size=65></p>
+	<p><input type=string name=note value="<%=func::escape_double($record->{'note'})%>" maxlength=65 size=65></p>
 
 	<hr>
 
