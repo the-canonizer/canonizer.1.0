@@ -361,13 +361,13 @@ if ($statement_tree) {
 	</select></p>
 <%
 }
-%>
+	%>
 
 <hr>
 
 <p>Note: <span class="required_field">*</span></p>
 <p>Reason for submission. Maximum 65 characters.</p>
-<p><input type=string name=note value="<%=escape_double($record->{note})%>" maxlength=65 size=65></p>
+<p><input type=string name=note value="<%=func::escape_double($record->{note})%>" maxlength=65 size=65></p>
 
 <hr>
 
