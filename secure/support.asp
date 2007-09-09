@@ -367,9 +367,9 @@ print(STDERR 'supporting statement: ' . $old_support->{statement_num} . ".\n");
 					if ($statement->is_related($old_statement->{statement_num})) {
 						if ($replacement_idx == -1) {
 							$replacement_idx = $support_order_idx++;
-							$replacement_str = 'This new support will replace the existing support for the following related statements:';
+							$replacement_str = '<br>This new support will replace the existing support for the following related statements:';
 						}
-						$replacement_str .= $old_statement->make_statement_path(1);
+						$replacement_str .= '<br>' . $old_statement->make_statement_path(1);
 					} else {
 						$Response->Write(make_js_support_object_str($support_order_idx++, $old_statement, '', ''));
 					}
