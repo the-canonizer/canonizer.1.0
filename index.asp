@@ -21,12 +21,12 @@ sub top_10 {
 	if ($as_of_mode eq 'review') {
 		# no as_of_clause;
 	} elsif ($as_of_mode eq 'as_of') {
-		$as_of_clause = 'where go_live_time < ' . &func::parse_as_of_date($as_of_date);
+		$as_of_clause = 'and go_live_time < ' . &func::parse_as_of_date($as_of_date);
 	} else {
-		$as_of_clause = 'where go_live_time < ' . time;
+		$as_of_clause = 'and go_live_time < ' . time;
 	}
 
-	my $selstmt = "select topic_num, name from topic $as_of_clause group by topic_num";
+	my $selstmt = "select topic_num, name from topic where objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
 	$sth->execute() || die "Failed to execute $selstmt";
