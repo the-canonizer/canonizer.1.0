@@ -224,6 +224,10 @@ sub save_support {
 
 sub support_form {
 
+	%>
+	<div class="main_content_container">
+	<%
+
 	my $nick_name_id;
 	my $old_support_array_ref = undef;
 	foreach $nick_name_id (keys %nick_names) {
@@ -277,7 +281,7 @@ sub support_form {
 			if ($old_delegate_nick_name_id) {
 				my $old_delegate_name = $statement->{support_hash}->{$old_delegate_nick_name_id}->[0]->{nick_name};
 				%>
-				Previously, you were delegating the following support from <%=$$old_delegate_name%>.
+				Previously, you were delegating the following support from <%=$old_delegate_name%>.
 				<%
 			} else {
 				%>
@@ -285,17 +289,22 @@ sub support_form {
 				<%
 			}
 			%>
-
+			<br>
+			<br>
+			<center>
+			<table class=support_table>
 			<%
 			my $idx;
 			for ($idx = 0; $idx <= $#{$old_support_array_ref}; $idx++) {
 				%>
-				<%=$idx%>
-				<%=$statement->{statement_tree_hash}->{$old_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%>
+				<tr><td><%=$idx%></td>
+				<td><%=$statement->{statement_tree_hash}->{$old_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%></td></tr>
 				<%
 			}
 			%>
-
+			</table>
+			</center>
+			<br>
 			<%
 		}
 
@@ -308,17 +317,23 @@ sub support_form {
 		%>
 		After committing this delegated support to <%=$delegate_name%> you will be supporting the below statement<%=$new_plural%>.  If <%=$delegate_name%> changes camps your support will follow as long as it is so delegated.
                 <form method=post>
-		<input type=hidden name=support_0 value=<%=$statement_num%>
+		<input type=hidden name=support_0 value=<%=$statement_num%>>
 		<input type=hidden name=delegate_id value=<%=$delegate_id%>>
+		<br>
+		<center>
+		<table class=support_table>
 		<%
 		my $idx;
 		for ($idx = 0; $idx <= $#{$new_support_array_ref}; $idx++) {
 			%>
-			<%=$idx%>
-			<%=$statement->{statement_tree_hash}->{$new_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%>
+			<tr><td><%=$idx%></td>
+			<td><%=$statement->{statement_tree_hash}->{$new_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%></td></tr>
 			<%
 		}
 		%>
+		</table>
+		</center>
+		<br>
 		Support Nick Name: 
 		<select name=nick_name>
 		<%
@@ -336,6 +351,8 @@ sub support_form {
 		}
 		%>
 		</select>
+		<br>
+		<br>
 		<input type=submit name=submit value="Commit Delegated Support">
 		</form>
 		<%
@@ -408,7 +425,8 @@ print(STDERR 'supporting statement: ' . $old_support->{statement_num} . ".\n");
 			render_str += "<form method=post>\n";
 			render_str += "  <input type=hidden name=topic_num value=<%=$topic_num%>>\n";
 			render_str += "  <input type=hidden name=statement_num value=<%=$statement_num%>>\n";
-			render_str += "  <table border=1>\n";
+			render_str += "  <table class=support_table>\n";
+
 			var idx;
 
 			for (idx = 0; idx < support_array.length; idx++) {
@@ -538,6 +556,7 @@ print(STDERR 'supporting statement: ' . $old_support->{statement_num} . ".\n");
 		render_support();
 		</script>
 
+		</div>
 		<%
 	}
 }
