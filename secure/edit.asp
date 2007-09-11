@@ -264,7 +264,8 @@ sub display_topic_form {
 sub print_parent_option {
 	my statement $statement_tree = $_[0];
 	my $selected                 = $_[1];
-	my $indent	             = $_[2];
+	my $current_statement_num    = $_[2];
+	my $indent	             = $_[3];
 
 	my $num = $statement_tree->{statement_num};
 
@@ -272,7 +273,7 @@ sub print_parent_option {
 		%>
 		<option value=<%=$num%> selected><%=$indent . $statement_tree->{name}%></option>
 		<%
-	} else {
+	} elsif ($current_statement_num != $num) { # can't set self as parent.
 		%>
 		<option value=<%=$num%>><%=$indent . $statement_tree->{name}%></option>
 		<%
@@ -280,10 +281,7 @@ sub print_parent_option {
 
 	my statement $child;
 	foreach $child (@{$statement_tree->{children}}) {
-
-print(STDERR "$indent $child->{name}, id: $child->{record_id}.\n"); # ????
-
-		&print_parent_option($child, $selected, $indent);
+		&print_parent_option($child, $selected, $current_statement_num, $indent);
 	}
 }
 
@@ -356,7 +354,7 @@ if ($statement_tree) {
 	Parent:
 	<p><select name="parent_statement_num">
 	<%
-	&print_parent_option($statement_tree, $record->{'parent_statement_num'}, '');
+	&print_parent_option($statement_tree, $record->{'parent_statement_num'}, $record->{statement_num}, '');
 	%>
 	</select></p>
 <%
