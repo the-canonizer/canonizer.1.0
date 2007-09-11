@@ -375,7 +375,6 @@ sub support_form {
 		if ($old_support_array_ref) {
 			my statement $old_statement;
 			foreach $old_support (@{$old_support_array_ref}) {
-print(STDERR 'supporting statement: ' . $old_support->{statement_num} . ".\n");
 				if ($statement->{statement_num} == $old_support->{statement_num}) { # modify support
 					$replacement_idx = $support_order_idx++;
 					$replacement_hdr = 'Modify Support';
