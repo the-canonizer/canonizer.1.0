@@ -265,10 +265,6 @@ if ($topic_data->{'short_text'}) {
  
 			<%
 		}%>
-		
-		
-		
-     
      </span>
      </div>
 		
@@ -326,7 +322,6 @@ if ($topic_data->{'short_text'}) {
 			<%
 		}
 		%>
-		
 
 		</span></div></div><%
 	}
@@ -368,8 +363,14 @@ if ($topic_data->{'short_text'}) {
 		%>
 		<a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add New Position Statement Under "<%=$topic_data->{'statement'}->{name}%>" Statement</a>
 		<% } %>
-     
-     
+
+<p>Note: This section is like the Table of Contents for this topic.
+It has links to the agreement statement always on the top, and all
+other sub statement in a hierarchical order, along with how much
+support each statement has, sorted according to your current
+Canonizer.  The green one, that is not the link, is the POV statement
+you are currently viewing.</p>
+
      </span>
      </div>
 
@@ -476,7 +477,7 @@ down the structure, and so on as they see fit.</p>
 
 <div class="content_1">
 <p>Name: <%=$topic_data->{'statement'}->{name}%> </p>
-<p>One Line: <%=$topic_data->{'statement'}->{one_line}%></p>
+<p>Title: <%=$topic_data->{'statement'}->{one_line}%></p>
 <p>Key Words: <%=$topic_data->{'statement'}->{key_words}%></p>
  </div>
 
