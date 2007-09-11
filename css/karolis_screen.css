@@ -36,9 +36,9 @@ body
 
 }
 
-select
+select.bar /* we only want to restrict select boxes on the side bar? */
 {
-	width: 10em;
+	width: 12em;
 }
 
 .error_message
@@ -688,6 +688,16 @@ select
 	border: 1px solid black;
 	padding: 5px;
 	margin: 0;
+}
+
+/* SUPPORT TABLES ----------------------------------------------------------- */
+
+.main_content_container .support_table td
+{
+	background: #FFFFFF;
+	margin: 0 0 0 0;
+	padding: 5px;
+	border: 1px solid black;
 }
 
 /* MANAGE TOPIC TABLES------------------------------------------------------- */
