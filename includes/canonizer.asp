@@ -18,7 +18,7 @@ function change_canonizer(new_canonizer) {
 	<h1>Canonizer</h1>
 
 	<p>Canonizer:</p>
-	<p><select name = canonizer onchange = javascript:change_canonizer(value)>
+	<p><select class=bar name = canonizer onchange = javascript:change_canonizer(value)>
 	  <option>Blind Popularity</option>
 	  <option>not implemented yet</option>
 	</select></p>
