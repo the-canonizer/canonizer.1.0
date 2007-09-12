@@ -39,7 +39,7 @@ sub top_10 {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Some information</span>
+     <span id="title">Canonizer News</span>
 
 </div>
 
