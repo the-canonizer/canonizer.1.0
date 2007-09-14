@@ -26,7 +26,7 @@ sub top_10 {
 		$as_of_clause = 'and go_live_time < ' . time;
 	}
 
-	my $selstmt = "select topic_num, name from topic where objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)";
+	my $selstmt = "select topic_num, topic_name from topic where objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
 	$sth->execute() || die "Failed to execute $selstmt";
@@ -135,7 +135,7 @@ sub display_statement_tree {
 
 %>
 
-<a href="http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$child->{topic_num}%>&statement_num=<%=$child->{statement_num}%>"><%=$child->{name}%> (<%=$child->{one_line}%>)</a>
+<a href="http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$child->{topic_num}%>&statement_num=<%=$child->{statement_num}%>"><%=$child->{statement_name}%> (<%=$child->{title}%>)</a>
 
 <%
 			&display_statement_tree($child);
