@@ -56,10 +56,10 @@ if ($topic_data->{'error_message'}) {
 	if ($Request->Form('submit_edit')) {		# preview mode
 
 		&display_page('Topic: ' . 
-		$topic_data->{'topic'}->{name} . ' - Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&search, \&main_ctl], [\&present_topic]);
+		$topic_data->{'topic'}->{topic_name} . ' - Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&search, \&main_ctl], [\&present_topic]);
 	} else {					# normal mode
 		&display_page('Topic: ' . 
-		$topic_data->{'topic'}->{name} . ' - Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
+		$topic_data->{'topic'}->{topic_name} . ' - Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
 	}
 }
 
@@ -223,7 +223,7 @@ sub present_topic {
                         <div class="section_container">
 
 			<div class="header_1">
-     <span id="title">Short Statement: <%=$topic_data->{'topic'}->{name}%> / <%=$topic_data->{'statement'}->{name}%></span>
+     <span id="title">Short Statement: <%=$topic_data->{'topic'}->{topic_name}%> / <%=$topic_data->{'statement'}->{statement_name}%></span>
  </div>
  
 
@@ -281,7 +281,7 @@ if ($topic_data->{'short_text'}) {
 	           			%>
 			                       <div class="section_container">
 						<div class="header_1">
-     <span id="title">Long Statement: <%=$topic_data->{'topic'}->{name}%> / <%=$topic_data->{'statement'}->{name}%></span>
+     <span id="title">Long Statement: <%=$topic_data->{'topic'}->{topic_name}%> / <%=$topic_data->{'statement'}->{statement_name}%></span>
      </div>
      
        	<%
@@ -348,7 +348,7 @@ if ($topic_data->{'short_text'}) {
 	
 <div class="statement_tree" id="statement_tree">
 	<%
-	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{name}, $topic_num, 1)); # 1 -> no_active_link
+	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{topic_name}, $topic_num, 1)); # 1 -> no_active_link
 
 	my $score = func::c_num_format($topic_data->{'statement'}->{score});
 
@@ -361,7 +361,7 @@ if ($topic_data->{'short_text'}) {
           	   	        <%
 		if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add New Position Statement Under "<%=$topic_data->{'statement'}->{name}%>" Statement</a>
+		<a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add New Position Statement Under "<%=$topic_data->{'statement'}->{statement_name}%>" Statement</a>
 		<% } %>
 
 <p>Note: This section is like the Table of Contents for this topic.
@@ -379,7 +379,7 @@ you are currently viewing.</p>
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Support Tree for "<%=$topic_data->{'statement'}->{name}%>" Statement</span>
+     <span id="title">Support Tree for "<%=$topic_data->{'statement'}->{statement_name}%>" Statement</span>
 
 </div>
 	
@@ -443,7 +443,7 @@ down the structure, and so on as they see fit.</p>
     
 </div>
  <div class="content_1">
-<p>Name: <%=$topic_data->{'topic'}->{name}%></p>
+<p>Name: <%=$topic_data->{'topic'}->{topic_name}%></p>
 <p>Name Space: <%=$topic_data->{'topic'}->{namespace}%></p>
 
     </div>
@@ -476,8 +476,8 @@ down the structure, and so on as they see fit.</p>
 </div>
 
 <div class="content_1">
-<p>Name: <%=$topic_data->{'statement'}->{name}%> </p>
-<p>Title: <%=$topic_data->{'statement'}->{one_line}%></p>
+<p>Name: <%=$topic_data->{'statement'}->{statement_name}%> </p>
+<p>Title: <%=$topic_data->{'statement'}->{title}%></p>
 <p>Key Words: <%=$topic_data->{'statement'}->{key_words}%></p>
  </div>
 
