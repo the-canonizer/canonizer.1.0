@@ -108,7 +108,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 	}
 	$record->{proposed} = 1;
 	$record->{note} = ''; # we don't want to copy the old note.
-	$subtitle = "Propose $class Modification";
+	$subtitle = $record->get_edit_ident($dbh, $record->{topic_num}, $record->{statement_num});
 
 } else { # create a first version of a managed record (not a topic)
 
@@ -416,7 +416,7 @@ sub display_text_form {
 
 	my $submit_value = 'Create Text';
 	if ($record->{proposed}) {
-		$submit_value = 'Propose Statement Modification';
+		$submit_value = 'Propose Text Modification';
 	}
 
 	my $agreement_disable_str = '';
