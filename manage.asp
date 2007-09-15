@@ -42,15 +42,15 @@ my $history = history_class->new($dbh, $class, $args);
 
 if ($history->{error_message}) {
 	$error_message = $history->{error_message};
-	&display_page("Manage " . $history->{ident_str}, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page("Manage " . $history->{manage_ident}, [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 } elsif ($history->{active} == 0) {
 	$error_message = "Unknown Topic Number: " . $args->{'topic_num'};
-	&display_page("Manage " . $history->{ident_str}, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page("Manage " . $history->{manage_ident}, [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
-display_page('Manage ' . $history->{ident_str}, [\&identity, \&search, \&main_ctl], [\&manage_record]);
+display_page('Manage ' . $history->{manage_ident}, [\&identity, \&search, \&main_ctl], [\&manage_record]);
 
 
 
