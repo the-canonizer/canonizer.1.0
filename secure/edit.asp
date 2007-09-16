@@ -351,6 +351,7 @@ if (!$statement_tree) {
 <%
 if ($statement_tree) {
 	%>
+	<hr>
 	Parent:
 	<p><select name="parent_statement_num">
 	<%
