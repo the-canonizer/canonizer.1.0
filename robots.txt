@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /manage.asp
+Disallow: /secure/
+Disallow: /images/
+Disallow: /includes/
