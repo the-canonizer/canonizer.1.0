@@ -22,6 +22,13 @@ sub as_of {
 
  	my $url = 'http://' . &func::get_host() . '/change_as_of.asp?destination=' . $protocol . '://' . &func::get_host() . $ENV{'SCRIPT_NAME'} . $qs . 'as_of=';
 
+	if ($Request->QueryString('as_of_mode')) {
+		$Session->{'as_of_mode'} = $Request->QueryString('as_of_mode');
+	}
+	if ($Request->QueryString('as_of_date')) {
+		$Session->{'as_of_date'} = $Request->QueryString('as_of_date');
+	}
+
 	my $review_checked = '';
 	my $default_checked = '';
 	my $as_of_checked = '';
