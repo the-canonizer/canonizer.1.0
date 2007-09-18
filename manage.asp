@@ -73,6 +73,22 @@ sub manage_record {
 	<div class="main_content_container">
 
 	<p><a href="<%=$topic_url%>">Return to topic page</a></p>
+
+<p>This record management page shows the history of this record with
+the latest version on top.  To make a change to this <%=$class%>
+record, select the record below you want to start with and take the
+"Propose Modification" link.  This will take you to a form page with
+the selected record values pre-populated in the fields where you can
+make changes and submit them.</p>
+
+<table>
+<tr class=proposed_record><td>Yellow</td><td>Proposed record</td></tr>
+<tr class=active_record><td>Green</td><td>Currently live or active record</td></tr>
+<tr class=objected_record><td>Red</td><td>Supporter Objected</td></tr>
+<tr class=history_record><td>Blue</td><td>Replaced record</td></tr>
+</table>
+<br>
+
 	<%
 	$history->print_history($dbh);
 	%>
