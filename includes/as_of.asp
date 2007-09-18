@@ -17,7 +17,9 @@ sub as_of {
 
 	my $qs = '?';
 	if ($ENV{'QUERY_STRING'}) {
-		$qs .= ($ENV{'QUERY_STRING'} . '&');
+		$qs .= $ENV{'QUERY_STRING'};
+		$qs =~ s|\&?\??(as_of_mode=.*)||; # if we change as_of, we don't want old as_of values in the qs to set it back.
+		$qs .= '&';
 	}
 
  	my $url = 'http://' . &func::get_host() . '/change_as_of.asp?destination=' . $protocol . '://' . &func::get_host() . $ENV{'SCRIPT_NAME'} . $qs . 'as_of=';
