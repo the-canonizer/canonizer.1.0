@@ -82,10 +82,10 @@ the selected record values pre-populated in the fields where you can
 make changes and submit them.</p>
 
 <table>
-<tr class=proposed_record><td>Yellow</td><td>Proposed record</td></tr>
-<tr class=active_record><td>Green</td><td>Currently live or active record</td></tr>
+<tr class=proposed_record><td>Yellow</td><td>Proposed version</td></tr>
+<tr class=active_record><td>Green</td><td>Currently live or active version</td></tr>
 <tr class=objected_record><td>Red</td><td>Supporter Objected</td></tr>
-<tr class=history_record><td>Blue</td><td>Replaced record</td></tr>
+<tr class=history_record><td>Blue</td><td>Replaced version</td></tr>
 </table>
 <br>
 
