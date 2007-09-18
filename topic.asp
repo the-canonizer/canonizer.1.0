@@ -24,6 +24,12 @@ my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 # ???? is this the right place for this?
 $dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
+if ($Request->QueryString('as_of_mode')) {
+	$Session->{'as_of_mode'} = $Request->QueryString('as_of_mode');
+}
+if ($Request->QueryString('as_of_date')) {
+	$Session->{'as_of_date'} = $Request->QueryString('as_of_date');
+}
 
 my $topic_num = 0;
 if ($Request->Form('topic_num')) {
@@ -62,6 +68,7 @@ if ($topic_data->{'error_message'}) {
 		$topic_data->{'topic'}->{topic_name} . ' - Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
 	}
 }
+
 
 sub lookup_topic_data {
 	my $dbh           = $_[0];
@@ -143,7 +150,7 @@ sub lookup_topic_data {
 		'short_text'	=> $short_text,
 		'long_text'	=> $long_text,
 		'error_message'	=> $error_message
-	} ;
+	};
 
 	return($topic_data);
 }
