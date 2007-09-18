@@ -207,6 +207,9 @@ sub display_topic_form {
 <p>Topic Name: <span class="required_field">*</span></p>
 <p>Maximum 25 characters.</p>
 <p><input type=string name=topic_name value="<%=func::escape_double($record->{topic_name})%>" maxlength=25 size=25></p>
+
+<hr>
+
 <p>Namespace:</p>
 <p>Nothing for main default namespace. Begins and Ends with '/'. Maximum 65 characters.</p>
 <p><input type=string name=namespace value="<%=func::escape_double($record->{namespace})%>" maxlength=65 size=65></p>
@@ -216,9 +219,14 @@ sub display_topic_form {
 # <input type = string name = AKA maxlength = 255 size = 65>
 %>
 
+<hr>
+
 <p>Note: <span class="required_field">*</span></p>
 <p>Reason for submission. Maximum 65 characters.</p>
 <p><input type=string name=note value="<%=func::escape_double($record->{note})%>" maxlength=65 size=65></p>
+
+<hr>
+
 <p>Attribution Nick Name:</p>
 
 	<p><select name="submitter">
@@ -237,6 +245,8 @@ sub display_topic_form {
 	}
 	%>
 	</select></p>
+
+<hr>
 
 <p><input type=reset value="Reset"></p>
 <p><input type=submit name=submit_edit value="<%=$submit_value%>"></p>
