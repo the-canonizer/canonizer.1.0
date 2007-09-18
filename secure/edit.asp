@@ -83,7 +83,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 		if ($Request->Form('submit_edit') eq 'Commit Text') { # from topic preview page.
 			$record->{value} = func::hex_decode($record->{value});
 		}
-		$record->save($dbh);
+		$record->save($dbh, $Session->{'cid'});
 		my $any_record = $record;
 		my $url = 'http://' . func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
 
@@ -247,10 +247,10 @@ sub display_topic_form {
 
      <div class="footer_1">
      <span id="buttons">
-     
 
-&nbsp;    
-     
+
+&nbsp;
+
      </span>
      </div>
 
@@ -270,11 +270,15 @@ sub print_parent_option {
 
 	my $num = $statement_tree->{statement_num};
 
+	if ($current_statement_num == $num) { # can't set self, or any children, to my parent.
+		return();
+	}
+
 	if ($num == $selected) {
 		%>
 		<option value=<%=$num%> selected><%=$indent . $statement_tree->{statement_name}%></option>
 		<%
-	} elsif ($current_statement_num != $num) { # can't set self as parent.
+	} else {
 		%>
 		<option value=<%=$num%>><%=$indent . $statement_tree->{statement_name}%></option>
 		<%
