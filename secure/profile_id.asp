@@ -8,8 +8,8 @@ if(!$ENV{"HTTPS"}) {
         $Response->Redirect('https://' . func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
 }
 
-local $message = '';
-local %form_state = ();
+my $message = '';
+my %form_state = ();
 
 ########
 # main #
@@ -150,6 +150,14 @@ sub save_values {
 			$message .= format_error("The nick name '$new_nick_name' is already taken.");
 		}
 		$sth->finish();
+	} else {
+		if ($cid) {
+			if (func::nick_name_count($dbh, $cid) < 1) {
+				$message .= format_error("Nick Name required. (You must have at least one.)");
+			}
+		} else {
+			$message .= format_error("Nick Name required. (You must have at least one.)");
+		}
 	}
 
 	if ($message) {return()};
@@ -162,8 +170,7 @@ sub save_values {
 
 		$selstmt = "insert into person (cid, first_name, middle_name, last_name, email, password, address_1, address_2, city, state, postal_code, country, create_time, join_time) values ($cid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $now_time, $now_time)";
 
-# 		$dbh->do($sestmt) || die "Failed to create new record with " . $selstmt;
-#????  Why does this work and the do doesn't ????
+		# may want to convert this to dbh->do some day
 		$sth = $dbh->prepare($selstmt) || die $selstmt;
 
 		if ($sth->execute(
@@ -206,8 +213,7 @@ sub save_values {
 
 		if (length($password) > 0) {
 			$selstmt = 'update person set password = ? where cid = ' . $cid;
-# why does do never work???
-#			if (! $dbh->do($selstmt, func::canon_encode($password))) {
+			# may want to convert this to dbh->do some day
 			$sth = $dbh->prepare($selstmt);
 			if (! $sth->execute(func::canon_encode($password)) ) {
 				$message .= format_error("Sorry, the database is currently having problems.");
@@ -218,9 +224,7 @@ sub save_values {
 
 			$selstmt = "update person set first_name = ?, middle_name = ?, last_name = ?, email = ?, address_1 = ?, address_2 = ?, city = ?, state = ?, postal_code = ?, country = ? where cid = $cid";
 
-# do doesn't work!!
-#			if ($dbh->do($selstmt,
-
+			# may want to convert this to dbh->do some day
 			$sth = $dbh->prepare($selstmt);
 
 			if ($sth->execute(
@@ -253,7 +257,7 @@ sub save_values {
 
 		$selstmt = "insert into nick_name (nick_name_id, owner_code, nick_name, create_time) values ($nick_name_id, '$owner_code', ?, $now_time)";
 
-# doesn't work?	if (! $dbh->do($selstmt, $nick_name)) {
+		# may want to convert this to dbh->do some day
 		$sth = $dbh->prepare($selstmt);
 		if($sth->execute($new_nick_name)) {
 			$form_state{'new_nick_name'} = ''; # can't submit this value again.
@@ -325,9 +329,9 @@ sub profile_id {
 	my @nick_names = ();
 
 	if ($cid) {
-		my $ownder_code = func::canon_encode($cid);
+		my $owner_code = func::canon_encode($cid);
 
-		$selstmt = "select nick_name from nick_name where owner_code = '$ownder_code' order by nick_name_id";
+		$selstmt = "select nick_name from nick_name where owner_code = '$owner_code' order by nick_name_id";
 
 		$sth = $dbh->prepare($selstmt) || die $selstmt;
 		$sth->execute() || die $selstmt;
@@ -374,9 +378,9 @@ sub profile_id {
 <p><input type = string name = postal_code value = "<%=$form_state{'postal_code'}%>"></p>
 <p>Country: <span class="required_field">*</span></p>
 <p><input type = string name = country value = "<%=$form_state{'country'}%>"></p>
-<p>Social Security Number: <span class="required_field">*</span></p>
+<p>Social Security Number: *</p>
 <p><input type = string name = country value = ""></p>
-<p><span class="required_field">*</span> A Social Security number is not required to register and fully
+<p>* A Social Security number is not required to register and fully
 participate with the Canonizer.  However, if your contributions start
 earning monetary rewards, we will not be able to pay you these until
 you provide it here.</p>
