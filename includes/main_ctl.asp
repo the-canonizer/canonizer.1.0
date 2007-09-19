@@ -24,7 +24,7 @@ sub main_ctl {
 	    <%
 	} else {
 	    %>
-	    <p><a href='https://<%=&func::get_host()%>/secure/profile_prefs.asp'>Personal Info</a></p>
+	    <p><a href='https://<%=&func::get_host()%>/secure/profile_id.asp'>Personal Info</a></p>
 	    <%
 	}
 
