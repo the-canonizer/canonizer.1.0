@@ -50,6 +50,10 @@ if ($Request->Form('statement_num')) {
 # nick_clause is used in both save and delete support.
 my $cid = $Session->{'cid'};
 my %nick_names = func::get_nick_name_hash($cid, $dbh);
+if ($nick_names{'error_message'}) {
+	$error_message .= $nick_names{error_message};
+}
+
 my $nick_clause = func::get_nick_name_clause(\%nick_names);
 
 if ($Request->QueryString('delete_id')) {
@@ -85,7 +89,7 @@ if ($error_message) {
 	# does not return if successful (rederects to topic.asp for original statement.)
 	save_support();
 } else {
-	display_page('Add Support Topic: ' . $topic->{name}, [\&identity, \&search, \&main_ctl], [\&support_form]);
+	display_page('Add Support Topic: ' . $topic->{topic_name}, [\&identity, \&search, \&main_ctl], [\&support_form]);
 }
 
 
@@ -178,7 +182,7 @@ sub save_support {
 	$sth->finish();
 
 	# add the new and replacement records
-	# ???? got to add the delegate stuff ????
+	# ? got to add the delegate stuff ?
 	foreach $support_order (keys %form_support_hash) {
 		$support_id = func::get_next_id($dbh, 'support', 'support_id');
 		$statement_num = $form_support_hash{$support_order};
@@ -339,7 +343,7 @@ sub support_form {
 		<%
 		my $id;
 		foreach $id (sort {$a <=> $b} (keys %nick_names)) {
-			if ($id == -1) { # some day propegate the previous support nick selection????
+			if ($id == -1) { # some day propegate the previous support nick selection?
 				%>
 				<option value=<%=$id%> selected><%=$nick_names{$id}%>
 				<%
@@ -356,7 +360,7 @@ sub support_form {
 		<input type=submit name=submit value="Commit Delegated Support">
 		</form>
 		<%
-		# this is where we display both lists!! ???? (after we check for delegate support to deref);
+		# this is where we display both lists!! ? (after we check for delegate support to deref);
 
 	} else {		# new direct (may change order) suport
 		%>
@@ -419,6 +423,7 @@ sub support_form {
 
 		function render_support() {
 			var render_str = "";
+
 			render_str += "<br><br>\n";
 			render_str += "<center>\n";
 			render_str += "<form method=post>\n";
@@ -463,7 +468,7 @@ sub support_form {
 			<%
 			my $id;
 			foreach $id (sort {$a <=> $b} (keys %nick_names)) {
-				if ($id == -1) { # some day propegate the previous support nick selection????
+				if ($id == -1) { # some day propegate the previous support nick selection?
 					%>
 					render_str += "<option value=<%=$id%> selected><%=$nick_names{$id}%>\n";
 					<%
@@ -527,7 +532,7 @@ sub support_form {
 			<%
 			my $id;
 			foreach $id (sort {$a <=> $b} (keys %nick_names)) {
-				if ($id == -1) { # some day propegate the previous support nick selection????
+				if ($id == -1) { # some day propegate the previous support nick selection?
 					%>
 					render_str += "<option value=<%=$id%> selected><%=$nick_names{$id}%>\n";
 					<%
@@ -542,7 +547,7 @@ sub support_form {
 			render_str += "<input type=submit name=submit value=\"Commit Direct Support\">\n";
 			render_str += "</form>\n";
 			render_str += "\n";
-			alert(render_str);
+			// alert(render_str);
 
 			document.getElementById("support_block").innerHTML = render_str;
 		}
