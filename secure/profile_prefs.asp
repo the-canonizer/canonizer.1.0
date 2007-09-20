@@ -6,6 +6,28 @@ if(!$ENV{"HTTPS"}){
 	}
         $Response->Redirect('https://' . &func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
 }
+
+########
+# main #
+########
+
+&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_prefs], \&profile_tabs);
+
+
+
+########
+# subs #
+########
+
+sub profile_prefs {
+
+%>
+
+<p>This is where you set your preferences, such as what canonizers you'd like to use</p>
+
+<%
+}
+
 %>
 
 <!--#include file = "includes/default/page.asp"-->
@@ -17,21 +39,3 @@ if(!$ENV{"HTTPS"}){
 <!--#include file = "includes/main_ctl.asp"-->
 <!--#include file = "includes/profile_tabs.asp"-->
 
-<%
-
-sub profile_prefs {
-
-%>
-
-<p>This is where you set your preferences, such as what canonizers you'd like to use</p>
-
-<%
-}
-
-########
-# main #
-########
-
-&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_prefs], \&profile_tabs);
-
-%>
