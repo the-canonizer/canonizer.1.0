@@ -435,6 +435,9 @@ inform their constituents of significant new events such as camp
 consolidations, improvements, conversions, information moving up or
 down the structure, and so on as they see fit.</p>
 
+<a href="https://<%=&func::get_host()%>/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">
+Send e-mail to all direct supporters of this, and all sub camps.</a>
+
 		<%
 	}
 	%>
