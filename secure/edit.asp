@@ -150,7 +150,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 	}
 }
 
-local %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
+my %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
 
 if ($nick_names{'error_message'}) {
 	$error_message = $nick_names{'error_message'};
