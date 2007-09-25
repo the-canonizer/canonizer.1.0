@@ -130,10 +130,10 @@ sub email_sent_page {
 	if (length($sender_nick_name) > 0) {
 
 		my $message = $sender_nick_name . " has sent this message\n" .
-			"to all the supporters of the $tree->{topic_name} statement on the topic: $topic_name.\n\n" .
+			"to all the supporters of the $tree->{statement_name} statement on the topic: $topic_name.\n\n" .
 			$Request->Form('message') .
 			"\n\n\n" .
-			"Please report any abuse to support@canonizer.com.\n";
+			"Please report any abuse to support\@canonizer.com.\n";
 
 		person::send_email_to_hash($dbh, \%support_hash, $Request->Form('subject'), $message);
 
