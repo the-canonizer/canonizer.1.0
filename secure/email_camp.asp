@@ -53,7 +53,8 @@ my ($topic_name, $msg) = topic::get_name($dbh, $topic_num);
 
 my statement $tree = new_tree statement ($dbh, $topic_num, $statement_num);
 
-my $header = "Send E-Mail to camp<br>\nTopic: $topic_name - Statement: " . $tree->make_statement_path();
+# my $header = "Send E-Mail to camp<br>\nTopic: $topic_name - Statement: " . $tree->make_statement_path();
+my $header = "Topic: $topic_name<br>\nStatement: " . $tree->make_statement_path() . "<br>\nSend E-Mail to Camp\n";
 
 
 if ($Request->Form('submit_edit')) {
