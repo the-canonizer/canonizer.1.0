@@ -576,13 +576,18 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	background: #FFFFFF;
 }
 
+.main_content_container .section_container .statement_tree div
+{
+	padding-bottom: 10px;
+}
+
 .main_content_container .section_container .statement_tree .top_branch
 {
 	font-size: 100%;
 	font-weight: bold;
 	color: #000099;
 	margin: 0 0 0 0;
-	padding-bottom: 5px;
+	padding-bottom: 0px;
 }
 
 .main_content_container .section_container .statement_tree .top_branch a
@@ -601,7 +606,7 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 
 .main_content_container .section_container .statement_tree .branch div
 {
-	padding-bottom: 5px;
+	padding-bottom: 0px;
 }
 
 .main_content_container .section_container .statement_tree #score
