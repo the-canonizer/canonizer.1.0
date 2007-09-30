@@ -120,7 +120,7 @@ NO_CID:		my $gid = $Session->{'gid'};
 <%
 	if ($mode == 2) {
 %>
-		<p><a href = "<%=$logout_url%>">Logout</a></p>
+		<p><a href = "<%=$logout_url%>">Logout (to browsing as)</a></p>
 		<p><a href = "<%=$clear_url%>">Clear Browser</a></p>
 <%
 	} elsif ($mode == 1) {
