@@ -23,16 +23,15 @@ if (!$Session->{'logged_in'}) {
 }
 
 
+my $error_message = '';
+
+
 my $topic_num = 0;
 if ($Request->Form('topic_num')) {
 	$topic_num = int($Request->Form('topic_num'));
 } elsif ($Request->QueryString('topic_num')) {
 	$topic_num = int($Request->QueryString('topic_num'));
 }
-
-my $error_message = '';
-
-
 if (!$topic_num) {
 	$error_message = "Must specify a topic_num.";
 	&display_page('Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&error_page]);
@@ -47,21 +46,48 @@ if ($Request->Form('statement_num')) {
 	$statement_num = int($Request->QueryString('statement_num'));
 }
 
+my $thread_num = 0; # 1 is the default ageement statement;
+if ($Request->Form('thread_num')) {
+	$thread_num = int($Request->Form('thread_num'));
+} elsif ($Request->QueryString('thread_num')) {
+	$thread_num = int($Request->QueryString('thread_num'));
+}
+
 my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 my ($topic_name, $msg) = topic::get_name($dbh, $topic_num);
 
 my statement $tree = new_tree statement ($dbh, $topic_num, $statement_num);
 
-# my $header = "Send E-Mail to camp<br>\nTopic: $topic_name - Statement: " . $tree->make_statement_path();
 my $header = "Topic: $topic_name<br>\nStatement: " . $tree->make_statement_path() . "<br>\nSend E-Mail to Camp\n";
 
+my $subject = '';
+if ($thread_num) {
+	$subject = func::get_thread_subject($dbh, $topic_num, $statement_num, $thread_num);
+	$header .= " on thread: $subject";
+}
+
+my $message;
 
 if ($Request->Form('submit_edit')) {
-	&display_page($header, [\&identity, \&search, \&main_ctl], [\&email_sent_page]);
-} else {
-	&display_page($header, [\&identity, \&search, \&main_ctl], [\&email_camp_form]);
+	$message = $Request->Form('message');
+	if (length($message) < 1) {
+		$error_message .= "No message supplied.<br>\n";
+	}
+	if (! $thread_num) {
+		$subject = $Request->Form('subject');
+		if (length($subject) < 1) {
+			$error_message .= "No subject supplied.<br>\n";
+		}
+	}
+	if (! $error_message) {
+		&display_page($header, [\&identity, \&search, \&main_ctl], [\&send_email_page]);
+		$Response->End();
+	}
 }
+
+&display_page($header, [\&identity, \&search, \&main_ctl], [\&email_camp_form]);
+
 
 
 ########
@@ -70,7 +96,10 @@ if ($Request->Form('submit_edit')) {
 
 sub email_camp_form {
 
-	my $error_messasge = '';
+	my $subject_disable_str = '';
+	if ($thread_num) {
+		$subject_disable_str = 'disabled';
+	}
 
 	my %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
 	if ($nick_names{'error_message'}) {
@@ -82,14 +111,29 @@ sub email_camp_form {
 
 		<p><a href="/topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Return to statement</a></p>
 
+		<%
+		if ($error_message) {
+		%>
+			<p><font color=red><%=$error_message%></font></p>
+		<%
+		}
+		%>
+
 		<form method=post>
+		<%
+		if ($thread_num) {
+		%>
+			<input type=hidden name=thread_num value=<%=$thread_num%>>
+		<%
+		}
+		%>
 
 		<p>Send e-mail to all direct supporters of this camp (including all sub camps)</p>
 
-		<p>Subject: <input type=string name=subject maxlength=65 size=65></p>
+		<p>Subject: <input type=string name=subject maxlength=65 size=65 value="<%=func::escape_double($subject)%>" <%=$subject_disable_str%>></p>
 
 		<p>Message:<br>
-		<textarea NAME="message" ROWS="20" COLS="65"></textarea></p>
+		<textarea NAME="message" ROWS="20" COLS="65"><%=$message%></textarea></p>
 
 		<p>Attribution Nick Name:</p>
 
@@ -98,7 +142,7 @@ sub email_camp_form {
 		my $id;
 		foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 			%>
-			<option value="<%=$nick_names{$id}%>"><%=$nick_names{$id}%></option>
+			<option value="<%=$id%>,<%=$nick_names{$id}%>"><%=$nick_names{$id}%></option>
 			<%
 		}
 		%>
@@ -113,7 +157,7 @@ sub email_camp_form {
 }
 
 
-sub email_sent_page {
+sub send_email_page {
 
 	my %support_hash = ();
 	$tree->get_support($dbh, \%support_hash);
@@ -127,15 +171,21 @@ sub email_sent_page {
 	}
 
 	my $sender_nick_name = $Request->Form('sender');
-	if (length($sender_nick_name) > 0) {
+	$sender_nick_name =~ s|(\d*),||;
+	my $sender_nick_id = $1;
 
-		my $message = $sender_nick_name . " has sent this message\n" .
+	if ($sender_nick_id and length($sender_nick_name) > 0) {
+
+		save_post($dbh, $subject, $message, $topic_num, $statement_num, $thread_num, $sender_nick_id);
+
+		$message = $sender_nick_name . " has sent this message\n" .
 			"to all the supporters of the $tree->{statement_name} statement on the topic: $topic_name.\n\n" .
-			$Request->Form('message') .
+			$message .
 			"\n\n\n" .
 			"Please report any abuse to support\@canonizer.com.\n";
 
-		person::send_email_to_hash($dbh, \%support_hash, $Request->Form('subject'), $message);
+		person::send_email_to_hash($dbh, \%support_hash, $subject, $message);
+		# person::send_email_to_cid($dbh, 1, $subject, $message); # for debugging.
 
 		%>
 		<p>Mail Successfully sent to supporters of this camp.
@@ -143,12 +193,54 @@ sub email_sent_page {
 		<p><a href="/topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Return to statement</a></p>
 		<%
 	} else {
-
 		%>
 		Error: invalid sender.
 		<%
 	}
 }
+
+
+sub save_post {
+	my $dbh            = $_[0];
+	my $subject        = $_[1];
+	my $message        = $_[2];
+	my $topic_num      = $_[3];
+	my $statement_num  = $_[4];
+	my $thread_num     = $_[5];
+	my $sender_nick_id = $_[6];
+
+	my $selstmt;
+
+	my %dummy = ();
+
+	if (!$thread_num) {
+		$thread_num = func::get_next_id($dbh, 'thread', 'thread_num');
+
+		$selstmt = 'insert into thread ( thread_num,  topic_num,  statement_num, subject) values ' .
+					      "($thread_num, $topic_num, $statement_num, ?      )";
+
+		if (! $dbh->do($selstmt, \%dummy, $subject)) {
+			%>
+			<h1><font color=red>Error: Failed to save thread in DB.</font></h1>
+			<%
+			$Response->End();
+		}
+	}
+
+	my $post_num = func::get_next_id($dbh, 'post', 'post_num');
+	my $now_time = time;
+
+	$selstmt = 'insert into post ( post_num,  thread_num,  topic_num,  statement_num, nick_id,         submit_time, message) values ' .
+				    "($post_num, $thread_num, $topic_num, $statement_num, $sender_nick_id, $now_time,   ?      )";
+
+	if (! $dbh->do($selstmt, \%dummy, $message)) {
+			%>
+			<h1><font color=red>Error: Failed to save post in DB.</font></h1>
+			<%
+			$Response->End();
+	}
+}
+
 
 
 %>
