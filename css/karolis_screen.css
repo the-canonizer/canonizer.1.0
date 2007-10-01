@@ -695,6 +695,22 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	margin: 0;
 }
 
+/* FORUM TABLES ----------------------------------------------------------- */
+
+.main_content_container .forum_table
+{
+	width: 100%;
+}
+
+.main_content_container .forum_table td
+{
+	background: #FFFFFF;
+	margin: 0 0 0 0;
+	padding: 5px;
+	border: 1px solid black;
+}
+
+
 /* SUPPORT TABLES ----------------------------------------------------------- */
 
 .main_content_container .support_table td
