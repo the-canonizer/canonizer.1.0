@@ -178,7 +178,7 @@ sub send_email_page {
 
 		save_post($dbh, $subject, $message, $topic_num, $statement_num, $thread_num, $sender_nick_id);
 
-		$message = $sender_nick_name . " has sent this message\n" .
+		$message = $sender_nick_name . " has sent this message " .
 			"to all the supporters of the $tree->{statement_name} statement on the topic: $topic_name.\n\n" .
 			$message .
 			"\n\n\n" .
