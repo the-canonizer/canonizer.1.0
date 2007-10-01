@@ -20,7 +20,7 @@ use text;
 
 my $error_message = '';
 
-my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+my $dbh = func::dbh_connect(1) || die "unable to connect to database";
 # ???? is this the right place for this?
 $dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
@@ -53,19 +53,19 @@ if ($Request->Form('long_short')) {
 }
 
 
-my $topic_data = &lookup_topic_data($dbh, $topic_num, $statement_num, $long_short);
+my $topic_data = lookup_topic_data($dbh, $topic_num, $statement_num, $long_short);
 
 if ($topic_data->{'error_message'}) {
 	$error_message = $topic_data->{'error_message'};
-	&display_page('Unknown Topic Number', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&error_page]);
+	display_page('Unknown Topic Number', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&error_page]);
 } else {
 	if ($Request->Form('submit_edit')) {		# preview mode
 
-		&display_page('Topic: ' . 
-		$topic_data->{'topic'}->{topic_name} . ' - Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&search, \&main_ctl], [\&present_topic]);
+		display_page('Topic: ' . 
+		$topic_data->{'topic'}->{topic_name} . '<br>Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&search, \&main_ctl], [\&present_topic]);
 	} else {					# normal mode
-		&display_page('Topic: ' . 
-		$topic_data->{'topic'}->{topic_name} . ' - Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
+		display_page('Topic: ' . 
+		$topic_data->{'topic'}->{topic_name} . '<br>Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
 	}
 }
 
@@ -191,11 +191,11 @@ sub present_topic {
 	if ($Request->Form('submit_edit')) {
 		%>
 		Preview Text Only
-		<form method=post action='https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>'>
+		<form method=post action='https://<%=func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>'>
 			<input type=hidden name=topic_num value="<%=$Request->Form('topic_num')%>">
 			<input type=hidden name=statement_num value="<%=$Request->Form('statement_num')%>">
 			<input type=hidden name=record_id value="<%=$Request->Form('record_id')%>">
-			<input type=hidden name=value value="<%=&func::hex_encode($Request->Form('value'))%>">
+			<input type=hidden name=value value="<%=func::hex_encode($Request->Form('value'))%>">
 			<input type=hidden name=text_size value="<%=$Request->Form('text_size')%>">
 			<input type=hidden name=proposed value="<%=$Request->Form('proposed')%>">
 			<input type=hidden name=note value="<%=$Request->Form('note')%>">
@@ -237,7 +237,7 @@ sub present_topic {
 <%		
 if ($topic_data->{'short_text'}) {
 
-			$html_text_short = &func::wikitext_to_html($topic_data->{'short_text'}->{value});		
+			$html_text_short = func::wikitext_to_html($topic_data->{'short_text'}->{value});		
 		                              
 		           
 		          } %>
@@ -259,7 +259,9 @@ if ($topic_data->{'short_text'}) {
 
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement Text</a>
+				<a href="http://<%=func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement Text</a><br><br>
+
+				<a href="http://<%=func::get_host()%>/forum.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Camp Forum</a>
 		
 				<%
 			}
@@ -268,7 +270,7 @@ if ($topic_data->{'short_text'}) {
 			<%
 		} else {
 			%>
-			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add Statement Text</a>
+			<a href="https://<%=func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add Statement Text</a>
  
 			<%
 		}%>
@@ -295,7 +297,7 @@ if ($topic_data->{'short_text'}) {
 	
 		if ($topic_data->{'long_text'}) {
 
-			$html_text_long = &func::wikitext_to_html($topic_data->{'long_text'}->{value});
+			$html_text_long = func::wikitext_to_html($topic_data->{'long_text'}->{value});
 		
 			    
 		}%>
@@ -309,12 +311,12 @@ if ($topic_data->{'short_text'}) {
 	
 		if ($topic_data->{'long_text'}) {
 
-			$html_text_long = &func::wikitext_to_html($topic_data->{'long_text'}->{value});
+			$html_text_long = func::wikitext_to_html($topic_data->{'long_text'}->{value});
 
 
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<a href="http://<%=&func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage Long Statement Text</a>
+				<a href="http://<%=func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Manage Long Statement Text</a>
 			         
 				<%
 			}
@@ -323,7 +325,7 @@ if ($topic_data->{'short_text'}) {
 			<%
 		} else {
 			%>
-			<a href="https://<%=&func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add Long Statement Text</a>
+			<a href="https://<%=func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add Long Statement Text</a>
                           	
                 
 			<%
@@ -368,7 +370,7 @@ if ($topic_data->{'short_text'}) {
           	   	        <%
 		if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<a href="http://<%=&func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add New Position Statement Under "<%=$topic_data->{'statement'}->{statement_name}%>" Statement</a>
+		<a href="http://<%=func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add New Position Statement Under "<%=$topic_data->{'statement'}->{statement_name}%>" Statement</a>
 		<% } %>
 
 <p>Note: This section is like the Table of Contents for this topic.
@@ -395,7 +397,7 @@ you are currently viewing.</p>
 	<p>Total Support for This Statement (including sub-statements): <%=$score%></p>
 	
 	<%
-	my %nick_names = &func::get_nick_name_hash($Session->{'cid'}, $dbh);
+	my %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
 	$Response->Write($topic_data->{'statement'}->display_support_tree($topic_num, $statement_num, \%nick_names));
 	%>
 
@@ -413,11 +415,11 @@ you are currently viewing.</p>
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		if (($Session->{'cid'}) && $topic_data->{'statement'}->is_supporting(\%nick_names)) {
 			%>
-			<a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Modify Support for This Statement</a>
+			<a href="https://<%=func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Modify Support for This Statement</a>
 			<%
 		} else {
 			%>
-			<a href="https://<%=&func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Directly Support This Statement</a>
+			<a href="https://<%=func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Directly Support This Statement</a>
 			<%
 		}
 		%>
@@ -435,7 +437,7 @@ inform their constituents of significant new events such as camp
 consolidations, improvements, conversions, information moving up or
 down the structure, and so on as they see fit.</p>
 
-<a href="https://<%=&func::get_host()%>/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">
+<a href="https://<%=func::get_host()%>/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">
 Send e-mail to all direct supporters of this, and all sub camps.</a>
 
 		<%
@@ -464,7 +466,7 @@ Send e-mail to all direct supporters of this, and all sub camps.</a>
       	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<a href="http://<%=&func::get_host()%>/manage.asp?class=topic&topic_num=<%=$topic_num%>">Manage This Topic</a>
+		<a href="http://<%=func::get_host()%>/manage.asp?class=topic&topic_num=<%=$topic_num%>">Manage This Topic</a>
 		<%
 	}
 	%>
@@ -498,7 +500,7 @@ Send e-mail to all direct supporters of this, and all sub camps.</a>
 	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<a href="http://<%=&func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage This Statement</a>
+		<a href="http://<%=func::get_host()%>/manage.asp?class=statement&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage This Statement</a>
 		<%
 	}
 	%>     
