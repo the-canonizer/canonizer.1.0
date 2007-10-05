@@ -455,7 +455,7 @@ Send e-mail to all direct supporters of this, and all sub camps.</a>
     
 </div>
  <div class="content_1">
-<p>Name: <%=$topic_data->{'topic'}->{topic_name}%></p>
+<p>Topic Name: <%=$topic_data->{'topic'}->{topic_name}%></p>
 <p>Name Space: <%=$topic_data->{'topic'}->{namespace}%></p>
 
     </div>
@@ -488,9 +488,16 @@ Send e-mail to all direct supporters of this, and all sub camps.</a>
 </div>
 
 <div class="content_1">
-<p>Name: <%=$topic_data->{'statement'}->{statement_name}%> </p>
+<p>Statement Name: <%=$topic_data->{'statement'}->{statement_name}%> </p>
 <p>Title: <%=$topic_data->{'statement'}->{title}%></p>
 <p>Key Words: <%=$topic_data->{'statement'}->{key_words}%></p>
+	<%
+	if ($topic_data->{'statement'}->{parent_statement_num}) {
+		%>
+		<p>Parent Statement: <%=$topic_data->{'statement'}->{parent}->{statement_name}%></p>
+		<%
+	}
+	%>
  </div>
 
      <div class="footer_1">
