@@ -351,7 +351,7 @@ if ($topic_data->{'short_text'}) {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Canonizer Sorted Postion (POV) Statement Tree</span>
+     <span id="title">Canonizer Sorted Position (POV) Statement Tree</span>
 
 </div>
 	
