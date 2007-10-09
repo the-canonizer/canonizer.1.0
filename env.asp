@@ -93,6 +93,8 @@ sub env {
 
 <!--#include file = "includes/default/page.asp"-->
 
+<!--#include file = "includes/page_sections.asp"-->
+
 <!--#include file = "includes/identity.asp"-->
 <!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
