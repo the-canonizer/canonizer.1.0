@@ -20,10 +20,10 @@ sub page_header
 		<title>$page_title</title>
 
         <!-- CSS / The way website will appear on the screen -->        
-		<link href="css/karolis_screen.css" rel="stylesheet" type="text/css" media="screen">
-        
+		<link href="/css/karolis_screen.css" rel="stylesheet" type="text/css" media="screen">
+
         <!-- CSS / The way website will appear when printed -->
-		<link href="css/karolis_print.css" rel="stylesheet" type="text/css" media="print">        
+		<link href="/css/karolis_print.css" rel="stylesheet" type="text/css" media="print">
 
 </head>
 
