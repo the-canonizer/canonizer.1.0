@@ -62,10 +62,10 @@ if ($topic_data->{'error_message'}) {
 	if ($Request->Form('submit_edit')) {		# preview mode
 
 		display_page('Topic: ' . 
-		$topic_data->{'topic'}->{topic_name} . '<br>Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&search, \&main_ctl], [\&present_topic]);
+		$topic_data->{'topic'}->{topic_name} . ' <br>Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&search, \&main_ctl], [\&present_topic]);
 	} else {					# normal mode
 		display_page('Topic: ' . 
-		$topic_data->{'topic'}->{topic_name} . '<br>Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
+		$topic_data->{'topic'}->{topic_name} . ' <br>Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
 	}
 }
 
