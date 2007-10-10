@@ -8,7 +8,7 @@ if(!$ENV{"HTTPS"}){
 	if ($ENV{'QUERY_STRING'}) {
 		$qs = '?' . $ENV{'QUERY_STRING'};
 	}
-        $Response->Redirect('https://' . &func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
+        $Response->Redirect('https://' . func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
 }
 
 my $destination;
@@ -18,7 +18,7 @@ if (!$Session->{'logged_in'}) {
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$destination .= ('?' . $query_string);
 	}
-	&display_page('Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	display_page('Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -34,7 +34,7 @@ if ($Request->Form('topic_num')) {
 }
 if (!$topic_num) {
 	$error_message = "Must specify a topic_num.";
-	&display_page('Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	display_page('Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -53,7 +53,7 @@ if ($Request->Form('thread_num')) {
 	$thread_num = int($Request->QueryString('thread_num'));
 }
 
-my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
+my $dbh = func::dbh_connect(1) || die "unable to connect to database";
 
 my ($topic_name, $msg) = topic::get_name($dbh, $topic_num);
 
@@ -81,12 +81,12 @@ if ($Request->Form('submit_edit')) {
 		}
 	}
 	if (! $error_message) {
-		&display_page($header, [\&identity, \&search, \&main_ctl], [\&send_email_page]);
+		display_page($header, [\&identity, \&search, \&main_ctl], [\&send_email_page]);
 		$Response->End();
 	}
 }
 
-&display_page($header, [\&identity, \&search, \&main_ctl], [\&email_camp_form]);
+display_page($header, [\&identity, \&search, \&main_ctl], [\&email_camp_form]);
 
 
 
@@ -180,6 +180,10 @@ sub send_email_page {
 
 		$message = $sender_nick_name . " has sent this message " .
 			"to all the supporters of the $tree->{statement_name} statement on the topic: $topic_name.\n\n" .
+			"Rather than reply to this e-mail (which only goes to canonizer\@canonizer.com) " .
+			"please post all replies to the camp forum thread page this message was sent from here:\n" .
+			"http://" . func::get_host() . "/thread.asp?topic_num=$topic_num&statement_num=$statement_num&thread_num=$thread_num" .
+			"\n\n\n" .
 			$message .
 			"\n\n\n" .
 			"Please report any abuse to support\@canonizer.com.\n";
