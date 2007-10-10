@@ -19,7 +19,7 @@ body
 }
 
 #container
-{ 
+{
 	width: 100%;
 	background: #FFFFFF;
 	text-align: left;
@@ -708,6 +708,22 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	margin: 0 0 0 0;
 	padding: 5px;
 	border: 1px solid black;
+}
+
+
+.main_content_container .forum_table .header
+{
+	background: #F8F9DC;
+	margin: 0 0 0 0;
+	padding: 5px;
+	border: 1px solid black;
+}
+
+.main_content_container .forum_table .separator
+{
+	background: #FFFFFF;
+	height: 20px;
+	border: 0;
 }
 
 
