@@ -3,9 +3,23 @@
 use person;
 use statement;
 
+my $path_info = $ENV{'PATH_INFO'};
+my $pi_topic_num = 0;
+my $pi_statement_num = 0;
+my $pi_thread_num = 0;
+if ($path_info =~ m|/(\d+)/(\d+)/?(\d*)|) {
+	$pi_topic_num = $1;
+	$pi_statement_num = $2;
+	if ($3) {
+		$pi_thread_num = $3;
+	}
+}
+
 my $topic_num = 0;
 if ($Request->Form('topic_num')) {
 	$topic_num = int($Request->Form('topic_num'));
+} elsif ($pi_topic_num) {
+	$topic_num = $pi_topic_num;
 } elsif ($Request->QueryString('topic_num')) {
 	$topic_num = int($Request->QueryString('topic_num'));
 }
@@ -23,6 +37,8 @@ if (!$topic_num) {
 my $statement_num = 1; # 1 is the default ageement statement;
 if ($Request->Form('statement_num')) {
 	$statement_num = int($Request->Form('statement_num'));
+} elsif ($pi_thread_num) {
+	$statement_num = $pi_statement_num;
 } elsif ($Request->QueryString('statement_num')) {
 	$statement_num = int($Request->QueryString('statement_num'));
 }
@@ -56,7 +72,7 @@ sub display_forum {
 	my $min_max = 'max';		 # set to min for static ordered page from first thread.
 	my $first_last = 'Last post by'; # set to first post by for static page.
 
-	my $selstmt = "select subject, nick_id, p.thread_num from thread t, (select thread_num, nick_id, $min_max(submit_time) as submit_time from post where topic_num=$topic_num and statement_num=$statement_num group by thread_num) p where t.thread_num = p.thread_num order by p.submit_time desc";
+	my $selstmt = "select subject, nick_id, p.thread_num, p.count, p.submit_time from thread t, (select thread_num, nick_id, count(*) as count, $min_max(submit_time) as submit_time from post where topic_num=$topic_num and statement_num=$statement_num group by thread_num) p where t.thread_num = p.thread_num order by p.submit_time desc";
 
 	my $threads = 0;
 	my $sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
@@ -67,15 +83,17 @@ sub display_forum {
 		if (! $threads) {
 			%>
 			<table class=forum_table>
-			<tr><th>Subject</th><th><%=$first_last%></th><tr>
+			<tr><th>Subject</th><th>Posts</td><th><%=$first_last%></th><tr>
 			<%
 		}
 		$threads++;
 
 		my ($nick_name) = func::get_nick_name($dbh, $rs->{'nick_id'});
 		my $subject = $rs->{'subject'};
+		my $submit_time = $rs->{'submit_time'};
+		my $count  = $rs->{'count'};
 		%>
-		<tr><td><a href="http://<%=func::get_host()%>/thread.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&thread_num=<%=$thread_num%>"><%=$subject%></a></td><td><%=$nick_name%></td></tr>
+		<tr><td><a href="http://<%=func::get_host()%>/thread.asp/<%=$topic_num%>/<%=$statement_num%>/<%=$thread_num%>"><%=$subject%></a></td><td><%=$count%></td><td nowrap><%=$nick_name%><br><%=func::to_local_time($submit_time)%></td></tr>
 		<%
 	}
 	$sth->finish();

@@ -6,9 +6,25 @@ use statement;
 
 my $error_message = '';
 
+my $path_info = $ENV{'PATH_INFO'};
+my $pi_topic_num = 0;
+my $pi_statement_num = 0;
+my $pi_thread_num = 0;
+my $pi_post_num = 0;
+if ($path_info =~ m|/(\d+)/(\d+)/(\d+)/?(\d*)|) {
+	$pi_topic_num = $1;
+	$pi_statement_num = $2;
+	$pi_thread_num = $3;
+	if ($4) {
+		$pi_thread_num = $4;
+	}
+}
+
 my $topic_num = 0;
 if ($Request->Form('topic_num')) {
 	$topic_num = int($Request->Form('topic_num'));
+} elsif ($pi_topic_num) {
+	$topic_num = $pi_topic_num;
 } elsif ($Request->QueryString('topic_num')) {
 	$topic_num = int($Request->QueryString('topic_num'));
 }
@@ -22,6 +38,8 @@ if (!$topic_num) {
 my $statement_num = 0;
 if ($Request->Form('statement_num')) {
 	$statement_num = int($Request->Form('statement_num'));
+} elsif ($pi_statement_num) {
+	$statement_num = $pi_statement_num;
 } elsif ($Request->QueryString('statement_num')) {
 	$statement_num = int($Request->QueryString('statement_num'));
 }
@@ -34,6 +52,8 @@ if (!$statement_num) {
 my $thread_num = 0;
 if ($Request->Form('thread_num')) {
 	$thread_num = int($Request->Form('thread_num'));
+} elsif ($pi_thread_num) {
+	$thread_num = $pi_thread_num;
 } elsif ($Request->QueryString('thread_num')) {
 	$thread_num = int($Request->QueryString('thread_num'));
 }
@@ -74,6 +94,8 @@ sub display_thread {
 
 	<p><a href="/topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Return to camp statement page</a></p>
 
+	<p><a href="/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Return to camp forum</a></p>
+
 	<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&thread_num=<%=$thread_num%>">New post to thread</a></p>
 	<%
 
@@ -82,7 +104,7 @@ sub display_thread {
 	my $min_max = 'max';		 # set to min for static ordered page from first thread.
 	my $first_last = 'Last post by'; # set to first post by for static page.
 
-	my $selstmt = "select nick_id, message from post where topic_num=$topic_num and statement_num=$statement_num and thread_num=$thread_num";
+	my $selstmt = "select nick_id, message, submit_time from post where topic_num=$topic_num and statement_num=$statement_num and thread_num=$thread_num";
 
 	my $posts = 0;
 	my $sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
@@ -98,8 +120,11 @@ sub display_thread {
 
 		my $nick_name = func::get_nick_name($dbh, $rs->{'nick_id'});
 		my $message = $rs->{'message'};
+		my $submit_time = $rs->{'submit_time'};
 		%>
+		<tr><td class=header colspan=2><%=func::to_local_time($submit_time)%></td></tr>
 		<tr><td valign=top><br><br><br><%=$nick_name%></td><td><%=func::wikitext_to_html($message)%></td></tr>
+		<tr><td class=separator colspan=2></td></tr>
 		<%
 	}
 	$sth->finish();
@@ -107,6 +132,12 @@ sub display_thread {
 	if ($posts) {
 		%>
 		</table>
+		<p><a href="/topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Return to camp statement page</a></p>
+
+		<p><a href="/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Return to camp forum</a></p>
+
+		<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&thread_num=<%=$thread_num%>">New post to thread</a></p>
+
 		<%
 	} else {
 		%>

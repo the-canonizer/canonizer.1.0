@@ -261,7 +261,7 @@ if ($topic_data->{'short_text'}) {
 				%>
 				<a href="http://<%=func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement Text</a><br><br>
 
-				<a href="http://<%=func::get_host()%>/forum.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Camp Forum</a>
+				<a href="http://<%=func::get_host()%>/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Camp Forum</a>
 		
 				<%
 			}
