@@ -366,6 +366,10 @@ sub do_object {
 		# what a pain!! if ($dbh->do($selstmt, $object_reason))
 		my $sth = $dbh->prepare($selstmt);
 		if ($sth->execute($object_reason)) {
+			my $notify_msg = "Proposal objected to.\n" .
+					"Topic: $record->{'topic_num'}.\n" .
+					"Class: $class.\n";
+			func::send_email('Canonizer Objection', $notify_msg);
 			$Response->Redirect(&make_manage_url($record, $class));
 		} else {
 			$message = "Failed to update for some reason.\n";
