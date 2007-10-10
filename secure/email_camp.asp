@@ -109,7 +109,7 @@ sub email_camp_form {
 	} else {
 		%>
 
-		<p><a href="/topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Return to statement</a></p>
+		<p><a href="http://<%=func::get_host()%>/topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Return to statement</a></p>
 
 		<%
 		if ($error_message) {
