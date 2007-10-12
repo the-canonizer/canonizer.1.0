@@ -3,6 +3,7 @@
 use person;
 use statement;
 
+my $num_posts_per_page = 3;
 
 my $error_message = '';
 
@@ -10,13 +11,13 @@ my $path_info = $ENV{'PATH_INFO'};
 my $pi_topic_num = 0;
 my $pi_statement_num = 0;
 my $pi_thread_num = 0;
-my $pi_post_num = 0;
+my $pi_post_num = 0;			# optional to specify what page.
 if ($path_info =~ m|/(\d+)/(\d+)/(\d+)/?(\d*)|) {
 	$pi_topic_num = $1;
 	$pi_statement_num = $2;
 	$pi_thread_num = $3;
 	if ($4) {
-		$pi_thread_num = $4;
+		$pi_post_num = $4;
 	}
 }
 
@@ -49,6 +50,7 @@ if (!$statement_num) {
 	$Response->End();
 }
 
+
 my $thread_num = 0;
 if ($Request->Form('thread_num')) {
 	$thread_num = int($Request->Form('thread_num'));
@@ -61,6 +63,15 @@ if (!$thread_num) {
 	$error_message = "Must specify a thread_num.";
 	&display_page('Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
+}
+
+my $post_num = 0; # optional value to specify page of thread.
+if ($Request->Form('post_num')) {
+	$post_num = int($Request->Form('post_num'));
+} elsif ($pi_post_num) {
+	$post_num = $pi_post_num;
+} elsif ($Request->QueryString('post_num')) {
+	$post_num = int($Request->QueryString('post_num'));
 }
 
 
@@ -78,7 +89,7 @@ if (length($subject) < 1) {
 
 my statement $tree = new_tree statement ($dbh, $topic_num, $statement_num);
 
-my $header = "Topic: $topic_name<br>\nStatement: " . $tree->make_statement_path() . "<br>\nCamp Forum Thread: $subject\n";
+my $header = "Topic: $topic_name<br> \nStatement: " . $tree->make_statement_path() . "<br>\nCamp Forum Thread: $subject\n";
 
 
 &display_page($header, [\&identity, \&search, \&main_ctl], [\&display_thread]);
@@ -104,32 +115,52 @@ sub display_thread {
 	my $min_max = 'max';		 # set to min for static ordered page from first thread.
 	my $first_last = 'Last post by'; # set to first post by for static page.
 
-	my $selstmt = "select nick_id, message, submit_time from post where topic_num=$topic_num and statement_num=$statement_num and thread_num=$thread_num";
+	my $selstmt = "select post_num, nick_id, message, submit_time from post where topic_num=$topic_num and statement_num=$statement_num and thread_num=$thread_num";
 
-	my $posts = 0;
+	my @posts = ();
+	my $num_posts = 0;
+	my $start_post = 0;
 	my $sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
 	$sth->execute() or die "Failed to execute $selstmt.\n";
 	my $rs;
-	while ($rs = $sth->fetchrow_hashref()) {
-		if (! $posts) {
-			%>
-			<table class=forum_table>
-			<%
-		}
-		$posts++;
 
-		my $nick_name = func::get_nick_name($dbh, $rs->{'nick_id'});
-		my $message = $rs->{'message'};
-		my $submit_time = $rs->{'submit_time'};
-		%>
-		<tr><td class=header colspan=2><%=func::to_local_time($submit_time)%></td></tr>
-		<tr><td valign=top><br><br><br><%=$nick_name%></td><td><%=func::wikitext_to_html($message)%></td></tr>
-		<tr><td class=separator colspan=2></td></tr>
-		<%
+	while ($rs = $sth->fetchrow_hashref()) {
+		$posts[$num_posts] = {'nick_name'   => func::get_nick_name($dbh, $rs->{'nick_id'}),
+				      'message'     => $rs->{'message'},
+				      'submit_time' => $rs->{'submit_time'},
+				      'post_num'    => $rs->{'post_num'}       };
+		if ($rs->{'post_num'} eq $post_num) {
+			$start_post = int($num_posts / $num_posts_per_page) * $num_posts_per_page;
+		}
+		$num_posts++;
 	}
 	$sth->finish();
 
-	if ($posts) {
+	if ($num_posts) {
+		if ($num_posts > $num_posts_per_page) {
+			%>
+			<p>Thread Page: <%=make_pagination_str($start_post, $num_posts, \@posts)%></p>
+			<%
+		}
+		%>
+		<table class=forum_table>
+		<%
+	}
+
+	my $print_post;
+	for ($print_post = 0; $print_post < $num_posts; $print_post++) {
+		next if $print_post < $start_post;
+		last if $print_post >= ($start_post + $num_posts_per_page);
+		my $post_ref = $posts[$print_post];
+		%>
+		<tr><td class=header><%=$post_ref->{'nick_name'}%></td><td class=header align=right><%=func::to_local_time($post_ref->{'submit_time'})%></td></tr>
+		<tr><td colspan=2><%=func::wikitext_to_html($post_ref->{'message'})%></td></tr>
+		<tr><td class=header><%=$post_ref->{'nick_name'}%></td><td class=header align=right><%=func::to_local_time($post_ref->{'submit_time'})%></td></tr>
+		<tr><td class=separator colspan=2><a name="<%=($post_ref->{'post_num'} + 1)%>"></td></tr>
+		<%
+	}
+
+	if ($num_posts) {
 		%>
 		</table>
 		<p><a href="/topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Return to camp statement page</a></p>
@@ -139,6 +170,12 @@ sub display_thread {
 		<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&thread_num=<%=$thread_num%>">New post to thread</a></p>
 
 		<%
+
+		if ($num_posts > $num_posts_per_page) {
+			%>
+			<p>Thread Page: <%=make_pagination_str($start_post, $num_posts, \@posts)%></p>
+			<%
+		}
 	} else {
 		%>
 		<h1>No post made to this thread yet.</h1>
@@ -148,6 +185,31 @@ sub display_thread {
 	</div>
 	<%
 }
+
+
+sub make_pagination_str {
+	my $post_num  = $_[0];
+	my $num_posts = $_[1];
+	my $posts_ref = $_[2];
+
+	my $ret_val = '<span id="pagination">';
+
+	my $num;
+	for ($num = 0; ($num * $num_posts_per_page) < $num_posts; $num++) {
+		if (($num * $num_posts_per_page) == $post_num) {
+			$ret_val .= '<font color=green>' . ($num + 1) . '</font>, ';
+		} else {
+			$ret_val .= '<a href="http://' . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num/" . $posts_ref->[($num * $num_posts_per_page)]->{'post_num'} . '">' . ($num + 1) . '</a>, ';
+		}
+	}
+
+	chop($ret_val);
+	chop($ret_val);
+	$ret_val .= ".</span>";
+
+	return($ret_val);
+}
+
 
 %>
 
