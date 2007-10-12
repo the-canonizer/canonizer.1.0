@@ -440,6 +440,24 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	font-size: 90%;
 }
 
+.main_content_container #pagination
+{
+	font-size: 200%;
+	font: "sans-serif";
+}
+.glip
+{
+	font: "Arial Black";
+	font: "Charchoal"
+}
+
+
+.main_content_container #current_page
+{
+	font-weight: bold;
+	color: #00FF00;
+}
+
 .main_content_container h1
 {
 	font-size: 120%;
