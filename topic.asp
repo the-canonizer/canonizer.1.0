@@ -254,15 +254,19 @@ if ($topic_data->{'short_text'}) {
 	
 		if ($topic_data->{'short_text'}) {
 
-		
-
 
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
 				<a href="http://<%=func::get_host()%>/manage.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Manage Statement Text</a><br><br>
+				<%
+				if ($statement_num > 1) {
+				%>
+				<a href="http://<%=func::get_host()%>/forum.asp/<%=$topic_num%>/1">Topic Forum</a><br><br>
 
+				<%
+				}
+				%>
 				<a href="http://<%=func::get_host()%>/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Camp Forum</a>
-		
 				<%
 			}
 			%>
