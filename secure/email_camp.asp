@@ -218,10 +218,11 @@ sub save_post {
 	my %dummy = ();
 
 	if (!$thread_num) {
-		$thread_num = func::get_next_id($dbh, 'thread', 'thread_num');
+		my $thread_id = func::get_next_id($dbh, 'thread', 'thread_id');
+		$thread_num = func::get_next_id($dbh, 'thread', 'thread_num', "where topic_num=$topic_num and statement_num = $statement_num");
 
-		$selstmt = 'insert into thread ( thread_num,  topic_num,  statement_num, subject) values ' .
-					      "($thread_num, $topic_num, $statement_num, ?      )";
+		$selstmt = 'insert into thread ( thread_id,  thread_num,  topic_num,  statement_num, subject) values ' .
+					      "($thread_id, $thread_num, $topic_num, $statement_num, ?      )";
 
 		if (! $dbh->do($selstmt, \%dummy, $subject)) {
 			%>
@@ -231,11 +232,12 @@ sub save_post {
 		}
 	}
 
-	my $post_num = func::get_next_id($dbh, 'post', 'post_num');
+	my $post_id = func::get_next_id($dbh, 'post', 'post_id');
+	my $post_num = func::get_next_id($dbh, 'post', 'post_num', "where topic_num=$topic_num and statement_num=$statement_num and thread_num=$thread_num");
 	my $now_time = time;
 
-	$selstmt = 'insert into post ( post_num,  thread_num,  topic_num,  statement_num, nick_id,         submit_time, message) values ' .
-				    "($post_num, $thread_num, $topic_num, $statement_num, $sender_nick_id, $now_time,   ?      )";
+	$selstmt = 'insert into post ( post_id,  post_num,  thread_num,  topic_num,  statement_num, nick_id,         submit_time, message) values ' .
+				    "($post_id, $post_num, $thread_num, $topic_num, $statement_num, $sender_nick_id, $now_time,   ?      )";
 
 	if (! $dbh->do($selstmt, \%dummy, $message)) {
 			%>
@@ -244,7 +246,6 @@ sub save_post {
 			$Response->End();
 	}
 }
-
 
 
 %>
