@@ -516,8 +516,9 @@ sub display_text_form {
 	<hr>
 
 	<p><input type=reset value="Reset"></p>
+	<!-- we want to force a preview before commit. -->
 	<p><input type=submit name=submit_edit value="Preview" onClick="return preview_text()"></p>
-	<p><input type=submit name=submit_edit value="<%=$submit_value%>"></p>
+	<!-- <p><input type=submit name=submit_edit value="<%=$submit_value%>"></p> -->
 
 	</form>
 
