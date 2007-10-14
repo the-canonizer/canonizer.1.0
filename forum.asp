@@ -98,9 +98,10 @@ sub display_forum {
 		my $submit_time = $rs->{'submit_time'};
 		my $count  = $rs->{'count'};
 		my $post_num = $rs->{'post_num'};
-		my $post_url = 'http://' . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num/$post_num#$post_num";
+		my $post_url = 'http://' . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num";
 		%>
-		<tr><td><a href="<%=$post_url%>"><%=$subject%></a></td><td><%=$count%></td><td nowrap><a href="<%=$post_url%>"><%=$nick_name%><br><%=func::to_local_time($submit_time)%></a></td></tr>
+		<tr><td><a href="<%=$post_url%>"><%=$subject%></a></td><td><%=$count%></td><td nowrap><a href="
+<%=$post_url%>/<%=$post_num%>#<%=$post_num%>"><%=$nick_name%><br><%=func::to_local_time($submit_time)%></a></td></tr>
 		<%
 	}
 	$sth->finish();
