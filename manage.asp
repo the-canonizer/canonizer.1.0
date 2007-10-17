@@ -58,14 +58,14 @@ sub manage_record {
 
 	my $record = $history->{record_array}->[0];
 
-	my $topic_url = 'http://' . &func::get_host() . '/topic.asp?topic_num=' . $record->{'topic_num'};
+	my $topic_url = 'http://' . &func::get_host() . '/topic.asp/' . $record->{'topic_num'};
 
 	if ($class eq 'statement') {
-		$topic_url .= ('&statement_num=' . $record->{statement_num});
+		$topic_url .= ('/' . $record->{statement_num});
 	} elsif ($class eq 'text') {
-		$topic_url .= ('&statement_num=' . $record->{statement_num});
+		$topic_url .= ('/' . $record->{statement_num});
 		if ($record->{text_size}) { # specify the long to be displayed with the short.
-			$topic_url .= '&long_short=2';
+			$topic_url .= '?long_short=2';
 		}
 	}
 
