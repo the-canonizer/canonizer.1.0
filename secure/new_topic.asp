@@ -42,7 +42,7 @@ if ($Request->Form('submit')) {
 	if (!$message) {
 		func::send_email("New Topic Submitted", "nick id $form_state{'submitter'} added a new topic num $new_topic_num.\nfrom new_topic.asp.\n");
 		sleep(1);
-		$Response->Redirect('http://' . func::get_host() . '/topic.asp?topic_num=' . $new_topic_num);
+		$Response->Redirect('http://' . func::get_host() . '/topic.asp/' . $new_topic_num);
 		$Response->End();
 	}
 }
