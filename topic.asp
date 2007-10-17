@@ -20,27 +20,35 @@ use text;
 
 my $error_message = '';
 
-my $dbh = func::dbh_connect(1) || die "unable to connect to database";
-# ???? is this the right place for this?
-$dbh->{LongReadLen} = 1000000; # what and where should this really be ????
-
-if ($Request->QueryString('as_of_mode')) {
-	$Session->{'as_of_mode'} = $Request->QueryString('as_of_mode');
-}
-if ($Request->QueryString('as_of_date')) {
-	$Session->{'as_of_date'} = $Request->QueryString('as_of_date');
+my $path_info = $ENV{'PATH_INFO'};
+my $pi_topic_num = 0;
+my $pi_statement_num = 0;
+if ($path_info =~ m|/(\d+)/?(\d*)|) {
+	$pi_topic_num = $1;
+	if ($2) {
+		$pi_statement_num = $2;
+	}
 }
 
 my $topic_num = 0;
 if ($Request->Form('topic_num')) {
 	$topic_num = int($Request->Form('topic_num'));
+} elsif ($pi_topic_num) {
+	$topic_num = $pi_topic_num;
 } elsif ($Request->QueryString('topic_num')) {
 	$topic_num = int($Request->QueryString('topic_num'));
+}
+if (!$topic_num) {
+	$error_message = "Must specify a topic_num.";
+	&display_page('Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	$Response->End();
 }
 
 my $statement_num = 1; # 1 is the default ageement statement;
 if ($Request->Form('statement_num')) {
 	$statement_num = int($Request->Form('statement_num'));
+} elsif ($pi_statement_num) {
+	$statement_num = $pi_statement_num;
 } elsif ($Request->QueryString('statement_num')) {
 	$statement_num = int($Request->QueryString('statement_num'));
 }
@@ -52,6 +60,16 @@ if ($Request->Form('long_short')) {
 	$long_short = int($Request->QueryString('long_short'));
 }
 
+if ($Request->QueryString('as_of_mode')) {
+	$Session->{'as_of_mode'} = $Request->QueryString('as_of_mode');
+}
+if ($Request->QueryString('as_of_date')) {
+	$Session->{'as_of_date'} = $Request->QueryString('as_of_date');
+}
+
+my $dbh = func::dbh_connect(1) || die "unable to connect to database";
+# ???? is this the right place for this?  Was this only for oracle?
+$dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
 my $topic_data = lookup_topic_data($dbh, $topic_num, $statement_num, $long_short);
 
