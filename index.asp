@@ -120,35 +120,6 @@ sub top_10 {
 <%
 
 }
-    
-sub display_statement_tree {
-	my statement $statement = $_[0];
-
-	if ($statement->{children}) {
-%>
-
-
-		
-<%
-		my statement $child;
-		foreach $child (@{$statement->{children}}) {
-
-%>
-
-<a href="http://<%=&func::get_host()%>/topic.asp?topic_num=<%=$child->{topic_num}%>&statement_num=<%=$child->{statement_num}%>"><%=$child->{statement_name}%> (<%=$child->{title}%>)</a>
-
-<%
-			&display_statement_tree($child);
-		}
-%>
-
-
-		
-<%
-		return(1);
-	}
-	return(0);
-}
 
 %>
 
