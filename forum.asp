@@ -67,7 +67,7 @@ sub display_forum {
 	%>
 	<div class="main_content_container">
 
-	<p><a href="/topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Return to camp statement page</a></p>
+	<p><a href="/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to camp statement page</a></p>
 
 	<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Start new thread</a></p>
 	<%
