@@ -192,11 +192,11 @@ sub present_topic {
 
 	<script language:javascript>
 	function change_long_short(val) {
-		var location_str = "topic.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>";
+		var location_str = "/topic.asp/<%=$topic_num%>/<%=$statement_num%>";
 		if (val == 2) {
-			location_str += "&long_short=2";
+			location_str += "?long_short=2";
 		} else if (val == 1) {
-			location_str += "&long_short=1";
+			location_str += "?long_short=1";
 		}
 		window.location = location_str;
 	}
