@@ -22,6 +22,11 @@ sub as_of {
 		$qs .= '&';
 	}
 
+	my $as_of_path_info = $ENV{'PATH_INFO'};
+	if ($as_of_path_info) {
+		$qs = $as_of_path_info . $qs;
+	}
+
  	my $url = 'http://' . &func::get_host() . '/change_as_of.asp?destination=' . $protocol . '://' . &func::get_host() . $ENV{'SCRIPT_NAME'} . $qs . 'as_of=';
 
 	# Can't put this here because it is sometimes executed after main content.
