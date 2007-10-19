@@ -23,7 +23,7 @@ if(!$ENV{"HTTPS"}){
 ########
 
 if (!$Session->{'logged_in'}) {
-	display_page('New Topic', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	display_page('New Topic', 'New Topic', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -51,11 +51,11 @@ my %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
 
 if ($nick_names{'error_message'}) {
 	$error_message = $nick_names{'error_message'};
-	display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	display_page($subtitle, $subtitle, [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
-display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&new_topic_form]);
+display_page($subtitle, $subtitle, [\&identity, \&search, \&main_ctl], [\&new_topic_form]);
 
 
 

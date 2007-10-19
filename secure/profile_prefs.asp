@@ -11,7 +11,7 @@ if(!$ENV{"HTTPS"}){
 # main #
 ########
 
-&display_page('Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_prefs], \&profile_tabs);
+&display_page('Personal Info', 'Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_prefs], \&profile_tabs);
 
 
 

@@ -22,7 +22,7 @@ if (!$Session->{'logged_in'} || !$Session->{'cid'}) {
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$destination .= ('?' . $query_string);
 	}
-	display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	display_page('Edit', 'Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -84,12 +84,12 @@ if ($statement->{error_message}) {
 
 
 if ($error_message) {
-	display_page('Support Errorr', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	display_page('Support Errorr', 'Support Errorr', [\&identity, \&search, \&main_ctl], [\&error_page]);
 } elsif ($Request->Form('submit')) {
 	# does not return if successful (rederects to topic.asp for original statement.)
 	save_support();
 } else {
-	display_page('Add Support Topic: ' . $topic->{topic_name}, [\&identity, \&search, \&main_ctl], [\&support_form]);
+	display_page('Add Support Topic: ' . $topic->{topic_name}, 'Add Support Topic: ' . $topic->{topic_name}, [\&identity, \&search, \&main_ctl], [\&support_form]);
 }
 
 

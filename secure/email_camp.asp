@@ -18,7 +18,7 @@ if (!$Session->{'logged_in'}) {
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$destination .= ('?' . $query_string);
 	}
-	display_page('Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	display_page('Send E-Mail to camp', 'Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -34,7 +34,7 @@ if ($Request->Form('topic_num')) {
 }
 if (!$topic_num) {
 	$error_message = "Must specify a topic_num.";
-	display_page('Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	display_page('Send E-Mail to camp', 'Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -81,12 +81,12 @@ if ($Request->Form('submit_edit')) {
 		}
 	}
 	if (! $error_message) {
-		display_page($header, [\&identity, \&search, \&main_ctl], [\&send_email_page]);
+		display_page($header, $header, [\&identity, \&search, \&main_ctl], [\&send_email_page]);
 		$Response->End();
 	}
 }
 
-display_page($header, [\&identity, \&search, \&main_ctl], [\&email_camp_form]);
+display_page($header, $header, [\&identity, \&search, \&main_ctl], [\&email_camp_form]);
 
 
 

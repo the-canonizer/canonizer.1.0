@@ -92,7 +92,7 @@ if (!$Session->{'logged_in'}) {
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$destination .= ('?' . $query_string);
 	}
-	&display_page('Upload File', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	&display_page('Upload File', 'Upload File', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -136,7 +136,7 @@ if ($Request->Form('upload')) {
 	}
 }
 
-&display_page($header, [\&identity, \&search, \&main_ctl], [\&upload]);
+&display_page($header, $header, [\&identity, \&search, \&main_ctl], [\&upload]);
 
 %>
 

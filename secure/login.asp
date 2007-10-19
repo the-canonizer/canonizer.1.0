@@ -36,7 +36,7 @@ if ($Request->Form('submit')) {
 	do_login();
 }
 
-display_page('Login', [], [\&login_form]);
+display_page('Login', 'Login', [], [\&login_form]);
 
 
 ########

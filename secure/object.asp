@@ -21,7 +21,7 @@ use text;
 my $error_message = '';
 
 if (!$Session->{'logged_in'}) {
-	&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	&display_page('Object to Modification', 'Object to Modification', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -34,7 +34,7 @@ if ($Request->Form('class')) {
 
 if (&managed_record::bad_managed_class($class)) {
 	$error_message = "Error: '$class' is an invalid edit class.\n";
-	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Edit Error', 'Edit Error', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -54,7 +54,7 @@ my $message = '';
 my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 if (!$record_id) {
-	&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&unknown_record_page]);
+	&display_page('Object to Modification', 'Object to Modification', [\&identity, \&search, \&main_ctl], [\&unknown_record_page]);
 	$Response->End();
 }
 
@@ -62,7 +62,7 @@ my $record = new_record_id $class ($dbh, $record_id);
 
 if ($record->{error_message}) {
 	$error_message = $record->{error_message};
-	&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Object to Modification', 'Object to Modification', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -77,7 +77,7 @@ if ($class eq 'topic') {
 
 if (! can_object($dbh, $topic_num, $statement_num, $record)) {
 	# can_object must set error mesage if can't object.
-	&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Object to Modification', 'Object to Modification', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -91,7 +91,7 @@ if (time > $record->{go_live_time}) {
 }
 
 
-&display_page('Object to Modification', [\&identity, \&search, \&main_ctl], [\&object_to_topic_page]);
+&display_page('Object to Modification', 'Object to Modification', [\&identity, \&search, \&main_ctl], [\&object_to_topic_page]);
 
 
 
