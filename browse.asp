@@ -43,7 +43,7 @@ sub browse {
 	my $no_data = 1;
 	while ($rs = $sth->fetch()) {
 		$no_data = 0;
-		print('<p class="browse_list"><a href="/topic.asp?topic_num=' . $rs->[0] . '">', $rs->[1], $rs->[2], '</a> ', $rs->[3], "</p>\n");
+		print('<p class="browse_list"><a href="/topic.asp/' . $rs->[0] . '">', $rs->[1], $rs->[2], '</a> ', $rs->[3], "</p>\n");
 	}
 
 	if ($no_data) {
@@ -75,6 +75,6 @@ sub browse {
 # main #
 ########
 
-&display_page('Browse', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&browse]);
+&display_page('Browse', 'Browse', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&browse]);
 
 %>

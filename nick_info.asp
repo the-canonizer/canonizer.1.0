@@ -13,7 +13,7 @@ if ($Request->Form('nick_id')) {
 }
 
 
-display_page('Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&nick_names]);
+display_page('Env and State info', 'Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&nick_names]);
 
 
 

@@ -22,7 +22,7 @@ if ($Request->Form('class')) {
 
 if (&managed_record::bad_managed_class($class)) {
 	$error_message = "Error: '$class' is an invalid manage class.\n";
-	&display_page("Manage Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page("Manage Error", "Manage Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -32,7 +32,7 @@ eval('$args = ' . $class . '::get_args($Request)');
 
 if ($args->{'error_message'}) {
 	$error_message = $args->{'error_message'};
-	&display_page("Manage $class:" . $topic_num, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page("Manage $class:" . $topic_num, "Manage $class:" . $topic_num, [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -42,11 +42,11 @@ my $history = history_class->new($dbh, $class, $args);
 
 if ($history->{error_message}) {
 	$error_message = $history->{error_message};
-	&display_page("Manage " . $history->{manage_ident}, [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page("Manage " . $history->{manage_ident}, "Manage " . $history->{manage_ident}, [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
-display_page('Manage ' . $history->{manage_ident}, [\&identity, \&search, \&main_ctl], [\&manage_record]);
+display_page('Manage ' . $history->{manage_ident}, 'Manage ' . $history->{manage_ident}, [\&identity, \&search, \&main_ctl], [\&manage_record]);
 
 
 

@@ -5,7 +5,7 @@ use statement;
 
 my $header = 'CANONIZER Top 10';
 
-&display_page($header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&top_10]);
+&display_page($header, $header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&top_10]);
 
 ##############
 # start subs #

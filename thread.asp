@@ -3,7 +3,7 @@
 use person;
 use statement;
 
-my $num_posts_per_page = 3;
+my $num_posts_per_page = 10;
 
 my $error_message = '';
 
@@ -31,7 +31,7 @@ if ($Request->Form('topic_num')) {
 }
 if (!$topic_num) {
 	$error_message = "Must specify a topic_num.";
-	&display_page('Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Camp Forum Thread', 'Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -46,7 +46,7 @@ if ($Request->Form('statement_num')) {
 }
 if (!$statement_num) {
 	$error_message = "Must specify a statement_num.";
-	&display_page('Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Camp Forum Thread', 'Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -61,7 +61,7 @@ if ($Request->Form('thread_num')) {
 }
 if (!$thread_num) {
 	$error_message = "Must specify a thread_num.";
-	&display_page('Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Camp Forum Thread', 'Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -83,16 +83,29 @@ my $subject = func::get_thread_subject($dbh, $topic_num, $statement_num, $thread
 
 if (length($subject) < 1) {
 		$error_message = "Unknown thread for topic_num $topic_num, statement_num: $statement_num, thread_num: $thread_num.";
-		&display_page('Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
+		&display_page('Camp Forum Thread', 'Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
 		$Response->End();
 }
 
 my statement $tree = new_tree statement ($dbh, $topic_num, $statement_num);
 
-my $header = "Topic: $topic_name<br> \nStatement: " . $tree->make_statement_path() . "<br>\nCamp Forum Thread: $subject\n";
+my $title = "Topic: $topic_name Statement: " . $tree->make_statement_path() . " Camp Forum Thread: $subject\n";
+
+my $topic_camp = 'Camp';
+if ($statement_num == 1) {
+	$topic_camp = 'Topic';
+}
+
+my $header .= '<table><tr><td class="label">Topic:</td>' .
+				'<td class="topic">' . $topic_name . "</td></tr>\n" .
+			    '<tr><td class="label">Statement:</td>' .
+			        '<td class="statement">' . $tree->make_statement_path() . "</td></tr>\n" .
+			    '<tr><td class="label">' . $topic_camp . ' Forum Thread:</td>' .
+			        '<td class="statement">' . $subject . "</td></tr>\n" .
+	      "</table>\n";
 
 
-&display_page($header, [\&identity, \&search, \&main_ctl], [\&display_thread]);
+&display_page($title, $header, [\&identity, \&search, \&main_ctl], [\&display_thread]);
 
 
 ########
@@ -103,9 +116,9 @@ sub display_thread {
 	%>
 	<div class="main_content_container">
 
-	<p><a href="/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to camp statement page</a></p>
+	<p><a href="/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to <%=$statement_num==1 ? 'agreement' : 'camp'%> statement page</a></p>
 
-	<p><a href="/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Return to camp forum</a></p>
+	<p><a href="/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Return to <%=$statement_num==1 ? 'topic' : 'camp'%> forum</a></p>
 
 	<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&thread_num=<%=$thread_num%>">New post to thread</a></p>
 	<%

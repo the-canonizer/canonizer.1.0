@@ -40,7 +40,7 @@ if ($Request->Form('topic_num')) {
 }
 if (!$topic_num) {
 	$error_message = "Must specify a topic_num.";
-	&display_page('Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Topic Page', 'Topic Page', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -75,15 +75,22 @@ my $topic_data = lookup_topic_data($dbh, $topic_num, $statement_num, $long_short
 
 if ($topic_data->{'error_message'}) {
 	$error_message = $topic_data->{'error_message'};
-	display_page('Unknown Topic Number', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&error_page]);
+	display_page('Unknown Topic Number', 'Unknown Topic Number', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&error_page]);
 } else {
+
+	my $title = 'Topic: ' . $topic_data->{'topic'}->{topic_name} . ' ' .
+		    'Statement: ' . $topic_data->{'statement'}->make_statement_path();
+
+	my $header = '<table><tr><td class="label">Topic:</td>' .
+				'<td class="topic">' . $topic_data->{'topic'}->{topic_name} . '</td></tr>' .
+			    '<tr><td class="label">Statement:</td>' .
+			        '<td class="statement">' . $topic_data->{'statement'}->make_statement_path() . "</td></tr></table>\n";
+
 	if ($Request->Form('submit_edit')) {		# preview mode
 
-		display_page('Topic: ' . 
-		$topic_data->{'topic'}->{topic_name} . ' <br>Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&search, \&main_ctl], [\&present_topic]);
+		display_page($title, $header, [\&identity, \&search, \&main_ctl], [\&present_topic]);
 	} else {					# normal mode
-		display_page('Topic: ' . 
-		$topic_data->{'topic'}->{topic_name} . ' <br>Statement: ' . $topic_data->{'statement'}->make_statement_path(), [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
+		display_page($title, $header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
 	}
 }
 
@@ -238,7 +245,12 @@ sub present_topic {
 
 	my $html_text_short = '<p>No short statement has been provided.</p>';
         my $html_text_long = '<p>No long statement has been provided.</p>';
-        
+
+	my $camp_agreement = 'Camp';
+	if ($statement_num == 1) {
+		$camp_agreement = "Agreement";
+	}
+
 	# short text:
 	if ($long_short == 0 || $long_short == 2) {
 	
@@ -248,9 +260,9 @@ sub present_topic {
                         <div class="section_container">
 
 			<div class="header_1">
-     <span id="title">Short Statement: <%=$topic_data->{'topic'}->{topic_name}%> / <%=$topic_data->{'statement'}->{statement_name}%></span>
+     <span id="title"><%=$camp_agreement%> Statement</span>
  </div>
- 
+
 
 <%		
 if ($topic_data->{'short_text'}) {
@@ -312,7 +324,7 @@ if ($topic_data->{'short_text'}) {
 	           			%>
 			                       <div class="section_container">
 						<div class="header_1">
-     <span id="title">Long Statement: <%=$topic_data->{'topic'}->{topic_name}%> / <%=$topic_data->{'statement'}->{statement_name}%></span>
+     <span id="title"><%=$camp_agreement%> Long Statement</span>
      </div>
      
        	<%
@@ -357,18 +369,8 @@ if ($topic_data->{'short_text'}) {
 		</span></div></div><%
 	}
 	%>
-	
-	
-
-	
 
 
-	
-	
-	
- 	
-
-	
 
 <div class="section_container">
 <div class="header_1">

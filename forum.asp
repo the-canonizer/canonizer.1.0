@@ -1,5 +1,7 @@
 <%
 
+my $num_posts_per_page = 10;
+
 use person;
 use statement;
 
@@ -29,7 +31,7 @@ my $error_message = '';
 
 if (!$topic_num) {
 	$error_message = "Must specify a topic_num.";
-	&display_page('Camp Forum', [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Camp Forum', 'Camp Forum', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -54,9 +56,18 @@ if ($statement_num == 1) {
 	$topic_camp = 'Topic';
 }
 
-my $header = "Topic: $topic_name<br>Statement: " . $tree->make_statement_path() . "<br>$topic_camp Forum\n";
+my $title = "Topic: $topic_name<br>Statement: " . $tree->make_statement_path() . "$topic_camp Forum\n";
 
-&display_page($header, [\&identity, \&search, \&main_ctl], [\&display_forum]);
+my $header .= '<table><tr><td class="label">Topic:</td>' .
+				'<td class="topic">' . $topic_name . "</td></tr>\n" .
+			    '<tr><td class="label">Statement:</td>' .
+			        '<td class="statement">' . $tree->make_statement_path() . "</td></tr>\n" .
+			    '<tr><td class="label">&nbsp;</td>' .
+			        '<td class="statement">' . $topic_camp . " Forum</td></tr>\n" .
+	      "</table>\n";
+
+
+&display_page($title, $header, [\&identity, \&search, \&main_ctl], [\&display_forum]);
 
 
 ########
@@ -98,9 +109,13 @@ sub display_forum {
 		my $submit_time = $rs->{'submit_time'};
 		my $count  = $rs->{'count'};
 		my $post_num = $rs->{'post_num'};
+		my $pagination = '';
+		if ($post_num > $num_posts_per_page) {
+			$pagination = make_pagination_str($thread_num, $post_num);
+		}
 		my $post_url = 'http://' . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num";
 		%>
-		<tr><td><a href="<%=$post_url%>"><%=$subject%></a></td><td><%=$count%></td><td nowrap><a href="
+		<tr><td><a href="<%=$post_url%>"><%=$subject%></a><%=$pagination%></td><td><%=$count%></td><td nowrap><a href="
 <%=$post_url%>/<%=$post_num%>#<%=$post_num%>"><%=$nick_name%><br><%=func::to_local_time($submit_time)%></a></td></tr>
 		<%
 	}
@@ -120,6 +135,28 @@ sub display_forum {
 	</div>
 	<%
 }
+
+
+sub make_pagination_str {
+	my $thread_num = $_[0];
+	my $num_posts  = $_[1];
+
+	my $ret_val = '<br>&nbsp; &nbsp; Pages: ';
+
+	my $num;
+	for ($num = 0; ($num * $num_posts_per_page) < $num_posts; $num++) {
+		$ret_val .= '<a href="http://' . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num/" . ($num * $num_posts_per_page + 1) . '">' . ($num + 1) . '</a>, ';
+	}
+
+	chop($ret_val);
+	chop($ret_val);
+
+	return($ret_val);
+}
+
+
+
+
 
 %>
 

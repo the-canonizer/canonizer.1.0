@@ -13,7 +13,7 @@ if ($Request->Form('nick_id')) {
 }
 
 
-display_page('Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&nick_names]);
+display_page('Env and State info', 'Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&nick_names]);
 
 
 
@@ -49,7 +49,7 @@ sub nick_names {
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 #	my $selstmt = 'select nick_name, nick_name_id from nick_name';
-	my $selstmt = 'select cid, first_name, last_name, email from person';
+	my $selstmt = 'select cid, first_name, last_name, email, state from person';
 
 	if ($nick_id) {
 		$selstmt .= " where nick_name_id = $nick_id";
@@ -65,7 +65,19 @@ sub nick_names {
 		my $not_supporting = 1;
 		# $selstmt = "select topic.name, support.name statement.delegate_id from suppo
 		%>
-		<li><%=$rs->{'first_name'}%> <%=$rs->{'last_name'}%> (<%=$rs->{'email'}%>)</li>
+		<li><%=$rs->{'first_name'}%> <%=$rs->{'last_name'}%> [<%=$rs->{'cid'}%>] (<%=$rs->{'email'}%>) <%=$rs->{'state'}%></li>
+		<ol>
+		<%
+		my %nick_name_hash = func::get_nick_name_hash($rs->{'cid'}, $dbh);
+		my $nick_name_id;
+		foreach $nick_name_id (keys %nick_name_hash) {
+			%>
+			<li><%=$nick_name_hash{$nick_name_id}%> [<%=$nick_name_id%>]</li>
+			<%
+		}
+		%>
+		</ol>
+		<br>
 		<%
 	}
 	%>
