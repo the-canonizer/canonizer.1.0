@@ -1,14 +1,12 @@
 <%
 
 sub display_page {
-	my $page_header	     = $_[0];
-	my $bar_subs	     = $_[1];
-	my $content_subs     = $_[2];
-	my $tab_sub	     = $_[3];
+	my $title	 = $_[0];    
+	my $page_header  = $_[1];
+	my $bar_subs	 = $_[2];
+	my $content_subs = $_[3];
+	my $tab_sub	 = $_[4];
 
-
-	my $title = $page_header;
-	   $title =~ s|\<[^\>]*\>||g;
 	my $copyright_info = 'Copyright Canonizer LLC 2007';
 	my $support_email = 'support@canonizer.com'
 
