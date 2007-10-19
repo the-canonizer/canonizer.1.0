@@ -30,7 +30,7 @@ if (!$Session->{'logged_in'}) {
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$destination .= ('?' . $query_string);
 	}
-	&display_page('Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	&display_page('Edit', 'Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
@@ -53,7 +53,7 @@ if ($Request->Form('class')) {
 
 if (&managed_record::bad_managed_class($class)) {
 	$error_message = "Error: '$class' is an invalid edit class.\n";
-	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Edit Error', 'Edit Error', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
@@ -69,7 +69,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 	$record = new_form $class ($Request);
 	if ($record->{error_message}) {
 		$error_message = $record->{error_message};
-		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+		&display_page('Edit Error', 'Edit Error', [\&identity, \&search, \&main_ctl], [\&error_page]);
 		$Response->End();
 	}
 	$record->{value} = func::hex_decode($record->{value});
@@ -104,7 +104,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 	$record = new_record_id $class ($dbh, $copy_record_id);
 	if ($record->{error_message}) {
 		$error_message = $record->{error_message};
-		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+		&display_page('Edit Error', 'Edit Error', [\&identity, \&search, \&main_ctl], [\&error_page]);
 		$Response->End();
 	}
 	$record->{proposed} = 1;
@@ -145,7 +145,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 		}
 	}
 	if ($error_message) {
-		&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+		&display_page('Edit Error', 'Edit Error', [\&identity, \&search, \&main_ctl], [\&error_page]);
 		$Response->End();
 	}
 }
@@ -154,11 +154,11 @@ my %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
 
 if ($nick_names{'error_message'}) {
 	$error_message = $nick_names{'error_message'};
-	&display_page("Edit Error", [\&identity, \&search, \&main_ctl], [\&error_page]);
+	&display_page('Edit Error', 'Edit Error', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
 
-&display_page($subtitle, [\&identity, \&search, \&main_ctl], [\&display_form]);
+&display_page($subtitle, $subtitle, [\&identity, \&search, \&main_ctl], [\&display_form]);
 
 
 ########
