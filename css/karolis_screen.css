@@ -745,6 +745,33 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 }
 
 
+/* HEADER TABLE ----------------------------------------------------------- */
+
+#header td.label
+{
+	vertical-align: top;
+	font-size: 80%;
+	text-align: right;
+	padding: 4px;
+}
+
+
+#header td.topic
+{
+	font-size: 150%;
+	font-weight: bold;
+	text-align: left;
+}
+
+#header td.statement
+{
+	font-size: 120%;
+	font-weight: bold;
+	text-align: left;
+}
+
+
+
 /* SUPPORT TABLES ----------------------------------------------------------- */
 
 .main_content_container .support_table td
