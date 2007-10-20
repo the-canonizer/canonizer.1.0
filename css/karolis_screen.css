@@ -745,7 +745,25 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 }
 
 
+/* ID TABLE ----------------------------------------------------------- */
+
+.main_content_container .separator
+{
+	background: #FFFFFF;
+	height: 10px;
+	border: 0;
+}
+
+
+
 /* HEADER TABLE ----------------------------------------------------------- */
+
+#header td.separator
+{
+	background: #FFFFFF;
+	height: 50px;
+	border: 0;
+}
 
 #header td.label
 {
@@ -770,6 +788,19 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	text-align: left;
 }
 
+#header td.forum
+{
+	font-size: 120%;
+	font-weight: normal;
+	padding-left: 40px;
+}
+
+#header td #green
+{
+	color: green;
+	font-size: 100%;
+	font-weight: bold;
+}
 
 
 /* SUPPORT TABLES ----------------------------------------------------------- */
