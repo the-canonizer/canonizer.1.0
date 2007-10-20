@@ -176,13 +176,13 @@ sub send_email_page {
 
 	if ($sender_nick_id and length($sender_nick_name) > 0) {
 
-		save_post($dbh, $subject, $message, $topic_num, $statement_num, $thread_num, $sender_nick_id);
+		$thread_num = save_post($dbh, $subject, $message, $topic_num, $statement_num, $thread_num, $sender_nick_id);
 
 		$message = $sender_nick_name . " has sent this message " .
-			"to all the supporters of the $tree->{statement_name} statement on the topic: $topic_name.\n\n" .
+			"to all the supporters of the $tree->{statement_name} camp on the topic: $topic_name.\n\n" .
 			"Rather than reply to this e-mail (which only goes to canonizer\@canonizer.com) " .
 			"please post all replies to the camp forum thread page this message was sent from here:\n" .
-			"http://" . func::get_host() . "/thread.asp?topic_num=$topic_num&statement_num=$statement_num&thread_num=$thread_num" .
+			"http://" . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num" .
 			"\n\n\n" .
 			$message .
 			"\n\n\n" .
@@ -245,6 +245,7 @@ sub save_post {
 			<%
 			$Response->End();
 	}
+	return($thread_num);
 }
 
 
