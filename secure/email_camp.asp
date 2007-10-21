@@ -183,9 +183,11 @@ sub send_email_page {
 			"Rather than reply to this e-mail (which only goes to canonizer\@canonizer.com) " .
 			"please post all replies to the camp forum thread page this message was sent from here:\n" .
 			"http://" . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num" .
-			"\n\n\n" .
+			"\h\n----------------------------------" .
+			"\n\n" .
 			$message .
-			"\n\n\n" .
+			"\n\n----------------------------------" .
+			"\n\n" .
 			"Please report any abuse to support\@canonizer.com.\n";
 
 		person::send_email_to_hash($dbh, \%support_hash, $subject, $message);
