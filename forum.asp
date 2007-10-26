@@ -60,10 +60,9 @@ my $title = "Topic: $topic_name<br>Statement: " . $tree->make_statement_path() .
 
 my $header .= '<table><tr><td class="label">Topic:</td>' .
 				'<td class="topic">' . $topic_name . "</td></tr>\n" .
-			    '<tr><td class="label">Statement:</td>' .
-			        '<td class="statement">' . $tree->make_statement_path() . "</td></tr>\n" .
-			    '<tr><td class="label">&nbsp;</td>' .
-			        '<td class="statement">' . $topic_camp . " Forum</td></tr>\n" .
+		     '<tr><td class="label">Statement:</td>' .
+			 '<td class="statement">' . $tree->make_statement_path() . "</td></tr>\n" .
+		     '<tr><td class="forum" colspan=2>' . $topic_camp . " Forum</td></tr>\n" .
 	      "</table>\n";
 
 
@@ -88,7 +87,7 @@ sub display_forum {
 	my $min_max = 'max';		 # set to min for static ordered page from first thread.
 	my $first_last = 'Last post by'; # set to first post by for static page.
 
-	my $selstmt = "select subject, nick_id, p.thread_num, p.post_num, p.count, p.submit_time from thread t, (select thread_num, $min_max(post_num) as post_num, nick_id, count(*) as count, $min_max(submit_time) as submit_time from post where topic_num=$topic_num and statement_num=$statement_num group by thread_num) p where t.topic_num=$topic_num and t.statement_num=$statement_num and t.thread_num = p.thread_num order by p.submit_time desc";
+	my $selstmt = "select subject, p.nick_id, p.thread_num, p.post_num, m.count, p.submit_time from thread t, post p, (select $min_max(post_num) as post_num, count(*) as count from post where topic_num=$topic_num and statement_num=$statement_num group by thread_num) m where t.topic_num=$topic_num and t.statement_num=$statement_num and t.thread_num = p.thread_num and p.post_num = m.post_num group by post_num order by p.submit_time desc";
 
 	my $threads = 0;
 	my $sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
