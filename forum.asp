@@ -98,7 +98,7 @@ sub display_forum {
 		if (! $threads) {
 			%>
 			<table class=forum_table>
-			<tr><td class=header>Subject</td><td class=header>Posts</td><td class=header><%=$first_last%></td><tr>
+			<tr><td class=header>Thread Subject</td><td class=header>Posts</td><td class=header><%=$first_last%></td><tr>
 			<%
 		}
 		$threads++;
@@ -122,7 +122,7 @@ sub display_forum {
 
 	if ($threads) {
 		%>
-		<tr><td class=header>Subject</td><td class=header>Posts</td><td class=header><%=$first_last%></td><tr>
+		<tr><td class=header>Thread Subject</td><td class=header>Posts</td><td class=header><%=$first_last%></td><tr>
 		</table>
 		<%
 	} else {
