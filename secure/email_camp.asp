@@ -3,21 +3,37 @@
 use person;
 use statement;
 
-if(!$ENV{"HTTPS"}){
-	my $qs = '';
-	if ($ENV{'QUERY_STRING'}) {
-		$qs = '?' . $ENV{'QUERY_STRING'};
+my $path_info = $ENV{'PATH_INFO'};
+my $pi_topic_num = 0;
+my $pi_statement_num = 0;
+my $pi_thread_num = 0;
+if ($path_info =~ m|/(\d+)/(\d+)/?(\d*)|) {
+	$pi_topic_num = $1;
+	$pi_statement_num = $2;
+	if ($3) {
+		$pi_thread_num = $3;
 	}
-        $Response->Redirect('https://' . func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
+}
+
+my $dest_args = '';
+
+if ($path_info) {
+	$dest_args = $path_info;
+}
+
+if ($ENV{'QUERY_STRING'}) {
+	$dest_args .= ('?' . $ENV{'QUERY_STRING'});
+}
+
+
+if (!$ENV{"HTTPS"}) {
+        $Response->Redirect('https://' . func::get_host() . $ENV{"SCRIPT_NAME"} . $dest_args);
 }
 
 my $destination;
 
 if (!$Session->{'logged_in'}) {
-	$destination = '/secure/email_camp.asp';
-	if (my $query_string = $ENV{'QUERY_STRING'}) {
-		$destination .= ('?' . $query_string);
-	}
+	$destination = '/secure/email_camp.asp' . $dest_args;
 	display_page('Send E-Mail to camp', 'Send E-Mail to camp', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
@@ -29,6 +45,8 @@ my $error_message = '';
 my $topic_num = 0;
 if ($Request->Form('topic_num')) {
 	$topic_num = int($Request->Form('topic_num'));
+} elsif ($pi_topic_num) {
+	$topic_num = $pi_topic_num;
 } elsif ($Request->QueryString('topic_num')) {
 	$topic_num = int($Request->QueryString('topic_num'));
 }
@@ -42,6 +60,8 @@ if (!$topic_num) {
 my $statement_num = 1; # 1 is the default ageement statement;
 if ($Request->Form('statement_num')) {
 	$statement_num = int($Request->Form('statement_num'));
+} elsif ($pi_statement_num) {
+	$statement_num = $pi_statement_num;
 } elsif ($Request->QueryString('statement_num')) {
 	$statement_num = int($Request->QueryString('statement_num'));
 }
@@ -49,6 +69,8 @@ if ($Request->Form('statement_num')) {
 my $thread_num = 0; # 1 is the default ageement statement;
 if ($Request->Form('thread_num')) {
 	$thread_num = int($Request->Form('thread_num'));
+} elsif ($pi_thread_num) {
+	$thread_num = $pi_thread_num;
 } elsif ($Request->QueryString('thread_num')) {
 	$thread_num = int($Request->QueryString('thread_num'));
 }
