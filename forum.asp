@@ -142,7 +142,7 @@ EOF
 		}
 
 		%>
-		<tr><td><%=$subject%><%=$pagination%></td><td><%=$count%></td><td nowrap>First post: &nbsp; &nbsp; &nbsp;<a href="<%=$post_url%>"><%=$min_nick_name%><br>
+		<tr><td><%=$subject%><br><br><a href = "http://<%=func::get_host()%>/secure/email_camp.asp/<%=$topic_num%>/<%=$statement_num%>/<%=$thread_num%>">New Reply to Thread</a><%=$pagination%></td><td><%=$count%></td><td nowrap>First post: &nbsp; &nbsp; &nbsp;<a href="<%=$post_url%>"><%=$min_nick_name%><br>
 				<%=func::to_local_time($min_time)%></a><%=$last_post_str%></td></tr>
 		<%
 	}
@@ -168,7 +168,7 @@ sub make_pagination_str {
 	my $thread_num = $_[0];
 	my $num_posts  = $_[1];
 
-	my $ret_val = '<br><br>&nbsp; &nbsp; Pages: ';
+	my $ret_val = '<br><br> &nbsp; &nbsp; Pages: ';
 
 	my $num;
 	for ($num = 0; ($num * $num_posts_per_page) < $num_posts; $num++) {
