@@ -1,6 +1,6 @@
 <%
 
-my $num_posts_per_page = 5;
+my $num_posts_per_page = 10;
 
 use person;
 use statement;
