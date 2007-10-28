@@ -1,10 +1,18 @@
 <%
-if(!$ENV{"HTTPS"}){
-	my $qs = '';
-	if ($ENV{'QUERY_STRING'}) {
-		$qs = '?' . $ENV{'QUERY_STRING'};
-	}
-        $Response->Redirect('https://' . func::get_host() . $ENV{"SCRIPT_NAME"} . $qs);
+
+my $dest_args = '';
+
+if ($ENV{'PATH_INFO'}) {
+	$dest_args = $ENV{'PATH_INFO'};
+}
+
+if ($ENV{'QUERY_STRING'}) {
+	$dest_args .= ('?' . $ENV{'QUERY_STRING'});
+}
+
+
+if (!$ENV{"HTTPS"}) {
+        $Response->Redirect('https://' . func::get_host() . $ENV{"SCRIPT_NAME"} . $dest_args);
 }
 
 local $message = '';
