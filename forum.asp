@@ -1,6 +1,6 @@
 <%
 
-my $num_posts_per_page = 10;
+my $num_posts_per_page = 5;
 
 use person;
 use statement;
@@ -56,7 +56,7 @@ if ($statement_num == 1) {
 	$topic_camp = 'Topic';
 }
 
-my $title = "Topic: $topic_name<br>Statement: " . $tree->make_statement_path() . "$topic_camp Forum\n";
+my $title = "Topic: $topic_name - Statement: " . $tree->make_statement_path() . "$topic_camp Forum\n";
 
 my $header .= '<table><tr><td class="label">Topic:</td>' .
 				'<td class="topic">' . $topic_name . "</td></tr>\n" .
@@ -84,10 +84,29 @@ sub display_forum {
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
-	my $min_max = 'max';		 # set to min for static ordered page from first thread.
-	my $first_last = 'Last post by'; # set to first post by for static page.
+	my $min_max = 'max_time';		 # set to min_time for static ordered page from first thread.
 
-	my $selstmt = "select subject, p.nick_id, p.thread_num, p.post_num, m.count, p.submit_time from thread t, post p, (select $min_max(post_num) as post_num, count(*) as count from post where topic_num=$topic_num and statement_num=$statement_num group by thread_num) m where t.topic_num=$topic_num and t.statement_num=$statement_num and t.thread_num = p.thread_num and p.post_num = m.post_num group by post_num order by p.submit_time desc";
+	my $selstmt = <<EOF;
+select t.thread_num, min_post_num, min_nick_id, min_time, max_post_num, max_nick_id, max_time, subject, count from
+
+(select a.thread_num, a.post_num as min_post_num, a.nick_id as min_nick_id, a.submit_time as min_time, z.post_num as max_post_num, z.nick_id as max_nick_id, z.submit_time as max_time from
+
+(select p.post_num, p.nick_id, p.thread_num, p.submit_time from
+(select thread_num, min(submit_time) as submit_time from post where topic_num = $topic_num and statement_num = $statement_num group by thread_num) b,
+post p where topic_num=$topic_num and statement_num=$statement_num and p.thread_num=b.thread_num and p.submit_time = b.submit_time) a, 
+
+(select p.post_num, p.nick_id, p.thread_num, p.submit_time from
+(select thread_num, max(submit_time) as submit_time from post where topic_num = $topic_num and statement_num = $statement_num group by thread_num) y,
+post p where topic_num=$topic_num and statement_num=$statement_num and p.thread_num=y.thread_num and p.submit_time = y.submit_time) z
+
+where a.thread_num = z.thread_num) t,
+
+(select t.subject, t.thread_num, p.count from thread t,
+(select thread_num, count(*) as count from post p where topic_num=$topic_num and statement_num=$statement_num group by thread_num) p
+where t.topic_num = $topic_num and statement_num = $statement_num and t.thread_num = p.thread_num) c
+
+where t.thread_num = c.thread_num order by $min_max desc
+EOF
 
 	my $threads = 0;
 	my $sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
@@ -98,31 +117,40 @@ sub display_forum {
 		if (! $threads) {
 			%>
 			<table class=forum_table>
-			<tr><td class=header>Thread Subject</td><td class=header>Posts</td><td class=header><%=$first_last%></td><tr>
+			<tr><td class=header>Thread Subject</td><td class=header>Posts</td><td class=header>&nbsp;</td><tr>
 			<%
 		}
 		$threads++;
 
-		my ($nick_name) = func::get_nick_name($dbh, $rs->{'nick_id'});
 		my $subject = $rs->{'subject'};
-		my $submit_time = $rs->{'submit_time'};
 		my $count  = $rs->{'count'};
-		my $post_num = $rs->{'post_num'};
+		my $min_nick_name = func::get_nick_name($dbh, $rs->{'min_nick_id'});
+		my $min_time = $rs->{'min_time'};
 		my $pagination = '';
-		if ($post_num > $num_posts_per_page) {
-			$pagination = make_pagination_str($thread_num, $post_num);
+		my $max_post_num = $rs->{'max_post_num'};
+		if ($count > $num_posts_per_page) {
+			$pagination = make_pagination_str($thread_num, $count);
 		}
 		my $post_url = 'http://' . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num";
+
+		my $last_post_str = '';
+		if ($count > 1) {
+			my $max_nick_name = func::get_nick_name($dbh, $rs->{'max_nick_id'});
+			my $max_time = $rs->{'max_time'};
+			$last_post_str = "<hr>Last post: &nbsp; &nbsp; &nbsp;<a href=\"$post_url/$max_post_num#$max_post_num\">$max_nick_name<br>" .
+				func::to_local_time($max_time) . "</a>\n";
+		}
+
 		%>
-		<tr><td><a href="<%=$post_url%>"><%=$subject%></a><%=$pagination%></td><td><%=$count%></td><td nowrap><a href="
-<%=$post_url%>/<%=$post_num%>#<%=$post_num%>"><%=$nick_name%><br><%=func::to_local_time($submit_time)%></a></td></tr>
+		<tr><td><%=$subject%><%=$pagination%></td><td><%=$count%></td><td nowrap>First post: &nbsp; &nbsp; &nbsp;<a href=\"$post_url\"><%=$min_nick_name%><br>
+				<%=func::to_local_time($min_time)%></a><%=$last_post_str%></td></tr>
 		<%
 	}
 	$sth->finish();
 
 	if ($threads) {
 		%>
-		<tr><td class=header>Thread Subject</td><td class=header>Posts</td><td class=header><%=$first_last%></td><tr>
+		<tr><td class=header>Thread Subject</td><td class=header>Posts</td><td class=header>&nbsp;</td><tr>
 		</table>
 		<%
 	} else {
@@ -140,7 +168,7 @@ sub make_pagination_str {
 	my $thread_num = $_[0];
 	my $num_posts  = $_[1];
 
-	my $ret_val = '<br>&nbsp; &nbsp; Pages: ';
+	my $ret_val = '<br><br>&nbsp; &nbsp; Pages: ';
 
 	my $num;
 	for ($num = 0; ($num * $num_posts_per_page) < $num_posts; $num++) {
