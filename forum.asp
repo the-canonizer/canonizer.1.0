@@ -142,7 +142,7 @@ EOF
 		}
 
 		%>
-		<tr><td><%=$subject%><%=$pagination%></td><td><%=$count%></td><td nowrap>First post: &nbsp; &nbsp; &nbsp;<a href=\"$post_url\"><%=$min_nick_name%><br>
+		<tr><td><%=$subject%><%=$pagination%></td><td><%=$count%></td><td nowrap>First post: &nbsp; &nbsp; &nbsp;<a href="<%=$post_url%>"><%=$min_nick_name%><br>
 				<%=func::to_local_time($min_time)%></a><%=$last_post_str%></td></tr>
 		<%
 	}
