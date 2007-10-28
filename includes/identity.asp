@@ -20,9 +20,15 @@ my $mode = 0;	# make this global so everyone can see it.
 sub identity {
 
 	my $script_name = $ENV{'SCRIPT_NAME'};
+
+	if ($ENV{'PATH_INFO'}) {
+		$script_name .= $ENV{'PATH_INFO'};
+	}
+
 	my $login_url = 'https://' . &func::get_host() . "/secure/login.asp?destination=$script_name";
 	my $logout_url = 'http://' . &func::get_host() . "/logout.asp?destination=$script_name";
 	my $clear_url = 'http://' . &func::get_host() . "/logout.asp?clear=1&destination=$script_name";
+
 	if ($ENV{'QUERY_STRING'}) {
 		$login_url .= ('?' . $ENV{'QUERY_STRING'});
 		$logout_url .= ('?' . $ENV{'QUERY_STRING'});
