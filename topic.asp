@@ -226,8 +226,8 @@ sub present_topic {
 			<input type=hidden name=note value="<%=$Request->Form('note')%>">
 			<input type=hidden name=submitter value="<%=$Request->Form('submitter')%>">
 
-			<input type=submit name=submit_edit value="Commit Text">
 			<input type=submit name=submit_edit value="Edit Text">
+			<input type=submit name=submit_edit value="Commit Text">
 
 		</form>
 		
