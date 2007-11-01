@@ -133,6 +133,7 @@ if ($Request->Form('preview_post')) {
 	}
 
 } elsif ($Request->Form('submit_post')) {
+	$message = func::hex_decode($message);
 	if (length($message) < 1) {
 		$error_message .= "No message supplied.<br>\n";
 	}
