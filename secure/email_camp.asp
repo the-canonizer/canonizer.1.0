@@ -237,6 +237,9 @@ sub preview_post_page {
 
 	<p><a href="/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Return to <%=$statement_num==1 ? 'topic' : 'camp'%> forum</a></p>
 
+	<center>
+	<h1><b>Preview Post</b></h1>
+
 	<form method=post>
 		<input type=hidden name=canon_subject value="<%=$subject%>">
 		<input type=hidden name=canon_sender  value="<%=$sender_nick_id%>,<%=$sender_nick_name%>">
@@ -244,6 +247,7 @@ sub preview_post_page {
 		<input type=submit name=edit_post value="Edit post">
 		<input type=submit name=submit_post value="Send e-mail">
 	</form>
+	</center>
 	<br>
 
 	<table class=forum_table>
