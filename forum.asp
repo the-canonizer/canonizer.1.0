@@ -79,7 +79,7 @@ sub display_forum {
 
 	<p><a href="/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to camp statement page</a></p>
 
-	<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Start new thread</a></p>
+	<p><a href="/secure/email_camp.asp/<%=$topic_num%>/<%=$statement_num%>">Start new thread</a></p>
 	<%
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
