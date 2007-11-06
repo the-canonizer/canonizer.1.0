@@ -89,12 +89,12 @@ if (length($subject) < 1) {
 
 my statement $tree = new_tree statement ($dbh, $topic_num, $statement_num);
 
-my $title = "Topic: $topic_name Statement: " . $tree->make_statement_path() . " Camp Forum Thread: $subject\n";
-
 my $topic_camp = 'Camp';
 if ($statement_num == 1) {
 	$topic_camp = 'Topic';
 }
+
+my $title = "Topic: $topic_name Statement: " . $tree->{statement_name} . " - $topic_camp Forum Thread: $subject\n";
 
 my $header .= '<table><tr><td class="label">Topic:</td>' .
 				'<td class="topic">' . $topic_name . "</td></tr>\n" .

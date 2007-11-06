@@ -56,7 +56,7 @@ if ($statement_num == 1) {
 	$topic_camp = 'Topic';
 }
 
-my $title = "Topic: $topic_name - Statement: " . $tree->make_statement_path() . "$topic_camp Forum\n";
+my $title = "Topic: $topic_name - Statement: " . $tree->{statement_name} . " - $topic_camp Forum\n";
 
 my $header .= '<table><tr><td class="label">Topic:</td>' .
 				'<td class="topic">' . $topic_name . "</td></tr>\n" .

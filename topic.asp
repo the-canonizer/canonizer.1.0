@@ -79,7 +79,7 @@ if ($topic_data->{'error_message'}) {
 } else {
 
 	my $title = 'Topic: ' . $topic_data->{'topic'}->{topic_name} . ' ' .
-		    'Statement: ' . $topic_data->{'statement'}->make_statement_path();
+		    'Statement: ' . $topic_data->{'statement'}->{statement_name};
 
 	my $header = '<table><tr><td class="label">Topic:</td>' .
 				'<td class="topic">' . $topic_data->{'topic'}->{topic_name} . '</td></tr>' .
