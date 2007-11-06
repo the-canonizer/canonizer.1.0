@@ -102,7 +102,7 @@ if ($Request->Form('canon_subject')) {
 }
 
 
-my $title = "Topic: $topic_name Statement: " . $tree->make_statement_path();
+my $title = "Topic: $topic_name Statement: " . $tree->{statement_name};
 
 
 my $header .= '<table><tr><td class="label">Topic:</td>' .
