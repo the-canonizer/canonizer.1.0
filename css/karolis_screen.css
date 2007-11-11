@@ -6,7 +6,7 @@
 {
 	zoom: 1; /* Fix Internet Explorer Bug */
 	font: 98% "Arial";
-	
+
 }
 
 body
@@ -670,7 +670,7 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 
 .main_content_container .section_container .support_tree #score
 {
-	color: #0000FF;
+	color: #000000;
 }
 
 .main_content_container .section_container .support_tree #name
