@@ -13,7 +13,7 @@ if ($Request->Form('nick_id')) {
 }
 
 
-display_page('Env and State info', 'Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&nick_names]);
+display_page('Person Info', 'Person Info', [\&identity, \&search, \&as_of, \&main_ctl], [\&nick_names]);
 
 
 
@@ -73,7 +73,7 @@ sub nick_names {
 		my $nick_name_id;
 		foreach $nick_name_id (keys %nick_name_hash) {
 			%>
-			<li><%=$nick_name_hash{$nick_name_id}%> [<%=$nick_name_id%>]</li>
+			<li><a href="http://<%=func::get_host()%>/support_list.asp?nick_name_id=<%=$nick_name_id%>"><%=$nick_name_hash{$nick_name_id}%> [<%=$nick_name_id%>]</a></li>
 			<%
 		}
 		%>
