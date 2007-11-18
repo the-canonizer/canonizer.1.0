@@ -138,7 +138,8 @@ sub display_thread {
 	my $rs;
 
 	while ($rs = $sth->fetchrow_hashref()) {
-		$posts[$num_posts] = {'nick_name'   => func::get_nick_name($dbh, $rs->{'nick_id'}),
+		$posts[$num_posts] = {'nick_id'     => $rs->{'nick_id'},
+				      'nick_name'   => func::get_nick_name($dbh, $rs->{'nick_id'}),
 				      'message'     => $rs->{'message'},
 				      'submit_time' => $rs->{'submit_time'},
 				      'post_num'    => $rs->{'post_num'}       };
@@ -166,9 +167,9 @@ sub display_thread {
 		last if $print_post >= ($start_post + $num_posts_per_page);
 		my $post_ref = $posts[$print_post];
 		%>
-		<tr><td class=header><%=$post_ref->{'nick_name'}%></td><td class=header align=right><%=func::to_local_time($post_ref->{'submit_time'})%></td></tr>
+		<tr><td class=header><a href="http://<%=func::get_host()%>/support_list.asp?nick_name_id=<%=$post_ref->{'nick_id'}%>"><%=$post_ref->{'nick_name'}%></a></td><td class=header align=right><%=func::to_local_time($post_ref->{'submit_time'})%></td></tr>
 		<tr><td colspan=2><%=func::wikitext_to_html($post_ref->{'message'})%></td></tr>
-		<tr><td class=header><%=$post_ref->{'nick_name'}%></td><td class=header align=right><%=func::to_local_time($post_ref->{'submit_time'})%></td></tr>
+		<tr><td class=header><a href="http://<%=func::get_host()%>/support_list.asp?nick_name_id=<%=$post_ref->{'nick_id'}%>"><%=$post_ref->{'nick_name'}%></a></td><td class=header align=right><%=func::to_local_time($post_ref->{'submit_time'})%></td></tr>
 		<tr><td class=separator colspan=2><a name="<%=($post_ref->{'post_num'} + 1)%>"></td></tr>
 		<%
 	}
