@@ -60,25 +60,48 @@ sub login_form {
 	my $email = $Session->{'email'};
 	my $password = $Session->{'password'};
 
-%>
+	my $cookie_test = 0;
+	if ($Request->Cookies('canonizer', 'cid')) {
+		$cookie_test = 1;
+	}
 
-<form method = post>
-<input type = hidden name = destination value = "<%=$destination%>">
+	if ($Request->Cookies('canonizer', 'gid')) {
+		$cookie_test = 1;
+	}
 
-<p>E-Mail:</p>
-<p><input type = text name = email value = "<%=$email%>" id = "email"></p>
-<p>Password:</p>
-<p><input type = password name = password value = "<%=$password%>"></p>
-<p><input type = submit name = submit value = Login></p>
-<p><a href = "http://<%=func::get_host()%>/register.asp">Register</a> if you haven't yet.</p>
+	if (! $cookie_test) {
+		%>
+		<p>Browser failed to return Canonizer identity cookie.</p>
 
-</form>
+		<p>You must have a browser that can store and return cookies in order to login and contribute to the Canonizer.</p>
+		<a href="http://<%=func::get_host()%>/">return to canonizer</a>
+		<br>
+		<br>
+		<%
+	} else {
 
-<script language="JavaScript">
-    	document.getElementById("email").focus();
-</script>
+	%>
 
-<%
+	<form method = post>
+	<input type = hidden name = destination value = "<%=$destination%>">
+
+	<p>E-Mail:</p>
+	<p><input type = text name = email value = "<%=$email%>" id = "email"></p>
+	<p>Password:</p>
+	<p><input type = password name = password value = "<%=$password%>"></p>
+	<p><input type = submit name = submit value = Login></p>
+	<p><a href = "http://<%=func::get_host()%>/register.asp">Register</a> if you haven't yet.</p>
+
+	</form>
+
+	<script language="JavaScript">
+	    	document.getElementById("email").focus();
+	</script>
+
+	<%
+
+	}
+
 }
 
 
