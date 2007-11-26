@@ -17,6 +17,18 @@
 my $mode = 0;	# make this global so everyone can see it.
 
 
+sub guest_cookie_expire_time {
+	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = gmtime(time + (60*60*24));
+	my @days = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
+	my @months = (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec);
+	$wday = @days[$wday];
+	$mon  = $months[$mon];
+	$year = $year + 1900;
+
+	return("$wday, $mday $mon $year $hour:$min:$sec GMT\n");
+}
+
+
 sub identity {
 
 	my $script_name = $ENV{'SCRIPT_NAME'};
@@ -92,6 +104,7 @@ sub identity {
 		# set cookie cid (and the compact_policy)
 		my $compact_policy = 'CP="NON DSP COR LAW CURa CONa HISa TELa OTPa OUR DELa OTRa IND UNI STA"';
 	        $Response->AddHeader('P3P', $compact_policy);
+
 		$Response->{Cookies}{canonizer} = {
 				Value   => {
 					cid => $cid,
@@ -99,7 +112,7 @@ sub identity {
 				Expires => "Fri, 1 Jan 2010 00:00:00 GMT",
 				Domain  => 'canonizer.com',
 				Path    => '/'
-			};
+		};
 	} else {
 NO_CID:		my $gid = $Session->{'gid'};
 		if (! $gid) {  # for some reason, we don't always have a gid here.
@@ -107,6 +120,19 @@ NO_CID:		my $gid = $Session->{'gid'};
 			$Session->{'gid'} = $gid;
 		}
 		$logged_in_as = 'Guest_' . $Session->{'gid'};
+
+		# set cookie gid (and the compact_policy)
+		my $compact_policy = 'CP="NON DSP COR LAW CURa CONa HISa TELa OTPa OUR DELa OTRa IND UNI STA"';
+	        $Response->AddHeader('P3P', $compact_policy);
+
+		$Response->{Cookies}{canonizer} = {
+				Value   => {
+					gid => $gid,
+				},
+				Expires => guest_cookie_expire_time(),
+				Domain  => 'canonizer.com',
+				Path    => '/'
+		};
 	}
 
 	my $mode_prompt = 'Browsing as:';
