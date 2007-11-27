@@ -120,14 +120,14 @@ EOF
 	$sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
 	$sth->execute() or die "Failed to execute $selstmt.\n";
 	my %support_struct = ();
-	my %delegate_hash  = ();
+	my $delegate_hash  = 0;
 	my $rs;
 	my $topic_num;
 	while ($rs = $sth->fetchrow_hashref()) {
 		$topic_num     = $rs->{'topic_num'};
 		my $statement_num = $rs->{'statement_num'};
 		if ($rs->{'delegate_nick_id'}) {
-			$delegate_hash{$topic_num} = $rs->{'support_order'};
+			$delegate_hash->{$topic_num} = $rs->{'support_order'};
 		} elsif ($statement_num == 1) {
 			$support_struct{$topic_num}->{'topic_title'} = $rs->{'title'};
 		} else {
@@ -173,8 +173,15 @@ EOF
 		<%
 	} else {
 		%>
-		<h1>No supported statements</h1>
+		<h1>No directly supported statements</h1>
 		<%
+	}
+
+	if ($delegate_hash) {
+
+		$selstmt = "select support_id, nick_name, s.nick_name_id, statement_num, delegate_nick_name_id, support_order from support s, nick_name n where s.nick_name_id = n.nick_name_id and topic_num = $topic_num and ((start < $as_of_time) and (end = 0 or end > $as_of_time))";
+
+
 	}
 
 }
