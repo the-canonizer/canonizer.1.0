@@ -210,7 +210,44 @@ sub present_topic {
 	</script>
 
 <div class="main_content_container">
-        
+
+<div class="section_container">
+<div class="header_1">
+
+     <span id="title">Canonizer Sorted Position (POV) Statement Tree</span>
+
+</div>
+
+<div class="statement_tree" id="statement_tree">
+	<%
+	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{topic_name}, $topic_num, 1)); # 1 -> no_active_link
+
+	my $score = func::c_num_format($topic_data->{'statement'}->{score});
+
+	%>
+</div>
+
+     <div class="footer_1">
+     <span id="buttons">
+
+          	<%
+		if (! $Request->Form('submit_edit')) {		# turn off in preview mode
+		%>
+		<a href="http://<%=func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add New Position Statement Under "<%=$topic_data->{'statement'}->{statement_name}%>" Statement</a>
+		<% } %>
+
+<p>Note: This section is like the Table of Contents for this topic.
+It has links to the agreement statement always on the top, and all
+other sub statement in a hierarchical order, along with how much
+support each statement has, sorted according to your current
+Canonizer.  The green one, that is not the link, is the POV statement
+you are currently viewing.</p>
+
+     </span>
+     </div>
+
+</div>
+
 	<%
 
 	if ($Request->Form('submit_edit')) {
@@ -230,17 +267,13 @@ sub present_topic {
 			<input type=submit name=submit_edit value="Commit Text">
 
 		</form>
-		
-                 
 
 		<%
 	}
 	%>
 
 
-	
 
-	
 	<%
 
 	my $html_text_short = '<p>No short statement has been provided.</p>';
@@ -253,10 +286,8 @@ sub present_topic {
 
 	# short text:
 	if ($long_short == 0 || $long_short == 2) {
-	
-	
 				%>
-			
+
                         <div class="section_container">
 
 			<div class="header_1">
@@ -267,7 +298,7 @@ sub present_topic {
 <%		
 if ($topic_data->{'short_text'}) {
 
-			$html_text_short = func::wikitext_to_html($topic_data->{'short_text'}->{value});		
+			$html_text_short = func::wikitext_to_html($topic_data->{'short_text'}->{value});
 		                              
 		           
 		          } %>
@@ -368,43 +399,6 @@ if ($topic_data->{'short_text'}) {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Canonizer Sorted Position (POV) Statement Tree</span>
-
-</div>
-	
-<div class="statement_tree" id="statement_tree">
-	<%
-	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{topic_name}, $topic_num, 1)); # 1 -> no_active_link
-
-	my $score = func::c_num_format($topic_data->{'statement'}->{score});
-
-	%>
-</div>
-
-     <div class="footer_1">
-     <span id="buttons">
-     
-          	   	        <%
-		if (! $Request->Form('submit_edit')) {		# turn off in preview mode
-		%>
-		<a href="http://<%=func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add New Position Statement Under "<%=$topic_data->{'statement'}->{statement_name}%>" Statement</a>
-		<% } %>
-
-<p>Note: This section is like the Table of Contents for this topic.
-It has links to the agreement statement always on the top, and all
-other sub statement in a hierarchical order, along with how much
-support each statement has, sorted according to your current
-Canonizer.  The green one, that is not the link, is the POV statement
-you are currently viewing.</p>
-
-     </span>
-     </div>
-
-</div>
-
-<div class="section_container">
-<div class="header_1">
-
      <span id="title">Support Tree for "<%=$topic_data->{'statement'}->{statement_name}%>" Statement</span>
 
 </div>
@@ -453,9 +447,6 @@ will follow that delegate.  Such delegates may periodically decide to
 inform their constituents of significant new events such as camp
 consolidations, improvements, conversions, information moving up or
 down the structure, and so on as they see fit.</p>
-
-<a href="https://<%=func::get_host()%>/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">
-Send e-mail to all direct supporters of this, and all sub camps.</a>
 
 		<%
 	}
