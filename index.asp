@@ -3,15 +3,66 @@
 use managed_record;
 use statement;
 
-my $header = 'CANONIZER Top 10';
+my $path_info = $ENV{'PATH_INFO'};
+my $pi_namespace = '';
+if (length($path_info) > 0) {
+	$pi_namespace = $path_info;
+}
 
-&display_page($header, $header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&top_10]);
+my $namespace = '';
+if ($Request->Form('namespace')) {
+	$namespace = $Request->Form('namespace');
+} elsif (length($pi_namespace) > 0) {
+	$namespace = $pi_namespace;
+} elsif ($Request->QueryString('namespace')) {
+	$namespace = $Request->QueryString('namespace');
+}
+
+
+my $header = 'Canonizer Main Page';
+
+&display_page($header, $header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&canonized_list]);
 
 ##############
 # start subs #
 ##############
 
-sub top_10 {
+sub make_namespace_select_str {
+	my $dbh           = $_[0];
+	my $cur_namespace = $_[1];
+
+	my $selstmt = 'select namespace from topic group by namespace order by namespace';
+
+	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
+	$sth->execute() || die "Failed to execute $selstmt";
+	my $rs;
+
+	my @namespaces = ();
+
+	while ($rs = $sth->fetch()) {
+		push(@namespaces, $rs->[0]);
+	}
+
+	if (length($cur_namespace) < 1) {
+		$cur_namespace = 'general';
+	}
+
+	$namespaces[0] = 'general';
+
+	my $namespace_select_str = "<select name=namespace onchange=javascript:change_namespace(value)>\n";
+
+	my $namespace;
+	foreach $namespace (@namespaces) {
+		$namespace_select_str .= "\t<option " . (($namespace eq $cur_namespace) ? 'selected' : '') . ">$namespace</option>\n";
+	}
+
+	$namespace_select_str .= "</select>\n";
+
+	return($namespace_select_str);
+}
+
+
+sub canonized_list {
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
@@ -26,13 +77,27 @@ sub top_10 {
 		$as_of_clause = 'and go_live_time < ' . time;
 	}
 
-	my $selstmt = "select topic_num, topic_name from topic where objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)";
+	my $namespace_select_str = make_namespace_select_str($dbh, $namespace);
+
+	my $selstmt = "select topic_num, topic_name from topic where namespace = ? and objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
-	$sth->execute() || die "Failed to execute $selstmt";
+	$sth->execute($namespace) || die "Failed to execute $selstmt";
 	my $rs;
 
 %>
+
+<script language:javascript>
+
+function change_namespace(namespace) {
+	if (namespace == 'general') {
+		namespace = '';
+	}
+	window.location = "/index.asp" + namespace;
+}
+
+</script>
+
 
 <div class="main_content_container">
 
@@ -45,18 +110,26 @@ sub top_10 {
 
 <div class="content_1">
 
-<p>For a brief description of the Canonizer see the "What is the Canonizer" link on the side bar.</p>
+<p>For a brief description of the Canonizer see the "What is the
+Canonizer" link on the side bar.</p>
 
-<p>Enough of the canonization process is now completed to do "Blind Popularity" (one person, one vote) canonization.  Since there are still so few topics, all are now being displayed here rather than just the top 10.  Once there are more topics, only the top 10 topics in the primary name space will be included here.  Once a user attribute system is completed, along with more canonizers using these attributes you will be able to canonize this page in different ways giving more influence to people you choose to respect.</p>
+<p>Enough of the canonization process is now completed to do "Blind
+Popularity" (one person, one vote) canonization.  Once a user
+attribute system is completed, along with more canonizers using these
+attributes you will be able to canonize this page in different ways
+giving more influence to people you choose to respect.</p>
+
+<p>There is a canonizers yahoo group where the developement and goals
+of the Canonizer are descussed.  Anyone interested in folowing this
+project or earning Canonizer LLC shares is envited to join this group
+<a href =
+"http://finance.groups.yahoo.com/group/canonizers/">here</a>.</p>
 
 </div>
 
      <div class="footer_1">
      <span id="buttons">
-     
-
-&nbsp;    
-     
+	&nbsp;
      </span>
      </div>
 
@@ -65,7 +138,7 @@ sub top_10 {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Top 10</span>
+     <span id="title">Canonized list for <%=$namespace_select_str%> namespace:</span>
 
 </div>
 
