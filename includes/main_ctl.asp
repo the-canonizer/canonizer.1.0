@@ -2,19 +2,29 @@
 sub main_ctl {
 
 	my $uri = $ENV{'REQUEST_URI'};
-%>
+	%>
+
   	<div class="main_ctl">
-  	
+
   	<h1>Navigation</h1>
-  	
+
+	<script language="JavaScript1.2">
+	function open_help() {
+		window.open("http://<%=&func::get_host()%>/help.asp", "_blank",
+			"status=1, toolbar=1, location=1, menubar=1, directories=1, resizable, scrollbars=1, width=400, height=400");
+	}
+	</script>
+
+	<p><a href="javascript: open_help()">Help</a></p>
+
   	<%
 	if (($uri eq '/') || ($uri =~ 'index.asp')) {
 	    %>
-	    <p id="selected">Main (Top 10)</p>
+	    <p id="selected">Canonizer Main</p>
 	    <%
 	} else {
 	    %>
-	    <p><a href='http://<%=&func::get_host()%>/'>Main (Top 10)</a></p>
+	    <p><a href='http://<%=&func::get_host()%>/'>Canonizer Main</a></p>
 	    <%
 	}
 
@@ -27,7 +37,6 @@ sub main_ctl {
 	    <p><a href='https://<%=&func::get_host()%>/secure/profile_id.asp'>Personal Info</a></p>
 	    <%
 	}
-
 
 	if ($uri =~ m|^/topic\.asp\?topic_num=10|) {
 	    %>
