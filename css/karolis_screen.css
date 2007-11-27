@@ -70,8 +70,13 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	border-top: 1px solid silver;
 } 
 
+#help_content
+{
+	padding: 15px 15px 15px 15px;
+}
+
 #main_content
-{ 
+{
 	margin: 0 9em 0 14em;
 	padding: 0 15px 0 15px;
 	border-left: 1px solid silver;	
@@ -493,7 +498,7 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	margin: 0 0 0 0;
 	padding: 10px 10px 10px 10px;
  	background: #F8F9DC; /*url(../images/header_1_bg.png) left no-repeat top;*/
- 
+
 }
 
 .main_content_container .section_container .header_1 #title
