@@ -49,11 +49,11 @@ sub make_namespace_select_str {
 
 	$namespaces[0] = 'general';
 
-	my $namespace_select_str = "<select name=namespace onchange=javascript:change_namespace(value)>\n";
+	my $namespace_select_str = "<select name=\"namespace\" onchange=\"javascript:change_namespace(value)\">\n";
 
 	my $namespace;
 	foreach $namespace (@namespaces) {
-		$namespace_select_str .= "\t<option " . (($namespace eq $cur_namespace) ? 'selected' : '') . ">$namespace</option>\n";
+		$namespace_select_str .= "\t<option value=\"$namespace\" " . (($namespace eq $cur_namespace) ? 'selected' : '') . ">$namespace</option>\n";
 	}
 
 	$namespace_select_str .= "</select>\n";
