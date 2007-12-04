@@ -5,7 +5,7 @@
 ########
 
 
-display_page('Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&env]);
+display_page('Env and State info', 'Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&env]);
 
 
 
