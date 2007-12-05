@@ -97,6 +97,8 @@ if ($error_message) {
 
 
 sub delete_support {
+	# some day I should reorder (create new ones) the lessor support records.
+	# it is a mess till I do this since support numberings will show up all wrong.
 
 	# add the nick clause just to make sure someone isn't deleteing some unowned support record.
 	my $now_time = time;
@@ -206,7 +208,7 @@ sub save_support {
 
 	func::send_email("Adding support", "Nick name id $nick_name_id is adding support for topic $topic_num, statement: $statement_num.\nfrom support.asp.\n");
 	sleep(1);
-        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num/$statement_num");
+        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num");
 	$Response->End();
 
 	%>
