@@ -300,10 +300,12 @@ sub support_form {
 			<%
 			my $idx;
 			for ($idx = 0; $idx <= $#{$old_support_array_ref}; $idx++) {
-				%>
-				<tr><td><%=$idx%></td>
-				<td><%=$statement->{statement_tree_hash}->{$old_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%></td></tr>
-				<%
+				if ($old_support_array_ref->[$idx]) { # may be null if deleted.
+					%>
+					<tr><td><%=$idx%></td>
+					<td><%=$statement->{statement_tree_hash}->{$old_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%></td></tr>
+					<%
+				}
 			}
 			%>
 			</table>
@@ -379,19 +381,21 @@ sub support_form {
 		if ($old_support_array_ref) {
 			my statement $old_statement;
 			foreach $old_support (@{$old_support_array_ref}) {
-				if ($statement->{statement_num} == $old_support->{statement_num}) { # modify support
-					$replacement_idx = $support_order_idx++;
-					$replacement_hdr = 'Modify Support';
-				} else {
-					$old_statement = $statement->{statement_tree_hash}->{$old_support->{statement_num}};
-					if ($statement->is_related($old_statement->{statement_num})) {
-						if ($replacement_idx == -1) {
-							$replacement_idx = $support_order_idx++;
-							$replacement_str = '<br>This new support will replace the existing support for the following related statements:';
-						}
-						$replacement_str .= '<br>' . $old_statement->make_statement_path(1);
+				if ($old_support) {
+					if ($statement->{statement_num} == $old_support->{statement_num}) { # modify support
+						$replacement_idx = $support_order_idx++;
+						$replacement_hdr = 'Modify Support';
 					} else {
-						$Response->Write(make_js_support_object_str($support_order_idx++, $old_statement, '', ''));
+						$old_statement = $statement->{statement_tree_hash}->{$old_support->{statement_num}};
+						if ($statement->is_related($old_statement->{statement_num})) {
+							if ($replacement_idx == -1) {
+								$replacement_idx = $support_order_idx++;
+								$replacement_str = '<br>This new support will replace the existing support for the following related statements:';
+							}
+							$replacement_str .= '<br>' . $old_statement->make_statement_path(1);
+						} else {
+							$Response->Write(make_js_support_object_str($support_order_idx++, $old_statement, '', ''));
+						}
 					}
 				}
 			}
