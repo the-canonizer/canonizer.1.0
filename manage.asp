@@ -72,7 +72,7 @@ sub manage_record {
 	%>
 	<div class="main_content_container">
 
-	<p><a href="<%=$topic_url%>">Return to topic page</a></p>
+	<p><a href="<%=$topic_url%>">Return to statement page</a></p>
 
 <p>This record management page shows the history of this record with
 the latest version on top.  To make a change to this <%=$class%>
