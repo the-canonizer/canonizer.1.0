@@ -230,23 +230,25 @@ sub get_statement_support_times {
 
 	my $delegate_nick_name_id;
 	foreach $support (@support_array) {
-		$delegate_nick_name_id = $support->{delegate_nick_name_id};
-		if ($delegate_nick_name_id) {
-			get_statement_support_times($dbh,
+		if ($support) { # this could be null if deleted.
+			$delegate_nick_name_id = $support->{delegate_nick_name_id};
+			if ($delegate_nick_name_id) {
+				get_statement_support_times($dbh,
 						    "nick_name_id = $delegate_nick_name_id",
 						    $support_time_hash,
 						    $recorded_support_ids,
 						    $go_live_time                            );
-		} else {
-			my $support_id = $support->{support_id};
-			if (!$recorded_support_ids->{$support_id}) {
-				$recorded_support_ids->{$support_id} = 1;
-				my $support_start = $support->{start};
-				my $support_end = $support->{end};
-				if (!$support_end) {
-					$support_end = $go_live_time;
+			} else {
+				my $support_id = $support->{support_id};
+				if (!$recorded_support_ids->{$support_id}) {
+					$recorded_support_ids->{$support_id} = 1;
+					my $support_start = $support->{start};
+					my $support_end = $support->{end};
+					if (!$support_end) {
+						$support_end = $go_live_time;
+					}
+					$support_time_hash->{$support->{statement_num}} += ($support_end - $support_start);
 				}
-				$support_time_hash->{$support->{statement_num}} += ($support_end - $support_start);
 			}
 		}
 	}
