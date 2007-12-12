@@ -295,13 +295,46 @@ you are currently viewing.</p>
  </div>
 
 
-<%		
+<%
 if ($topic_data->{'short_text'}) {
 
 			$html_text_short = func::wikitext_to_html($topic_data->{'short_text'}->{value});
-		                              
-		           
-		          } %>
+
+			my $num_clause = '';
+
+			my $replace_str = '&amp;canonized_topic_list\(([^\)]*)\)';
+			if ($html_text_short =~ m|$replace_str|) {
+				my @topic_nums = split(', ', $1);
+				my $topic_num;
+				foreach $topic_num (@topic_nums) {
+					if ($num_clause) {
+						$num_clause .= ' or ';
+					} else {
+						$num_clause = '(';
+					}
+					$num_clause .= "topic_num=$topic_num";
+				}
+
+				if ($num_clause) {
+					$num_clause .= ')';
+
+					my $selstmt = "select topic_num, topic_name from topic where $num_clause and objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)";
+
+					my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
+					$sth->execute() || die "Failed to execute $selstmt";
+					my $canonize_list_str = 
+						'<div class="statement_tree" id="statement_tree">' . "\n" .
+						topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}) . "\n" .
+						"</div>\n";
+
+					$html_text_short =~ s|$replace_str|$canonize_list_str|;
+				}
+			}
+
+
+
+
+} %>
 
 
 <div class="content_1"><%=$html_text_short%></div>		
