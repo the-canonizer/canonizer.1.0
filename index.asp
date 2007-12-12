@@ -83,7 +83,6 @@ sub canonized_list {
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
 	$sth->execute($namespace) || die "Failed to execute $selstmt";
-	my $rs;
 
 %>
 
@@ -146,32 +145,7 @@ project or earning Canonizer LLC shares is envited to join this group
 
 <%
 
-	my @topic_array = ();
-
-	my %topic_names = ();
-
-	my $topic_num;
-	my statement $statement;
-	my $no_data = 1;
-	while ($rs = $sth->fetch()) {
-		$no_data = 0;
-		$topic_num = $rs->[0];
-		$topic_names{$topic_num} = $rs->[1];
-		$statement = new_tree statement ($dbh, $topic_num, 1, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
-		if (!$statement) {
-			next;
-		}
-		$statement->canonize();
-		push(@topic_array, $statement);
-	}
-	$sth->finish();
-
-	my $topic_name;
-	foreach $statement (sort {(($a->{score} <=> $b->{score}) * -1)} @topic_array) {
-		$topic_num = $statement->{topic_num};
-		$topic_name = $topic_names{$statement->{topic_num}};
-		$Response->Write($statement->display_statement_tree($topic_name, $topic_num));
-	}
+	$Response->Write(topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}, $namespace));
 
 %>
 
