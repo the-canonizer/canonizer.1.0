@@ -249,14 +249,16 @@ sub support_form {
 		# wasn't yet supporting any statements.
 	} else {
 		$old_support = $old_support_array_ref->[0];
-		$old_delegate_nick_name_id = $old_support->{delegate_nick_name_id};
-		if ($old_delegate_nick_name_id) {
-			$old_support_array_ref = $statement->{support_hash}->{$old_support->{support_order}};
-			if (! $old_support_array_ref) {
-				%>
-				support <%=$nick_name_id%> is delegated to non existant root support id: <%=$old_support->{support_order}%>
-				<%
-				return();
+		if ($old_support) {
+			$old_delegate_nick_name_id = $old_support->{delegate_nick_name_id};
+			if ($old_delegate_nick_name_id) {
+				$old_support_array_ref = $statement->{support_hash}->{$old_support->{support_order}};
+				if (! $old_support_array_ref) {
+					%>
+					support <%=$nick_name_id%> is delegated to non existant root support id: <%=$old_support->{support_order}%>
+					<%
+					return();
+				}
 			}
 		}
 	}
