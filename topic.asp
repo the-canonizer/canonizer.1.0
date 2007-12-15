@@ -468,18 +468,10 @@ if ($topic_data->{'short_text'}) {
 		}
 		%>
 
-<p>Note: If you directly support a
-statement, you are expected to be involved in the improvement of that
-and all super statements.  This includes receiving e-mail
-notifications of proposed modifications, reviewing such, and so on.
-If you are not interested in being this involved, please just delegate
-your support to anyone already in this camp you trust.  In that case,
-if the delegate moves their support to a statement that they believe
-is better; your delegated support and all support delegated to you
-will follow that delegate.  Such delegates may periodically decide to
-inform their constituents of significant new events such as camp
-consolidations, improvements, conversions, information moving up or
-down the structure, and so on as they see fit.</p>
+<p>Note: If you directly support a statement, you will receive e-mail
+notifications of any proposed changes to the statement.  If you do not
+wish to receive such notifications, you can delegate your support to
+another supporter.</p>
 
 		<%
 	}
