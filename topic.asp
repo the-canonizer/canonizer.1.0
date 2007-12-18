@@ -468,8 +468,9 @@ if ($topic_data->{'short_text'}) {
 		}
 		%>
 
-<p>Note: If you directly support a statement, you will receive e-mail
-notifications of any proposed changes to the statement.  If you do not
+<p>Note: Any supporter of a statement can object to any proposed
+changes they disagree with.  If you directly support a statement, you
+will receive e-mail notifications of proposed changes.  If you do not
 wish to receive such notifications, you can delegate your support to
 another supporter.</p>
 
