@@ -163,7 +163,7 @@ NO_CID:		my $gid = $Session->{'gid'};
 	} else {
 %>
 		<p><a href = "<%=$login_url%>">Login</a>
-		<p><a href = "http://<%=&func::get_host()%>/register.asp">Register</a></p>
+		<p><a href = "http://<%=&func::get_host()%>/secure/profile_id.asp">Register</a></p>
 <%
 	}
 %>
