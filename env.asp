@@ -5,6 +5,25 @@
 ########
 
 
+# be sure the db is working by counting the number of members:
+my $dbh = &func::dbh_connect(1);
+
+my $selstmt = 'select count(*) from person';
+my $sth = $dbh->prepare($selstmt) || die $selstmt;
+$sth->execute() || die $selstmt;
+
+my $rs;
+$rs = $sth->fetch();
+my $members = $rs->[0];
+$sth->finish();
+
+%>
+<!-- num db members: <%=$members%> -->
+<!-- gid: <%=$Session->{'gid'}%> -->
+
+<%
+
+
 display_page('Env and State info', 'Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&env]);
 
 
@@ -15,18 +34,6 @@ display_page('Env and State info', 'Env and State info', [\&identity, \&search, 
 
 
 sub env {
-
-	# be sure the db is working by counting the number of members:
-	my $dbh = &func::dbh_connect(1);
-
-	my $selstmt = 'select count(*) from person';
-	my $sth = $dbh->prepare($selstmt) || die $selstmt;
-	$sth->execute() || die $selstmt;
-
-	my $rs;
-	$rs = $sth->fetch();
-	my $members = $rs->[0];
-	$sth->finish();
 
 	%>
 
