@@ -33,19 +33,23 @@ if ($Request->QueryString('takeover_cid')) {
 }
 
 
+my $header = 'Register';
+if ($Session->{'cid'}) {
+	$header = 'Personal Info';
+}
+
+
+
 if ($Session->{'cid'} and ! $Session->{'logged_in'}) {
 	$Response->Redirect("login.asp?destination=/secure/profile_id.asp");
-} elsif (!$Session->{'did_warning_search'} and ! $Session->{'logged_in'}) {
-	display_page('Personal Info', 'Personal Info', [\&identity, \&search, \&main_ctl], [\&must_search_first], \&profile_tabs);
-} elsif ($Session->{'logged_in'} or $Session->{'did_warning_search'}) {
+# } elsif (!$Session->{'did_warning_search'} and ! $Session->{'logged_in'}) {
+# 	display_page('Personal Info', 'Personal Info', [\&identity, \&search, \&main_ctl], [\&must_search_first], \&profile_tabs);
+# } elsif ($Session->{'logged_in'} or $Session->{'did_warning_search'}) {
+} else {
 	if ($Request->Form('submit')) {
 		save_values();
 	}
-	display_page('Personal Info', 'Personal Info', [\&identity, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
-} else {
-%>
-	How did you get here anyway?
-<%
+	display_page($header, $header, [\&identity, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
 }
 
 
