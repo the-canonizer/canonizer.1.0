@@ -33,7 +33,18 @@ foreach $sub (@$bar_subs)
 </div>
 
 <div id="block_adverts">
-     <h1>Advertisement Space</h1>
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-6646446076038181";
+//120x600, right bar
+google_ad_slot = "5819006657";
+google_ad_width = 120;
+google_ad_height = 600;
+//--></script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
 </div>
 
 <div id="main_content">
