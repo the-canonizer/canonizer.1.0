@@ -28,7 +28,7 @@ sub search {
 <input type="radio" name="sitesearch" value="" checked id="ss0"></input>
 <label for="ss0" title="Search the Web"><font size="-1" color="black">Web</font></label></td>
 <td>
-<input type="radio" name="sitesearch" value="canonizer.com" id="ss1"></input>
+<input type="radio" name="sitesearch" value="canonizer.com" id="ss1" checked></input>
 <label for="ss1" title="Search canonizer.com"><font size="-1" color="black">canonizer.com</font></label></td>
 </tr>
 </table>
