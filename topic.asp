@@ -349,7 +349,7 @@ if ($topic_data->{'short_text'}) {
 
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$statement_num%>?class=text">Manage Statement Text</a><br><br>
+				<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$statement_num%>?class=text">Manage/Edit Statement Text</a><br><br>
 				<%
 			}
 		} else {
@@ -407,7 +407,7 @@ if ($topic_data->{'short_text'}) {
 
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$statement_num%>?class=text&long=1">Manage Long Statement Text</a>
+				<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$statement_num%>?class=text&long=1">Manage/Edit Long Statement Text</a>
 			         
 				<%
 			}
@@ -500,7 +500,7 @@ another supporter.</p>
       	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>?class=topic">Manage This Topic</a>
+		<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>?class=topic">Manage/Edit This Topic</a>
 		<%
 	}
 	%>
@@ -541,7 +541,7 @@ another supporter.</p>
 	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$statement_num%>?class=statement">Manage This Statement</a>
+		<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$statement_num%>?class=statement">Manage/Edit This Statement</a>
 		<%
 	}
 	%>     
