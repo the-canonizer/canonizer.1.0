@@ -582,6 +582,16 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	font-weight: normal;
 }
 
+.main_content_container .section_container .content_1 b
+{
+	font-weight: bold;
+}
+
+.main_content_container .section_container .content_1 i
+{
+	font-style: italic
+}
+
 .main_content_container .section_container .content_1 .browse_list
 {
 	font-size: 100%;
