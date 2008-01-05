@@ -9,139 +9,235 @@ if(!$ENV{"HTTPS"}) {
 }
 
 my $message = '';
+my $errors = 0;
 my %form_state = ();
 
-########
-# main #
-########
-
-# there are several cases leading into this page:
-# logged in - setting personal information
-# cid but not logged in - must go to login with this page as destination.
-# click on the page after going to registration/search page. (searched flag set)
-#	But could get here after session expires  (display must_search_first page)
-# Go hear as guest from profile_prefs
-# 	when we visit this page as a guest from another prefs page
-# 	we want an advertizement page saying:
-#		This is where you go to edit your personal identity data
-#		or to enter it the first time when you do register.
-#		But before that can take place, you must register.
+#
+# see comments at head of includes/identity.asp for info about modes (0, 1, 2)
 #
 
-if ($Request->QueryString('takeover_cid')) {
-	$Session->{'takeover_cid'} = int($Request->QueryString('takeover_cid'));
-}
+#
+# profile_id.asp has two modes:
+#	register new user (?register=1).
+#		Any mode OK, just ignore and register new user.
+#		Set to new user, log them in to mode 2, when registered.
+#	update info from existing user (when logged in)
+#		0	no link for this case, but if we get here, redirect to login.
+#				navigation link to here removed when in guest 0 mode.
+#		1	redirect to login with destination back to profile_id.asp
+#		2	update existing info.
+#
+
+my $cid = $Session->{'cid'};
+# When I do 0, it seems to leave a lock active if it crashes.
+# restarting httpd cleans it up.
+# don't want to risk this for now, should probably clean this up some day.
+# probably need to do some kind of timeout or something in the asp daemons,
+# so it cleans up the lock and does a rollback if the asp script crashes.
+# my $dbh = func::dbh_connect(0) || die "unable to connect to database";
+my $dbh = func::dbh_connect(1) || die "unable to connect to database";
 
 
-my $header = 'Register';
-if ($Session->{'cid'}) {
-	$header = 'Personal Info';
-}
-
-
-
-if ($Session->{'cid'} and ! $Session->{'logged_in'}) {
+my $register = 0; # registering a new user.
+if ($Request->QueryString('register') or $Request->Form('register')) {
+	$register = 1;
+} elsif(! $cid) { # there should be no links for this case, but just in case session times out...
 	$Response->Redirect("login.asp?destination=/secure/profile_id.asp");
-# } elsif (!$Session->{'did_warning_search'} and ! $Session->{'logged_in'}) {
-# 	display_page('Personal Info', 'Personal Info', [\&identity, \&search, \&main_ctl], [\&must_search_first], \&profile_tabs);
-# } elsif ($Session->{'logged_in'} or $Session->{'did_warning_search'}) {
-} else {
-	if ($Request->Form('submit')) {
-		save_values();
-	}
-	display_page($header, $header, [\&identity, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
 }
+
+my %nick_names = (); # this is only set if not $register and $cid (updating data.)
+my $have_nick_name = 0;
+
+if ($cid && ! $register) {
+	%nick_names = func::get_nick_name_hash($cid, $dbh);
+	if (! $nick_names{'error_message'}) {
+		$have_nick_name = 1;
+	}
+}
+
+if ($cid and ! $Session->{'logged_in'}) {
+	$Response->Redirect("login.asp?destination=/secure/profile_id.asp");
+}
+
+
+
+
+if ($Request->Form('submit')) {
+	save_values();
+}
+
+my $title = 'Account Info';
+if ($register) {
+	$title = 'Register';
+}
+
+display_page($title, $title, [\&identity, \&search, \&main_ctl], [\&profile_id], \&profile_tabs);
+
 
 
 ########
 # subs #
 ########
 
-sub must_search_first {
-
-%>
-
-This is where you go to edit your personal identity data or to
-enter it the first time when you register.  If you are already a
-member you must first <a href = "login.asp?destination=/secure/profile_id.asp">login</a>
-
-If you are attempting to register for the first time, you must
-first read the registration warning and do a search to ensure there is
-no existing record for you at canonizer.  We have no record of you
-doing this.  You can do all this <a href = "http://<%=func::get_host()%>/register.asp">here</a>
-
-<%
-}
 
 sub format_error {
 	return('<p class="error_message">' . $_[0] . '</p>');
+	$errors++;
 }
+
+
 sub format_success {
 	return($_[0]);
 }
 
+
 sub save_values {
-
-	my $cid;
-	if($Session->{'takeover_cid'}) {
-		$cid = $Session->{'takeover_cid'};
-	} else {
-		$cid = $Session->{'cid'};
-	}
-
-	my $dbh = func::dbh_connect(1) || die "unable to connect to database";
 
 	my $selstmt;
 	my $sth;
+	my %dummy = ();
 
-	if (length($form_state{'first_name'} = $Request->Form('first_name')) < 1) {
+	if (length($form_state{'first_name'} = $Request->Form('canon_first_name')) < 1) {
 		$message .= format_error("First Name is required.");
 	}
-	$form_state{'middle_name'} = $Request->Form('middle_name');
-	if (length($form_state{'last_name'} = $Request->Form('last_name')) < 1) {
+	$form_state{'middle_name'} = $Request->Form('canon_middle_name');
+	if (length($form_state{'last_name'} = $Request->Form('canon_last_name')) < 1) {
 		$message .= format_error("Last Name is required.");
 	}
-	if (length($form_state{'email'} = $Request->Form('email')) < 1) {
+	if (length($form_state{'email'} = $Request->Form('canon_email')) < 1) {
 		$message .= format_error("E-mail is required.");
 	} else { # check for unique e-mail
 		$selstmt = 'select cid from person where email = ?';
-		if ($cid) {
+		if ($cid && !$register) {
 			$selstmt .= " and not cid = $cid";
 		}
 		$sth = $dbh->prepare($selstmt) || die "Failed to prepare " . $selstmt;
 		$sth->execute($form_state{'email'}) || die "Failed to prepare " . $selstmt;
 		if ($sth->fetch()) {
-			$message .= format_error("Duplicate e-mail and or duplicate identities are not allowed.");
+			$message .= format_error("An identity with email " . $form_state{'email'} . " already exists.");
 		}
 		$sth->finish();
 	}
 
-	if (length($form_state{'address_1'} = $Request->Form('address_1')) < 1) {
-		$message .= format_error("Address_1 is required.");
+	my $birthday = $Request->Form('canon_birthday');
+	if (length($birthday) > 1) {
+		$form_state{'birthday'} = $birthday;
+		if ($birthday !~ m|^\d\d\d\d/\d\d/\d\d$|) {
+			$message .= format_error("($birthday) is an improperly formatted birthday, must be yyyy/mm/dd");
+		}
+	} else {
+		$form_state{'birthday'} = '';
 	}
-	$form_state{'address_2'} = $Request->Form('address_2');
-	if (length($form_state{'city'} = $Request->Form('city')) < 1) {
-		$message .= format_error("City is required.");
+
+	$form_state{'address_1'}   = $Request->Form('canon_address_1');
+	$form_state{'address_2'}   = $Request->Form('canon_address_2');
+	$form_state{'city'}        = $Request->Form('canon_city');
+	$form_state{'state'}       = $Request->Form('canon_state');
+	$form_state{'postal_code'} = $Request->Form('canon_postal_code');
+	$form_state{'country'}     = $Request->Form('canon_country');
+
+	my $private_flags_str = '';
+
+	if ($Request->Form('canon_first_name_private')) {
+		$form_state{'first_name_private'}  = 1;
+		$private_flags_str .= 'first_name,';
+	} else {
+		$form_state{'first_name_private'}  = 0;
 	}
-	if (length($form_state{'state'} = $Request->Form('state')) < 1) {
-		$message .= format_error("State is required.");
+
+	if ($Request->Form('canon_middle_name_private')) {
+		$form_state{'middle_name_private'} = 1;
+		$private_flags_str .= 'middle_name,';
+	} else {
+		$form_state{'middle_name_private'} = 0;
 	}
-	if (length($form_state{'postal_code'} = $Request->Form('postal_code')) < 1) {
-		$message .= format_error("Polstal Code is required.");
+
+	if ($Request->Form('canon_last_name_private')) {
+		$form_state{'last_name_private'} = 1;
+		$private_flags_str .= 'last_name,';
+	} else {
+		$form_state{'last_name_private'} = 0;
 	}
-	if (length($form_state{'country'} = $Request->Form('country')) < 1) {
-		$message .= format_error("Country is required.");
+
+	if ($Request->Form('canon_email_private')) {
+		$form_state{'email_private'} = 1;
+		$private_flags_str .= 'email,';
+	} else {
+		$form_state{'email_private'} = 0;
+	}
+
+	if ($Request->Form('canon_birthday_private')) {
+		$form_state{'birthday_private'} = 1;
+		$private_flags_str .= 'birthday,';
+	} else {
+		$form_state{'birthday_private'} = 0;
+	}
+ 
+	if ($Request->Form('canon_address_1_private')) {
+		$form_state{'address_1_private'} = 1;
+		$private_flags_str .= 'address_1,';
+	} else {
+		$form_state{'address_1_private'} = 0;
+	}
+
+	if ($Request->Form('canon_address_2_private')) {
+		$form_state{'address_2_private'} = 1;
+		$private_flags_str .= 'address_2,';
+	} else {
+		$form_state{'address_2_private'} = 0;
+	}
+
+	if ($Request->Form('canon_city_private')) {
+		$form_state{'city_private'} = 1;
+		$private_flags_str .= 'city,';
+	} else {
+		$form_state{'city_private'} = 1;
+	}
+
+	if ($Request->Form('canon_state_private')) {
+		$form_state{'state_private'} = 1;
+		$private_flags_str .= 'state,';
+	} else {
+		$form_state{'state_private'} = 0;
+	}
+
+	if ($Request->Form('canon_postal_code_private')) {
+		$form_state{'postal_code_private'} = 1;
+		$private_flags_str .= 'postal_code,';
+	} else {
+		$form_state{'postal_code_private'} = 0;
+	}
+
+	if ($Request->Form('canon_country_private')) {
+		$form_state{'country_private'} = 1;
+		$private_flags_str .= 'country,';
+	} else {
+		$form_state{'country_private'} = 0;
+	}
+
+	if ($private_flags_str) {
+		chop($private_flags_str); # remove last ','
 	}
 
 	my $pass_val = '';
-	my $password = $Request->Form('password');
+	my $password = $Request->Form('canon_password');
 	if (length($password) > 0) {
-		if ($password ne $Request->Form('password_confirm') ) {
+		if ($password ne $Request->Form('canon_password_confirm') ) {
 			$message .= format_error('Password and Confirmation Password did not match.');
 		}
 		$pass_val = func::canon_encode($password);
-	} elsif (! $Session->{'cid'}) {
+	} elsif ($register) {
 		$message .= format_error('Password is required when registering.');
+	}
+
+	if ($cid && ! $register) {
+		foreach my $nick_name_id (keys %nick_names) {
+			if ($Request->Form("private_nick_id_$nick_name_id")) { # will be 'on' if it exists / checked.
+				$nick_names{$nick_name_id}->{'private'} = 1;
+			} else {
+				$nick_names{$nick_name_id}->{'private'} = 0;
+			}
+		}
 	}
 
 	my $new_nick_name = $Request->Form('new_nick_name');
@@ -155,34 +251,30 @@ sub save_values {
 		}
 		$sth->finish();
 	} else {
-		if ($cid) {
-			if (func::nick_name_count($dbh, $cid) < 1) {
-				$message .= format_error("Nick Name required. (You must have at least one.)");
-			}
-		} else {
+		if ($register or (func::nick_name_count($dbh, $cid) < 1)) {
 			$message .= format_error("Nick Name required. (You must have at least one.)");
 		}
 	}
 
-	if ($message) {return()};
+	if ($errors) {
+		return()
+	};
 
-	if (! $cid) { # create new entry and log them in.
+	if ($register) { # create new entry and log them in.
 
 		$cid = func::get_next_id($dbh, 'person', 'cid');
 
 		my $now_time = time;
 
-		$selstmt = "insert into person (cid, first_name, middle_name, last_name, email, password, address_1, address_2, city, state, postal_code, country, create_time, join_time) values ($cid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $now_time, $now_time)";
+		$selstmt = "insert into person (cid, first_name, middle_name, last_name, email, password, birthday, address_1, address_2, city, state, postal_code, country, create_time, join_time) values ($cid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $now_time, $now_time)";
 
-		# may want to convert this to dbh->do some day
-		$sth = $dbh->prepare($selstmt) || die $selstmt;
-
-		if ($sth->execute(
+		if ($dbh->do($selstmt, \%dummy,
 				$form_state{'first_name'},
 				$form_state{'middle_name'},
 				$form_state{'last_name'},
 				$form_state{'email'},
 				$pass_val,
+				$form_state{'birthday'},
 				$form_state{'address_1'},
 				$form_state{'address_2'},
 				$form_state{'city'},
@@ -210,48 +302,77 @@ sub save_values {
 		} else {
 			$message .= format_error("DB Insert Failed.\n");
 		}
-
-		$sth->finish();
-
 	} else { # update existing entry
 
 		if (length($password) > 0) {
 			$selstmt = 'update person set password = ? where cid = ' . $cid;
-			# may want to convert this to dbh->do some day
-			$sth = $dbh->prepare($selstmt);
-			if (! $sth->execute(func::canon_encode($password)) ) {
+			if (! $dbh->do($selstmt, \%dummy, func::canon_encode($password)) ) {
 				$message .= format_error("Sorry, the database is currently having problems.");
 			}
 		}
 
-		if (!$message) {
+		if (!$errors) {
 
-			$selstmt = "update person set first_name = ?, middle_name = ?, last_name = ?, email = ?, address_1 = ?, address_2 = ?, city = ?, state = ?, postal_code = ?, country = ? where cid = $cid";
+			$selstmt = "update person set first_name = ?, middle_name = ?, last_name = ?, email = ?, birthday = ?, address_1 = ?, address_2 = ?, city = ?, state = ?, postal_code = ?, country = ?, private_flags = ? where cid = $cid";
 
-			# may want to convert this to dbh->do some day
-			$sth = $dbh->prepare($selstmt);
-
-			if ($sth->execute(
+			if ($dbh->do($selstmt, \%dummy,
 					$form_state{'first_name'},
 					$form_state{'middle_name'},
 					$form_state{'last_name'},
 					$form_state{'email'},
+					$form_state{'birthday'},
 					$form_state{'address_1'},
 					$form_state{'address_2'},
 					$form_state{'city'},
 					$form_state{'state'},
 					$form_state{'postal_code'},
-					$form_state{'country'}      )) {
+					$form_state{'country'},
+					$private_flags_str          )) {
 
 				$Session->{'email'} = $form_state{'email'};
-				$message .= format_success("Update Completed.");
+
+				if ($have_nick_name) {
+					my $private_nick_clause = '';
+					my $public_nick_clause  = '';
+					foreach my $nick_name_id (keys %nick_names) {
+						if ($nick_names{$nick_name_id}->{'private'}) {
+							$private_nick_clause .= "nick_name_id = $nick_name_id or ";
+						} else {
+							$public_nick_clause .= "nick_name_id = $nick_name_id or ";
+						}
+					}
+					$selstmt = '';
+					if ($private_nick_clause) {
+						chop($private_nick_clause); # get rid of last ' or ';
+						chop($private_nick_clause);
+						chop($private_nick_clause);
+						chop($private_nick_clause);
+						$selstmt = "update nick_name set private = 1 where $private_nick_clause;\n";
+					}
+					if ($public_nick_clause) {
+						chop($public_nick_clause); # get rid of last ' or ';
+						chop($public_nick_clause);
+						chop($public_nick_clause);
+						chop($public_nick_clause);
+						$selstmt .= "update nick_name set private = 0 where $public_nick_clause;\n";
+					}
+					if ($selstmt) {
+						if (! $dbh->do($selstmt)) {
+							$message .= format_error("Sorry, the database is currently having problems.");
+						}
+					}
+				}
+
+				if (! $errors) {
+					$message .= format_success("Update Completed.");
+				}
 			} else {
 				$message .= format_error("Sorry, the database is currently having problems.");
 			}
 		}
 	}
 
-	if (length($new_nick_name) > 0) {
+	if ((! $errors) and (length($new_nick_name) > 0)) {
 
 		my $nick_name_id = func::get_next_id($dbh, 'nick_name', 'nick_name_id');
 
@@ -259,17 +380,26 @@ sub save_values {
 
 		my $now_time = time;
 
-		$selstmt = "insert into nick_name (nick_name_id, owner_code, nick_name, create_time) values ($nick_name_id, '$owner_code', ?, $now_time)";
+		my $private = 0;
+		if ($Request->Form('new_nick_name_private')) { # will be 'yes' if it exists.
+			$private = 1;
+		}
+
+		$selstmt = "insert into nick_name (nick_name_id, owner_code, nick_name, private, create_time) values ($nick_name_id, '$owner_code', ?, ?, $now_time)";
 
 		# may want to convert this to dbh->do some day
-		$sth = $dbh->prepare($selstmt);
-		if($sth->execute($new_nick_name)) {
-			$form_state{'new_nick_name'} = ''; # can't submit this value again.
-		} else {
+		my %dummy = ();
+		if (! $dbh->do($selstmt, \%dummy, $new_nick_name, $private)) {
 			$message .= format_error("Sorry, the database is currently having problems.");
 		}
-		$sth->finish();
 	}
+
+	# See comment on dbh_connect(0) above.
+	# if ($errors) {
+	# 	$dbh->rollback();
+	# } else {
+	# 	$dbh->commit();
+	# }
 }
 
 
@@ -288,27 +418,104 @@ sub profile_id {
 	}
 	my $submit_value = 'Update';
 
-	if ($cid and (length($form_state{'email'}) < 1)) {
-
+	if ($register) {
+		$submit_value = 'Register';
+	} elsif (! $errors) { # user form values when there are errors, else db values.
 		if ($dbh) {
-			my $selstmt = "select first_name, middle_name, last_name, email, address_1, address_2, city, state, postal_code, country from person where cid = $cid";
+
+			if ($cid) { # just to be sure we have real db values.
+				%nick_names = func::get_nick_name_hash($cid, $dbh);
+			}
+
+			my $selstmt = "select first_name, middle_name, last_name, email, birthday, address_1, address_2, city, state, postal_code, country, private_flags+0 from person where cid = $cid";
 
 			$sth = $dbh->prepare($selstmt) || die $selstmt;
 			$sth->execute() || die $selstmt;
 
 			$rs = $sth->fetchrow_hashref;
 
+			my $private_flags = 0;
 			if ($rs) {
 				$form_state{'first_name'}  = $rs->{'first_name'};
 				$form_state{'middle_name'} = $rs->{'middle_name'};
 				$form_state{'last_name'}   = $rs->{'last_name'};
 				$form_state{'email'}       = $rs->{'email'};
+				$form_state{'birthday'}    = $rs->{'birthday'};
 				$form_state{'address_1'}   = $rs->{'address_1'};
 				$form_state{'address_2'}   = $rs->{'address_2'};
 				$form_state{'city'}        = $rs->{'city'};
 				$form_state{'state'}       = $rs->{'state'};
 				$form_state{'postal_code'} = $rs->{'postal_code'};
 				$form_state{'country'}     = $rs->{'country'};
+				$private_flags             = $rs->{'private_flags+0'};
+
+				if ($private_flags & 1) {
+					$form_state{'first_name_private'} = 1;
+				} else {
+					$form_state{'first_name_private'} = 0;
+				}
+
+				if ($private_flags & 2) {
+					$form_state{'middle_name_private'} = 1;
+				} else {
+					$form_state{'middle_name_private'} = 0;
+				}
+
+				if ($private_flags & 4) {
+					$form_state{'last_name_private'} = 1;
+				} else {
+					$form_state{'last_name_private'} = 0;
+				}
+
+				if ($private_flags & 8) {
+					$form_state{'email_private'} = 1;
+				} else {
+					$form_state{'email_private'} = 0;
+				}
+
+				if ($private_flags & 16) {
+					$form_state{'birthday_private'} = 1;
+				} else {
+					$form_state{'birthday_private'} = 0;
+				}
+
+				if ($private_flags & 32) {
+					$form_state{'address_1_private'} = 1;
+				} else {
+					$form_state{'address_1_private'} = 0;
+				}
+
+				if ($private_flags & 64) {
+					$form_state{'address_2_private'} = 1;
+				} else {
+					$form_state{'address_2_private'} = 0;
+				}
+
+				if ($private_flags & 128) {
+					$form_state{'city_private'} = 1;
+				} else {
+					$form_state{'city_private'} = 0;
+				}
+
+				if ($private_flags & 256) {
+					$form_state{'state_private'} = 1;
+				} else {
+					$form_state{'state_private'} = 0;
+				}
+
+				if ($private_flags & 512) {
+					$form_state{'postal_code_private'} = 1;
+				} else {
+					$form_state{'postal_code_private'} = 0;
+				}
+
+				if ($private_flags & 1024) {
+					$form_state{'country_private'} = 1;
+				} else {
+					$form_state{'country_private'} = 0;
+				}
+
+
 			} else {
 				$Response->Write("<h2>For some reason we can't look up your cid.  Please contact <a href=\"mailto:support\@canonizer.com\">support\@canonizer.com</a></h2>\n");
 				return();
@@ -319,131 +526,203 @@ sub profile_id {
 			$Response->Write("<h2>A database error occurred, please try again latter.</h2>\n");
 			return();
 		}
-	} elsif (length($form_state{'email'}) < 1) { # then we are registering for the first time.
-		$submit_value = 'Register';
 	}
 
-	my $pass_comment;
-	if ($Session->{'cid'}) {
-		$pass_comment = '(if changing)';
+	my $pass_star = '';
+	my $pass_comment = '';
+	if ($register) {
+		$pass_star = '*';
 	} else { # registring for the first time so required
-		$pass_comment = '';
+		$pass_comment = '<br>(Only if changeing)';
 	}
-
-	my @nick_names = ();
-
-	if ($cid) {
-		my $owner_code = func::canon_encode($cid);
-
-		$selstmt = "select nick_name from nick_name where owner_code = '$owner_code' order by nick_name_id";
-
-		$sth = $dbh->prepare($selstmt) || die $selstmt;
-		$sth->execute() || die $selstmt;
-
-		while ($rs = $sth->fetch()) {
-			if ($rs->[0]) {
-				push(@nick_names, $rs->[0]);
-			}
-		}
-		$sth->finish();
-	}
-
 
 %>
+
+<div class="main_content_container">
 
 <%=$message%>
+<br>
+<br>
 
 <form method=post>
-<p>Name:</p>
-<p>Checks will be made out to this name.</p>
-<p>Legal First Name: <span class="required_field">*</span></p>
-<p><input type = string name = first_name value = "<%=$form_state{'first_name'}%>"></p>
-<p>Legal Middle Name:</p>
-<p><input type = string name = middle_name value = "<%=$form_state{'middle_name'}%>"></p>
-<p>Legal Last Name: <span class="required_field">*</span></p>
-<p><input type = string name = last_name value = "<%=$form_state{'last_name'}%>"></p>
-<p>E-Mail: <span class="required_field">*</span></p>
-<p><input type = string name = email value = "<%=$form_state{'email'}%>"></p>
-<p>Password: <span class="required_field">*</span><%=$pass_comment%></p>
-<p><input type = password name = password></p>
-<p>Password Confirmation: <span class="required_field">*</span></p>
-<p><input type = password name = password_confirm></p>
-<p>Address: <span class="required_field">*</span></p>
-<p>Checks will be mailed to this address.</p>
-<p>Address 1: <span class="required_field">*</span></p>
-<p><input type = string name = address_1 value = "<%=$form_state{'address_1'}%>"></p>
-<p>Address 2:</p>
-<p><input type = string name = address_2 value = "<%=$form_state{'address_2'}%>"></p>
-<p>City: <span class="required_field">*</span></p>
-<p><input type = string name = city value = "<%=$form_state{'city'}%>"></p>
-<p>State: <span class="required_field">*</span></p>
-<p><input type = string name = state value = "<%=$form_state{'state'}%>"></p>
-<p>Postal Code: <span class="required_field">*</span></p>
-<p><input type = string name = postal_code value = "<%=$form_state{'postal_code'}%>"></p>
-<p>Country: <span class="required_field">*</span></p>
-<p><input type = string name = country value = "<%=$form_state{'country'}%>"></p>
-<p>Social Security Number: *</p>
-<p><input type = string name = country value = ""></p>
-<p>* A Social Security number is not required to register and fully
-participate with the Canonizer.  However, if your contributions start
-earning monetary rewards, we will not be able to pay you these until
-you provide it here.</p>
 
-<p>Permanent Nick Names:</p>
+<input type=hidden name=register value="<%=$register%>">
 
-<p>You can have multiple Nick Names.  Some of them may obviously be you,
-while others may be anonymous pen names possibly used to support
-various controversial positions.  You must provide one to start.  You
-may return to this page to add more.</p>
+<table>
+
+<tr><td colspan=3>Checks from advertisement revenue earned will be dispersed to this name and address</td><td>&nbsp; &nbsp;</td><td>Private</tr></tr>
+
+<tr><td class=separator></td></tr>
+
+<tr><td>Legal First Name: </td>
+    <td class="required_field">*</td>
+    <td><input type=text name=canon_first_name value="<%=$form_state{'first_name'}%>">
+    <td></td>
+    </td><td><input type=checkbox name=canon_first_name_private <%=$form_state{'first_name_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td>Legal Middle Name:</td>
+    <td class="required_field">&nbsp;</td>
+    <td><input type=string name=canon_middle_name value="<%=$form_state{'middle_name'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_middle_name_private <%=$form_state{'middle_name_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td>Legal Last Name: </td>
+    <td class="required_field">*</td>
+    <td><input type=text name=canon_last_name value="<%=$form_state{'last_name'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_last_name_private <%=$form_state{'last_name_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td class=separator></td></tr>
+
+<tr><td>E-Mail: </td>
+    <td class="required_field">*</td>
+    <td><input type=text name=canon_email size=40 value="<%=$form_state{'email'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_email_private <%=$form_state{'email_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td class=separator></td></tr>
+
+<tr><td>Password:<%=$pass_comment%></td>
+    <td class="required_field"><%=$pass_star%></td>
+    <td><input type=password name=canon_password></td></tr>
+
+<tr><td>Password Confirmation:<%=$pass_comment%></td>
+    <td class="required_field"><%=$pass_star%></td>
+    <td><input type=password name=canon_password_confirm></td></tr>
+
+<tr><td class=separator></td></tr>
+
+<tr><td>Birthday (yyyy/mm/dd):</td>
+    <td>*</td>
+    <td><input type=text name=canon_birthday value="<%=$form_state{'birthday'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_birthday_private <%=$form_state{'birthday_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td>Address 1:</td>
+    <td>*</td>
+    <td><input type=text name=canon_address_1 value="<%=$form_state{'address_1'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_address_1_private <%=$form_state{'address_1_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td>Address 2:</td>
+    <td>*</td>
+    <td><input type=text name=canon_address_2 value="<%=$form_state{'address_2'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_address_2_private <%=$form_state{'address_2_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td>City:</td>
+    <td>*</td>
+    <td><input type=text name = canon_city value = "<%=$form_state{'city'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_city_private <%=$form_state{'city_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td>State:</td>
+    <td>*</td>
+    <td><input type=text name=canon_state value="<%=$form_state{'state'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_state_private <%=$form_state{'state_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td>Postal Code:</td>
+    <td>*</td>
+    <td><input type=text name=canon_postal_code value="<%=$form_state{'postal_code'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_postal_code_private <%=$form_state{'postal_code_private'} ? 'checked' : ''%>></td></tr>
+
+<tr><td>Country:</td>
+    <td>*</td>
+    <td><input type=text name=canon_country value="<%=$form_state{'country'}%>"></td>
+    <td></td>
+    <td><input type=checkbox name=canon_country_private <%=$form_state{'country_private'} ? 'checked' : ''%>></td></tr>
+
+</table>
+
+<p>* These fields are not required to register and participate with
+the Canonizer.  However, if your contributions start earning monetary
+credits, we will not be able to pay you until you provide them.  Also,
+address or birthday based canonizers will not count your support if it
+is not provided.</p>
+
+
+<p>&nbsp;</p>
+
+<b>Permanent Nick Names:</b>
+
+<p>Normally, nick names have public links back to their owners
+providing public access to relevant non private information about you.
+If you check the anonymous box for a nick name, no information tying
+that nick name to you will be provided.  Only the canonizers will know
+who owns them for canonization purposes.</p>
+
+<table>
+<tr><td class=separator></td></tr>
+<tr><td class=separator></td></tr>
+
 
 <%
-if ($#nick_names >= 0) {
-	my $idx;
-	for ($idx = 0; $idx <= $#nick_names; $idx++) {
+if (!$register) {
+
+	if ($have_nick_name) {
 		%>
-		<%=$nick_names[$idx]%>
+		<tr><td colspan=2>Current nick names:</td><td>Anonymous</td></tr>
+		<%
+
+		my $nick_name_id;
+		foreach $nick_name_id (keys %nick_names) {
+			my $checked_str = '';
+			if ($nick_names{$nick_name_id}->{'private'}) {
+				$checked_str = 'checked';
+			}
+			%>
+			<tr><td><%=$nick_names{$nick_name_id}->{'nick_name'}%></td>
+			    <td></td>
+			    <td><input type=checkbox <%=$checked_str%> name=private_nick_id_<%=$nick_name_id%>></td></tr>
+			<%
+		}
+	} else {
+		%>
+		<tr><td colspan=3>No Nick Names Specified Yet.</td></tr>
 		<%
 	}
-} else {
-	%>
-	<p>No Nick Names Specified Yet.</p>
-	<%
 }
+
 %>
 
-<p>Add New Permanent Nick Name:
+<tr><td class=separator></td></tr>
+<tr><td class=separator></td></tr>
 
-<%
-if (! ($#nick_names >= 0)) {
-	%>
-	<span class="required_field"> *</span>
+<tr><td>Add New Permanent Nick Name:</td><td>&nbsp;</td><td>Anonymous</td></tr>
+
+<tr><td>
+
 	<%
-}
-</p>
-%>
+	if (! $have_nick_name) {
+		%>
+		<span class="required_field">* </span>
+		<%
+	}
+	%>
 
-<p><input type = string name = new_nick_name maxlength=25 size=25 value="<%=$form_state{'new_nick_name'}%>"></p>
+
+
+                  <input type = string name = new_nick_name maxlength=25 size=25 value="<%=$form_state{'new_nick_name'}%>"></p></td>
+    <td></td>
+    <td><input type=checkbox name=new_nick_name_private></td></tr>
+
+</table>
+
 
 <p><input type=reset value="Reset Form"></p>
 <p><input type = submit name = submit value = "<%=$submit_value%>"></p>
 
+
+
 </form>
+
+</div>
 
 <%
 }
 
-sub temp_send_email {
-	my $name = $_[0];
-
-	open(MAIL, "| /bin/mail -s new_user brent\@canonizer.com") || die "can't open mail.\n";
-
-	print(MAIL "A new user, $name, signed up!\n.\n\n");
-
-	close(MAIL);
-
-	print(STDERR "Sent e-mail.\n");
-
-}
 
 
 %>
