@@ -191,7 +191,7 @@ sub save_values {
 		$form_state{'city_private'} = 1;
 		$private_flags_str .= 'city,';
 	} else {
-		$form_state{'city_private'} = 1;
+		$form_state{'city_private'} = 0;
 	}
 
 	if ($Request->Form('canon_state_private')) {
