@@ -22,7 +22,7 @@ if (!$Session->{'logged_in'} || !$Session->{'cid'}) {
 	if (my $query_string = $ENV{'QUERY_STRING'}) {
 		$destination .= ('?' . $query_string);
 	}
-	display_page('Edit', 'Edit', [\&identity, \&search, \&main_ctl], [\&must_login]);
+	display_page('Support', 'Support', [\&identity, \&search, \&main_ctl], [\&must_login]);
 	$Response->End();
 }
 
