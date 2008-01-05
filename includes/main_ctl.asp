@@ -28,14 +28,16 @@ sub main_ctl {
 	    <%
 	}
 
-	if ($uri =~ '/secure/profile_') {
-	    %>
-	    <p id="selected">Personal Info</p>
-	    <%
-	} else {
-	    %>
-	    <p><a href='https://<%=&func::get_host()%>/secure/profile_id.asp'>Personal Info</a></p>
-	    <%
+	if ($Session->{'cid'}) { # mode 1 or 2
+		if ($uri =~ '/secure/profile_') {
+			    %>
+			    <p id="selected">Account Info</p>
+			    <%
+		} else {
+			    %>
+			    <p><a href='https://<%=&func::get_host()%>/secure/profile_id.asp'>Account Info</a></p>
+			    <%
+		}
 	}
 
 	if ($uri =~ m|^/topic\.asp/10|) {

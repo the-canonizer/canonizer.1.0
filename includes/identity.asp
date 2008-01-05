@@ -2,19 +2,26 @@
 
 <%
 
-# modes:	selections:
-#	0 Browsing as: guest
-#		Login
-#	1 Browsing as: <cid>
-#		Login
-#		Clear Browser (logout.asp&clear=1)
-#	2 Logged in as: <cid>
-#		$Session->{'logged_in'} = 1, can go to personal pages.
-#		Logout
-#		Clear Browser (logout.asp&clear=1)
+# Identity modes:
+# 
+# Identity line (and mode specification):
+# 	0    Browsing as guest
+# 	1    Browsing as e-mail
+# 	2    Logged in as e-mail
+# Login line:
+#       0	Login
+#       1	Login (can do different user, but no mention of this.)
+#       2	Login as different user
+# Logout line:
+#       2	Logout to browsing as
+# Clear Browser line:
+#       1, 2    Clear Browser (logout.asp?clear=1)
+# Register line:
+#	0, 1, 2	Register New User
+#
 
 
-my $mode = 0;	# make this global so everyone can see it.
+my $mode = 0;
 
 
 sub guest_cookie_expire_time {
@@ -46,7 +53,6 @@ sub identity {
 		$logout_url .= ('?' . $ENV{'QUERY_STRING'});
 		$clear_url .= ('?' . $ENV{'QUERY_STRING'});
 	}
-
 
 	$Session->{'page_count'}++;
 
@@ -140,38 +146,43 @@ NO_CID:		my $gid = $Session->{'gid'};
 		$mode_prompt = 'Logged in as:';
 		$mode = 2;
 	}
-
-
 %>
 
   	<div class="identity">
-  	
+
 	<h1>Identity</h1>
 
 	<p><%=$mode_prompt%> <%=$logged_in_as%></p>
-<%
+
+	<% # login line:
 	if ($mode == 2) {
-%>
-		<p><a href = "<%=$logout_url%>">Logout (to browsing as)</a></p>
-		<p><a href = "<%=$clear_url%>">Clear Browser</a></p>
-<%
-	} elsif ($mode == 1) {
-%>
-		<p><a href = "<%=$login_url%>">Login</a>
-		<p><a href = "<%=$clear_url%>&clear=1">Clear Browser</a></p>
-<%
+		%>
+		<p><a href = "<%=$login_url%>">Login as different user</a>
+		<%
 	} else {
-%>
+		%>
 		<p><a href = "<%=$login_url%>">Login</a>
-		<p><a href = "http://<%=&func::get_host()%>/secure/profile_id.asp">Register</a></p>
-<%
+		<%
 	}
-%>
 
+	if ($mode == 2) { # logout line:
+		%>
+		<p><a href = "<%=$logout_url%>">Logout (to browsing as)</a></p>
+		<%
+	}
+
+	if (($mode == 1) or ($mode == 2)) { # clear browser line:
+		%>
+		<p><a href = "<%=$clear_url%>">Clear Browser</a></p>
+		<%
+	}
+
+	# register new user line:
+	%>
+	<p><a href = "http://<%=&func::get_host()%>/secure/profile_id.asp?register=1">Register New User</a></p>
   	</div>
-
-<%
-
+	<%
 }
 
 %>
+
