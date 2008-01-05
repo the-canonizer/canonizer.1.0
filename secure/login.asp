@@ -35,6 +35,8 @@ if ($Request->QueryString('destination')) {
 	$destination =~ s|\&?destination=||gi;  # remove the only argument to login (all others get passed on.)
 }
 
+$destination =~ s|asp\&amp;|asp\?|; # session ids and such get appended with &, so must be converted.
+
 if ($Request->Form('destination')) {
 	$destination = $Request->Form('destination');
 }
@@ -44,7 +46,7 @@ if ($Request->Form('submit')) {
 	do_login();
 }
 
-display_page('Login', 'Login', [], [\&login_form]);
+display_page('Login', 'Login', [\&main_ctl], [\&login_form]);
 
 
 ########
@@ -90,7 +92,7 @@ sub login_form {
 	<p>Password:</p>
 	<p><input type = password name = password value = "<%=$password%>"></p>
 	<p><input type = submit name = submit value = Login></p>
-	<p><a href = "http://<%=func::get_host()%>/register.asp">Register</a> if you haven't yet.</p>
+	<p><a href = "https://<%=func::get_host()%>/secure/profile_id.asp?register=1">Register</a> if you haven't yet.</p>
 
 	</form>
 
@@ -193,6 +195,6 @@ sub do_login {
 %>
 
 <!--#include file = "includes/default/page.asp"-->
-
 <!--#include file = "includes/page_sections.asp"-->
+<!--#include file = "includes/main_ctl.asp"-->
 
