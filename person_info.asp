@@ -73,7 +73,7 @@ sub nick_names {
 		my $nick_name_id;
 		foreach $nick_name_id (keys %nick_name_hash) {
 			%>
-			<li><a href="http://<%=func::get_host()%>/support_list.asp?nick_name_id=<%=$nick_name_id%>"><%=$nick_name_hash{$nick_name_id}%> [<%=$nick_name_id%>]</a></li>
+			<li><a href="http://<%=func::get_host()%>/support_list.asp?nick_name_id=<%=$nick_name_id%>"><%=$nick_name_hash{$nick_name_id}->{'nick_name'}%> [<%=$nick_name_id%>]</a></li>
 			<%
 		}
 		%>

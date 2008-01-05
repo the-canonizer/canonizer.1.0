@@ -48,7 +48,7 @@ if ($nick_name_id) {
 		$Response->End();
 	} else {
 		$sth->finish();
-		$error_message = 'Uniown nick_name_id: ' . $Request->QueryString('nick_name_id');
+		$error_message = 'Unkown nick_name_id: ' . $Request->QueryString('nick_name_id');
 		display_page("Unknown nick_name_id", 'Unknown nick_name_id', [\&identity, \&search, \&as_of, \&main_ctl], [\&list_support]);
 		$Response->End();
 	}
@@ -236,7 +236,7 @@ sub list_support {
 		my $nick_name_id;
 		foreach $nick_name_id (keys %nick_name_hash) {
 			%>
-			<li><%=$nick_name_hash{$nick_name_id}%> [<%=$nick_name_id%>]</li>
+			<li><%=$nick_name_hash{$nick_name_id}->{'nick_name'}%> [<%=$nick_name_id%>]</li>
 			<%
 		}
 		%>
