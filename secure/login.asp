@@ -75,6 +75,8 @@ sub login_form {
 		%>
 		<p>Browser failed to return Canonizer identity cookie.</p>
 
+		<p>Sometimes simply going back to the main page and trying again resolves the problem.</p>
+
 		<p>You must have a browser that can store and return cookies in order to login and contribute to the Canonizer.</p>
 		<a href="http://<%=func::get_host()%>/">return to canonizer</a>
 		<br>
