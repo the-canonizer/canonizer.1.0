@@ -307,24 +307,27 @@ sub object_form_message {
 	my $id;
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $Request->Form('submitter')) {
-			$ret_val .= "<option value=$id selected>" . $nick_names{$id} . "\n";
+			$ret_val .= "<option value=$id selected>" . $nick_names{$id}->{'nick_name'} . "\n";
 		} else {
-			$ret_val .= "<option value=$id>" . $nick_names{$id} . "\n";
+			$ret_val .= "<option value=$id>" . $nick_names{$id}->{'nick_name'} . "\n";
 		}
 	}
 
 	$ret_val .=
-"	</select>
+"	</select><br><br>
 	Reason for objection: *
 	<input type=string name=object_reason maxlength=65 size=65>
 
 	<input type=hidden name=topic_num value=" . $record->{topic_num} . ">
 	<input type=hidden name=record_id value=" . $record->{record_id} . ">
 
+	<br><br>
+
 	<input type=submit name=submit value=\"Yes, I want to object.\">
-	<input type=button value=\"No, take me back to the topic manager.\" onClick='location=\"" . &make_manage_url($record, $class) . "\"'>
+	<input type=button value=\"No, take me back to the $class record manager.\" onClick='location=\"" . &make_manage_url($record, $class) . "\"'>
 
 	</form>
+	<br><br>
 
 ";
 	return($ret_val);
@@ -336,9 +339,13 @@ sub object_to_topic_page {
 	%>
 	<%=$message%>
 
+	<div class="main_content_container">
+
 	<%
 	$record->print_record($dbh, $history_class::proposed_color);
 	%>
+
+	</div>
 
 	<%
 }

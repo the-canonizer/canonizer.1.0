@@ -182,11 +182,11 @@ sub new_topic_form {
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $form_state{'submitter'}) {
 			%>
-			<option value=<%=$id%> selected><%=$nick_names{$id}%></option>
+			<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%></option>
 			<%
 		} else {
 			%>
-			<option value=<%=$id%>><%=$nick_names{$id}%></option>
+			<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%></option>
 			<%
 		}
 	}

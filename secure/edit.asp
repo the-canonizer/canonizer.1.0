@@ -235,11 +235,11 @@ sub display_topic_form {
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $record->{submitter}) {
 			%>
-			<option value=<%=$id%> selected><%=$nick_names{$id}%></option>
+			<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%></option>
 			<%
 		} else {
 			%>
-			<option value=<%=$id%>><%=$nick_names{$id}%></option>
+			<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%></option>
 			<%
 		}
 	}
@@ -392,11 +392,11 @@ if ($statement_tree) {
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $record->{'submitter'}) {
 			%>
-			<option value=<%=$id%> selected><%=$nick_names{$id}%></option>
+			<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%></option>
 			<%
 		} else {
 			%>
-			<option value=<%=$id%>><%=$nick_names{$id}%></option>
+			<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%></option>
 			<%
 		}
 	}
@@ -495,18 +495,18 @@ sub display_text_form {
 	<hr>
 
 	<p>Attribution Nick Name:</p>
-	
+
 	    <p><select name="submitter">
 	    <%
 	    my $id;
 	    foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 		if ($id == $record->{'submitter'}) {
 			%>
-			<option value=<%=$id%> selected><%=$nick_names{$id}%></option>
+			<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%></option>
 			<%
 		} else {
 			%>
-			<option value=<%=$id%>><%=$nick_names{$id}%></option>
+			<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%></option>
 			<%
 		}
 	    }

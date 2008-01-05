@@ -351,11 +351,11 @@ sub support_form {
 		foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 			if ($id == -1) { # some day propegate the previous support nick selection?
 				%>
-				<option value=<%=$id%> selected><%=$nick_names{$id}%>
+				<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%>
 				<%
 			} else {
 				%>
-				<option value=<%=$id%>><%=$nick_names{$id}%>
+				<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%>
 				<%
 			}
 		}
@@ -478,11 +478,11 @@ sub support_form {
 			foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 				if ($id == -1) { # some day propegate the previous support nick selection?
 					%>
-					render_str += "<option value=<%=$id%> selected><%=$nick_names{$id}%>\n";
+					render_str += "<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%>\n";
 					<%
 				} else {
 					%>
-					render_str += "<option value=<%=$id%>><%=$nick_names{$id}%>\n";
+					render_str += "<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%>\n";
 					<%
 				}
 			}
@@ -542,11 +542,11 @@ sub support_form {
 			foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 				if ($id == -1) { # some day propegate the previous support nick selection?
 					%>
-					render_str += "<option value=<%=$id%> selected><%=$nick_names{$id}%>\n";
+					render_str += "<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%>\n";
 					<%
 				} else {
 					%>
-					render_str += "<option value=<%=$id%>><%=$nick_names{$id}%>\n";
+					render_str += "<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%>\n";
 					<%
 				}
 			}

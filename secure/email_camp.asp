@@ -209,7 +209,7 @@ sub email_camp_form {
 		my $id;
 		foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 			%>
-			<option value="<%=$id%>,<%=$nick_names{$id}%>"><%=$nick_names{$id}%></option>
+			<option value="<%=$id%>,<%=$nick_names{$id}->{'nick_name'}%>"><%=$nick_names{$id}->{'nick_name'}%></option>
 			<%
 		}
 		%>
