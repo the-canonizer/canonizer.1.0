@@ -7,14 +7,17 @@
 
 my $nick_name_id = 0;
 my $list_cid = 0;
+my $anonymous_nick = 1;
 if ($Request->Form('nick_name_id')) {
 	$nick_name_id = int($Request->Form('nick_name_id'));
 } elsif ($Request->QueryString('nick_name_id')) {
 	$nick_name_id = int($Request->QueryString('nick_name_id'));
 } elsif ($Request->Form('list_cid')) {
 	$list_cid = int($Request->Form('list_cid'));
+	$anonymous_nick = 0;
 } elsif ($Request->QueryString('list_cid')) {
 	$list_cid = int($Request->QueryString('list_cid'));
+	$anonymous_nick = 0;
 }
 
 
@@ -30,7 +33,7 @@ my $nick_name;
 
 if ($nick_name_id) {
 
-	my $selstmt = 'select nick_name from nick_name where nick_name_id = ' . $nick_name_id;
+	$selstmt = 'select nick_name, owner_code, private from nick_name where nick_name_id = ' . $nick_name_id;
 
 	$sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
 	$sth->execute() or die "Failed to execute $selstmt.\n";
@@ -38,42 +41,142 @@ if ($nick_name_id) {
 	if ($rs = $sth->fetchrow_hashref()) {
 		$sth->finish();
 		$nick_name = $rs->{'nick_name'};
-		my $title = "Supported statements by nick name: $nick_name";
-		my $header = '<table><tr><td class="label">Supported statements by nick name: </td>' .
+		if ($rs->{'private'}) {
+			my $title = "Supported statements by nick name: $nick_name";
+			my $header = '<table><tr><td class="label">Supported statements by nick name: </td>' .
 					'<td class="topic">' . $nick_name. '</td></tr>' .
-			     "</table>\n";
-
-
-		display_page($title, $header, [\&identity, \&search, \&as_of, \&main_ctl], [\&list_nick_support]);
-		$Response->End();
+					"</table>\n";
+			display_page($title, $header, [\&identity, \&search, \&as_of, \&main_ctl], [\&list_nick_support]);
+			$Response->End();
+		} else { # not private
+			$anonymous_nick = 0;
+			$list_cid = func::canon_decode($rs->{'owner_code'});
+		}
 	} else {
 		$sth->finish();
 		$error_message = 'Unkown nick_name_id: ' . $Request->QueryString('nick_name_id');
-		display_page("Unknown nick_name_id", 'Unknown nick_name_id', [\&identity, \&search, \&as_of, \&main_ctl], [\&list_support]);
+		display_page("Unknown nick_name_id", 'Unknown nick_name_id', [\&identity, \&search, \&as_of, \&main_ctl], [\&error_page]);
 		$Response->End();
 	}
+}
 
-
-
-	display_page('Env and State info', 'Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&list_support]);
-} elsif ($list_cid) {
-	%>
-	<h1>cid listing is not yet implemented.</h1>
-	<%
-	$Response->End();
+if ($list_cid) {
+	display_page('User Information', 'User Information', [\&identity, \&search, \&as_of, \&main_ctl], [\&list_cid_support]);
 }
 
 
-
-
-display_page('Env and State info', 'Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&list_support]);
-
+$Response->End();
 
 
 ########
 # subs #
 ########
 
+
+sub list_cid_support {
+
+	my $rs;
+	my $selstmt = "select * from person where cid = $list_cid";
+	my $sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
+	$sth->execute() or die "Failed to execute $selstmt.\n";
+
+	if ($rs = $sth->fetchrow_hashref()) {
+
+		my $name_line = '';
+		my $private_flags = $rs->{'private_flags'};
+		my $have_name = 0;
+
+		if ((length($rs->{'first_name'}) > 0) and ($private_flags !~ m|first_name|)) {
+			$name_line = $rs->{'first_name'};
+			$have_name = 1;
+		}
+
+		if ((length($rs->{'middle_name'}) > 0) and ($private_flags !~ m|middle_name|)) {
+			if ($have_name) {
+				$name_line .= '&nbsp;';
+			}
+			$name_line .= $rs->{'second_name'};
+			$have_name = 1;
+		}
+
+		if ((length($rs->{'last_name'}) > 0) and ($private_flags !~ m|last_name|)) {
+			if ($have_name) {
+				$name_line .= '&nbsp;';
+			}
+			$name_line .= $rs->{'last_name'};
+			$have_name = 1;
+		}
+		if (! $have_name) {
+			$name_line = 'Name is private';
+		}
+
+		%>
+		<table>
+		<tr><td>Canonizer User: </td><td><%=$name_line%></td></tr>
+		<%
+
+		display_line($rs, $private_flags, 'email');
+		display_line($rs, $private_flags, 'birthday');
+		display_line($rs, $private_flags, 'address_1');
+		display_line($rs, $private_flags, 'address_2');
+		display_line($rs, $private_flags, 'city');
+		display_line($rs, $private_flags, 'state');
+		display_line($rs, $private_flags, 'postal_code');
+		display_line($rs, $private_flags, 'country');
+
+		%>
+		</table>
+		<br>
+		<%
+
+		my %nick_name_hash = func::get_nick_name_hash($list_cid, $dbh);
+		my $tmp_nick_name_id; # stupid perl!
+		foreach $tmp_nick_name_id (keys %nick_name_hash) {
+			$nick_name_id = $tmp_nick_name_id;
+			if (! $nick_name_hash{$nick_name_id}->{'private'}) {
+				$nick_name = $nick_name_hash{$nick_name_id}->{'nick_name'};
+				list_nick_support();
+			}
+		}
+
+		if ($Session->{'cid'} == $list_cid) {
+			if ($Session->{'logged_in'}) {
+				%>
+				<p>Anonymous Nick Names:</p>
+				<%
+				foreach $tmp_nick_name_id (keys %nick_name_hash) {
+					$nick_name_id = $tmp_nick_name_id;
+					if ($nick_name_hash{$nick_name_id}->{'private'}) {
+						$nick_name = $nick_name_hash{$nick_name_id}->{'nick_name'};
+						list_nick_support();
+					}
+				}
+			} else {
+				%>
+				<p>Your anonymous nick names will list here when you are fully logged in.</p>
+				<%
+			}
+		}
+
+	} else {
+		%>
+		<h1>Unknown cid: $list_cid</h1>
+		<%
+	}
+}
+
+
+sub display_line {
+	my $rs            = $_[0];
+	my $private_flags = $_[1];
+	my $line_value    = $_[2];
+
+	if ((length($rs->{$line_value}) > 0) and ($private_flags !~ m|$line_value|)) {
+		%>
+		<tr><td><%=$line_value%>: </td><td><%=$rs->{$line_value}%></td></tr>
+		<%
+	}
+}
 
 sub list_nick_support {
 
@@ -91,6 +194,11 @@ sub list_nick_support {
 		$as_of_clause = 'and go_live_time < ' . time;
 	}
 
+	if ($anonymous_nick) {
+		%>
+		<p><%=$nick_name%> is an anonymous nick name.</p>
+		<%
+	}
 	%>
 	<li>Nick name <%=$nick_name%> is supporting:</li>
 	<%
