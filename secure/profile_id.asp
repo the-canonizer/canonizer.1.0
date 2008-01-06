@@ -81,13 +81,13 @@ display_page($title, $title, [\&identity, \&search, \&main_ctl], [\&profile_id],
 
 
 sub format_error {
-	return('<p class="error_message">' . $_[0] . '</p>');
 	$errors++;
+	return('<p class="error_message">' . $_[0] . '</p>');
 }
 
 
 sub format_success {
-	return($_[0]);
+	return('<p class="success_message">' . $_[0] . '</p>');
 }
 
 
@@ -341,22 +341,22 @@ sub save_values {
 							$public_nick_clause .= "nick_name_id = $nick_name_id or ";
 						}
 					}
-					$selstmt = '';
 					if ($private_nick_clause) {
 						chop($private_nick_clause); # get rid of last ' or ';
 						chop($private_nick_clause);
 						chop($private_nick_clause);
 						chop($private_nick_clause);
-						$selstmt = "update nick_name set private = 1 where $private_nick_clause;\n";
+						$selstmt = "update nick_name set private = 1 where $private_nick_clause";
+						if (! $dbh->do($selstmt)) {
+							$message .= format_error("Sorry, the database is currently having problems.");
+						}
 					}
 					if ($public_nick_clause) {
 						chop($public_nick_clause); # get rid of last ' or ';
 						chop($public_nick_clause);
 						chop($public_nick_clause);
 						chop($public_nick_clause);
-						$selstmt .= "update nick_name set private = 0 where $public_nick_clause;\n";
-					}
-					if ($selstmt) {
+						$selstmt = "update nick_name set private = 0 where $public_nick_clause";
 						if (! $dbh->do($selstmt)) {
 							$message .= format_error("Sorry, the database is currently having problems.");
 						}
@@ -645,7 +645,7 @@ is not provided.</p>
 
 <p>&nbsp;</p>
 
-<b>Permanent Nick Names:</b>
+<p class="section_heading">Permanent Nick Names:</p>
 
 <p>Normally, nick names have public links back to their owners
 providing public access to relevant non private information about you.
