@@ -43,9 +43,25 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 
 .error_message
 {
-	font-size: 90%;
+	font-size: 120%;
 	color: red;
+	font-weight: bold;
 }
+
+.success_message
+{
+	font-size: 120%;
+	color: green;
+	font-weight: bold;
+}
+
+.section_heading
+{
+	font-size: 120%;
+	font-weight: bold;
+}
+
+
 
 .required_field
 {
