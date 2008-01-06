@@ -19,9 +19,10 @@ if ($Request->Form('namespace')) {
 }
 
 
-my $header = 'Canonizer Main Page';
+my $title = 'Canonizer Main Page';
+my $header = '<table><tr><td class="topic">Canonizer Main Page</td><td>&nbsp &nbsp</td><td class="label">beta</td></tr></table>';
 
-&display_page($header, $header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&canonized_list]);
+&display_page($title, $header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&canonized_list]);
 
 ##############
 # start subs #
