@@ -146,7 +146,7 @@ project or earning Canonizer LLC shares is envited to join this group
 
 <%
 
-	$Response->Write(topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}, $namespace));
+	$Response->Write(topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}, $Session->{'canonizer'}));
 
 %>
 

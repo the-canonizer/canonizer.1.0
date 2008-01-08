@@ -114,7 +114,7 @@ sub lookup_topic_data {
 	if ($statement->{error_message}) {
 		$error_message .= $statement->{error_message};
 	} else {
-		$statement->canonize();
+		$statement->canonize($dbh, $Session->{'canonizer'}, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 	}
 
 	my text $short_text = 0;
@@ -324,7 +324,7 @@ if ($topic_data->{'short_text'}) {
 					$sth->execute() || die "Failed to execute $selstmt";
 					my $canonize_list_str = 
 						'<div class="statement_tree" id="statement_tree">' . "\n" .
-						topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}) . "\n" .
+						topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}, $Session->{'canonizer'}) . "\n" .
 						"</div>\n";
 
 					$html_text_short =~ s|$replace_str|$canonize_list_str|;
