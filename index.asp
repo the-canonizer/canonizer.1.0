@@ -113,11 +113,10 @@ function change_namespace(namespace) {
 <p>For a brief description of the Canonizer see the "What is the
 Canonizer" link on the side bar.</p>
 
-<p>Enough of the canonization process is now completed to do "Blind
-Popularity" (one person, one vote) canonization.  Once a user
-attribute system is completed, along with more canonizers using these
-attributes you will be able to canonize this page in different ways
-giving more influence to people you choose to respect.</p>
+<p>Most of the core functionality is now complete, including some real
+canonizers.  Now all we need is some more people to tell us what they
+believe so we can start getting some valuable moral advice from people
+we chose to trust.</P>
 
 <p>There is a canonizers yahoo group where the developement and goals
 of the Canonizer are descussed.  Anyone interested in folowing this
