@@ -65,7 +65,7 @@ function change_canonizer(new_canonizer) {
 
 	</select></p>
 
-	<p><a href='http://<%=&func::get_host()%>/topic.asp/53'>Canonizer Information</a></p>
+	<p><a href='http://<%=&func::get_host()%>/topic.asp/53'>Algorithm Information</a></p>
 
 	</div>
 
