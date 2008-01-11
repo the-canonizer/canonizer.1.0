@@ -270,8 +270,8 @@ you are currently viewing.</p>
 
 	<%
 
-	my $html_text_short = '<p>No short statement has been provided.</p>';
-        my $html_text_long = '<p>No long statement has been provided.</p>';
+	my $html_text_short = '<p>No short statement has been provided yet.</p>';
+        my $html_text_long = '<p>No long statement has been provided yet.</p>';
 
 	my $camp_agreement = 'Camp';
 	if ($statement_num == 1) {
