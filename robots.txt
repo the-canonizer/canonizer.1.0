@@ -1,6 +1,7 @@
 User-agent: *
 Disallow: /manage.asp
 Disallow: /register.asp
+Disallow: /imbedded.asp
 Disallow: /secure/
 Disallow: /images/
 Disallow: /includes/
