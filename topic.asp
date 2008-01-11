@@ -230,12 +230,6 @@ sub present_topic {
      <div class="footer_1">
      <span id="buttons">
 
-          	<%
-		if (! $Request->Form('submit_edit')) {		# turn off in preview mode
-		%>
-		<a href="http://<%=func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&parent_statement_num=<%=$statement_num%>">Add New Position Statement Under "<%=$topic_data->{'statement'}->{statement_name}%>" Statement</a>
-		<% } %>
-
 <p>Note: This section is like the Table of Contents for this topic.
 It has links to the agreement statement always on the top, and all
 other sub statement in a hierarchical order, along with how much
