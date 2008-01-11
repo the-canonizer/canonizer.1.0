@@ -315,9 +315,7 @@ sub display_statement_form {
 
 	my statement $statement_tree;
 
-	if (($record->{proposed}) && ($record->{statement_num} > 1)) {
-		$statement_tree = new_tree statement ($dbh, $record->{topic_num}, 1);
-	}
+	$statement_tree = new_tree statement ($dbh, $record->{topic_num}, 1);
 
 %>
 
@@ -338,7 +336,8 @@ sub display_statement_form {
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
 <input type=hidden name=topic_num value=<%=$record->{topic_num}%>>
 <%
-if (!$statement_tree) {
+if (($record->{proposed}) && ($record->{statement_num} > 1)) {
+
 	%>
 	<input type=hidden name=parent_statement_num value=<%=$record->{parent_statement_num}%>>
 	<%
@@ -363,19 +362,13 @@ if (!$statement_tree) {
 <p>Maximum 65 characters, comma seperated.</p>
 <p><input type=string name=key_words value="<%=func::escape_double($record->{'key_words'})%>" maxlength=65 size=65></p>
 
+<hr>
+Parent:
+<p><select name="parent_statement_num">
 <%
-if ($statement_tree) {
-	%>
-	<hr>
-	Parent:
-	<p><select name="parent_statement_num">
-	<%
-	&print_parent_option($statement_tree, $record->{'parent_statement_num'}, $record->{statement_num}, '');
-	%>
-	</select></p>
-<%
-}
-	%>
+&print_parent_option($statement_tree, $record->{'parent_statement_num'}, $record->{statement_num}, '');
+%>
+</select></p>
 
 <hr>
 
