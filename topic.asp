@@ -457,7 +457,7 @@ if ($topic_data->{'short_text'}) {
 			<%
 		} else {
 			%>
-			<a href="https://<%=func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Directly Support This Statement</a>
+			<a href="https://<%=func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Join or Directly Support This Camp</a>
 			<%
 		}
 		%>
