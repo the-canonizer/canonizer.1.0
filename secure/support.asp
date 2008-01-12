@@ -562,6 +562,8 @@ sub support_form {
 
 		</script>
 
+		<p><a href="http://<%=func::get_host()%>/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to statement (no change)</a></p>
+
 		<span id = 'support_block'></span>
 
 		<script language=javascript>
