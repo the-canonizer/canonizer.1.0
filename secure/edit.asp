@@ -167,6 +167,13 @@ if ($nick_names{'error_message'}) {
 
 # it would be nice to object orient this, but alas, we must have asp ability to do html.
 sub display_form {
+	my $url = 'http://' . func::get_host() . "/topic.asp/" . $record->{topic_num};
+	if ($record->{statement_num}) {
+		$url .= '/' . $record->{statement_num};
+	}
+	%>
+	<p><a href="<%=$url%>">Return to statement (no change)</a></p>
+	<%
 	if ($class eq 'text') {
 		&display_text_form();
 	} elsif ($class eq 'statement') {
@@ -335,14 +342,6 @@ sub display_statement_form {
 <form method=post>
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
 <input type=hidden name=topic_num value=<%=$record->{topic_num}%>>
-<%
-if (($record->{proposed}) && ($record->{statement_num} > 1)) {
-
-	%>
-	<input type=hidden name=parent_statement_num value=<%=$record->{parent_statement_num}%>>
-	<%
-}
-%>
 <input type=hidden name=statement_num value=<%=$record->{statement_num}%>>
 <input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
