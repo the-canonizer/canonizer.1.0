@@ -104,25 +104,66 @@ function change_namespace(namespace) {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Canonizer News</span>
+     <span id="title">Canonizer Information</span>
 
 </div>
 
 <div class="content_1">
+<h3>Description</h3>
+<p>For a more complete description of the Canonizer see the "What is
+the Canonizer" link in the Navigation section of the side bar.  For
+more information on how to canonize your point of view (POV) see the
+help link.</p>
+<br>
 
-<p>For a brief description of the Canonizer see the "What is the
-Canonizer" link on the side bar.</p>
 
-<p>Most of the core functionality is now complete, including some real
-canonizers.  Now all we need is some more people to tell us what they
-believe so we can start getting some valuable moral advice from people
-we chose to trust.</P>
+<h3>What does Everyone Want?</h3>
+<p>What does everyone value?  What does everyone believe?  What is the
+gospel according to you?  There are a quickly approaching infinite set
+of individual testimonials about all such contained in books, op / ed
+pieces, blogs, comments to such, product review sites, web pages, and
+so on.  As much as you'd like to know quantitatively what the masses
+are saying in all this you probably don't have time to read, let alone
+digest and tally it all right?  So lets all work together to get it all
+canonized so we can know it concisely, quantitatively, and in
+everyone's preferred words.</p>
+<br>
 
-<p>There is a canonizers yahoo group where the developement and goals
-of the Canonizer are descussed.  Anyone interested in folowing this
-project or earning Canonizer LLC shares is envited to join this group
-<a href =
-"http://finance.groups.yahoo.com/group/canonizers/">here</a>.</p>
+<h3>Canonized Feedback on Your Web Pages</h3>
+<p>Would you like to have free and easy canonized feedback from the
+masses on your web pages about a product, a company, a belief or
+anything?  You can now create a topic in the canonizer for such, and
+then add a simple block of HTML to your web page to show the information on your
+page as is done here: <a
+href="http://home.comcast.net/~brent.allsop">http://home.comcast.net/~brent.allsop</a>.</p>
+<br>
+
+<h3>Canonized Yellow Pages / Product Reviews.</h3>
+<p>Do you have a professional service or product that is, in your POV,
+the best?  And do you have lots of happy customers willing to prove
+it?  Then you can get such canonized.  For an example, see this topic
+on <a href=" http://test.canonizer.com/topic.asp/18">who is the best
+family dentist</a>.</p>
+<br>
+
+<h3>Canonized Science</h3>
+<p>Are you researching an area of science with lots of competing
+theories, yet still no consensus on what theory will turn out right?
+Do you wonder just how accurate certain claims of consensus on such
+topics as global warming are?  Would you like to have some kind of
+quantitative measure to help know such?  Then get it canonized as has
+started with this very controversial scientific topic on the <a
+href="http://test.canonizer.com/topic.asp/23">Hard Problem of
+Consciousness</a>.</p>
+<br>
+
+<h3>Canonizers Yahoo Group</h3>
+<p>canonizer.com is being developed by a grass roots group of
+volunteers.  We all communicate on this <a href =
+"http://finance.groups.yahoo.com/group/canonizers/">Canonizers Yahoo
+Group</a>.  Of course everyone is invited to join, especially if the
+Canonizer isn't yet what you'd like it to be.</p>
+
 
 </div>
 
