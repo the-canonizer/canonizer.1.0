@@ -598,7 +598,7 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 .main_content_container .section_container .content_1 p
 {
 	font-size: 100%;
-	line-height: 200%;
+	line-height: 120%;
 	padding: 0 0 10px 0;
 	margin: 0; 
 }
