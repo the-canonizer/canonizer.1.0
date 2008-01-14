@@ -519,6 +519,7 @@ another supporter.</p>
 <p>Statement Name: <%=$topic_data->{'statement'}->{statement_name}%> </p>
 <p>Title: <%=$topic_data->{'statement'}->{title}%></p>
 <p>Key Words: <%=$topic_data->{'statement'}->{key_words}%></p>
+<p>URL: <%=$topic_data->{'statement'}->{url}%></p>
 	<%
 	if ($topic_data->{'statement'}->{parent_statement_num}) {
 		%>

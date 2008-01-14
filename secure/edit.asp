@@ -315,14 +315,16 @@ sub display_statement_form {
 		$submit_value = 'Propose Statement Modification';
 	}
 
+	my statement $statement_tree = '';
+
 	my $agreement_disable_str = '';
 	if ($record->{statement_num} == 1) {
 		$agreement_disable_str = 'disabled';
+	} else {
+		$statement_tree = new_tree statement ($dbh, $record->{topic_num}, 1);
 	}
 
-	my statement $statement_tree;
 
-	$statement_tree = new_tree statement ($dbh, $record->{topic_num}, 1);
 
 %>
 
@@ -362,12 +364,23 @@ sub display_statement_form {
 <p><input type=string name=key_words value="<%=func::escape_double($record->{'key_words'})%>" maxlength=65 size=65></p>
 
 <hr>
-Parent:
-<p><select name="parent_statement_num">
+<p>URL:</p>
+<p>Maximum 65 characters, comma seperated.</p>
+<p><input type=string name=canon_url value="<%=func::escape_double($record->{'url'})%>" maxlength=65 size=65></p>
+
 <%
-&print_parent_option($statement_tree, $record->{'parent_statement_num'}, $record->{statement_num}, '');
+if ($statement_tree) { # if not then it is the agreement statement (no parent)
+	%>
+	<hr>
+	Parent:
+	<p><select name="parent_statement_num">
+	<%
+	&print_parent_option($statement_tree, $record->{'parent_statement_num'}, $record->{statement_num}, '');
+	%>
+	</select></p>
+<%
+}
 %>
-</select></p>
 
 <hr>
 

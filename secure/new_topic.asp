@@ -66,28 +66,47 @@ display_page($subtitle, $subtitle, [\&identity, \&search, \&main_ctl], [\&new_to
 sub save_topic {
 	my $dbh = $_[0];
 
-	my %form_state = ();
-
-	$form_state{'topic_name'} = $Request->Form('topic_name');
-	if (length($form_state{'topic_name'}) < 1) {
-		$message .= "A Topic Name is required.\n";
-	}
-
-	$form_state{'namespace'} = $Request->Form('namespace');
-
-	$form_state{'one_line'}  = $Request->Form('one_line');
-	if (length($form_state{'one_line'}) < 1) {
-		$message .= "A Topic is required.\n";
-	}
-
-	$form_state{'key_words'} = $Request->Form('key_words');
-
-	$form_state{'submitter'} = int($Request->Form('submitter'));
-	# should validate submitter nick name here!!!!
-
 	my $selstmt;
 	my $sth;
 	my $rs;
+
+	my %form_state = ();
+
+	$form_state{'topic_name'} = $Request->Form('canon_topic_name');
+	if (length($form_state{'topic_name'}) < 1) {
+		$message .= format_error("A Topic Name is required.\n");
+	}
+
+	my $namespace = $Request->Form('canon_namespace');
+	if (length($namespace) > 0) {
+		$form_state{'namespace'} = $Request->Form('canon_namespace');
+		$selstmt = "select count(*) from topic where namespace = ?";
+		$sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
+		$sth->execute($namespace) || die "Failed to execute " . $selstmt;
+		if ($rs = $sth->fetch()) {
+			if ($rs->[0] < 1) {
+				$message .= format_error("The namespace '$namespace' does not yet exist.\n");
+				$message .= format_error("please contact support\@canonizer.com to create a new name space.\n");
+			}
+		}
+		$sth->finish();
+	} else {
+		$form_state{'namespace'} = '';
+	}
+
+	$form_state{'title'}  = $Request->Form('canon_title');
+	if (length($form_state{'title'}) < 1) {
+		$message .= format_error("A Title is required.\n");
+	}
+
+	$form_state{'key_words'} = $Request->Form('canon_key_words');
+
+	$form_state{'url'} = $Request->Form('canon_url');
+
+	$form_state{'submitter'} = int($Request->Form('canon_submitter'));
+	# should validate submitter nick name here!!!!
+
+	$messsage .= "???? $namespace.<br>\n";
 
 	if (!$message) {
 
@@ -104,10 +123,10 @@ sub save_topic {
 		my %dummy = ();
 		$dbh->do($selstmt, \%dummy, $form_state{'topic_name'}, $form_state{'namespace'}) || die "Failed to create new record with " . $selstmt;
 
-		$selstmt = "insert into statement (topic_num,      statement_name,        title, key_words, record_id,         statement_num,      note,                                   submitter,                submit_time, go_live_time) values " .
-						 "($new_topic_num, 'Agreement',           ?,     ?,         $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', $form_state{'submitter'}, $now_time,   $go_live_time)";
+		$selstmt = "insert into statement (topic_num,      statement_name,        title, key_words, url, record_id,         statement_num,      note,                                   submitter,                submit_time, go_live_time) values " .
+						 "($new_topic_num, 'Agreement',           ?,     ?,         ?,   $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', $form_state{'submitter'}, $now_time,   $go_live_time)";
 
-		$dbh->do($selstmt, \%dummy, $form_state{'one_line'}, $form_state{'key_words'} ) || die "Failed to create new record with " . $selstmt;
+		$dbh->do($selstmt, \%dummy, $form_state{'title'}, $form_state{'key_words'}, $form_state{'url'} ) || die "Failed to create new record with " . $selstmt;
 
 	}
 
@@ -143,18 +162,26 @@ sub new_topic_form {
 
 <div class="content_1">
 
-<%=$message%>
+<%
+if (length($message) > 0) {
+%>
+	<%=$message%>
+	<hr>
+<%
+}
+%>
+
 
 <form method=post>
 <p>Name: <span class="required_field">*</span></p>
 <p>Maximum 25 characters.</p>
-<p><input type=string name=topic_name value="<%=func::escape_double($form_state{'topic_name'})%>" maxlength=25 size=25 /></p>
+<p><input type=string name=canon_topic_name value="<%=func::escape_double($form_state{'topic_name'})%>" maxlength=25 size=25 /></p>
 
 <hr>
 
 <p>Namespace:</p>
 <p>Nothing for main default namespace. Path that begins, seperated by, and ends with '/'. Maximum 65 characters.</p>
-<p><input type=string name=namespace value="<%=func::escape_double($form_state{'namespace'})%>" maxlength=65 size=75></p>
+<p><input type=string name=canon_namespace value="<%=func::escape_double($form_state{'namespace'})%>" maxlength=65 size=75></p>
 
 <hr>
 <%
@@ -165,18 +192,24 @@ sub new_topic_form {
 
 <p>Title: <span class="required_field">*</span></p>
 <p>Maximum 65 characters.</p>
-<p><input type=string name=one_line value="<%=func::escape_double($form_state{'one_line'})%>" maxlength=65 size=75></p>
+<p><input type=string name=canon_title value="<%=func::escape_double($form_state{'title'})%>" maxlength=65 size=75></p>
 
 <hr>
 
 <p>Key Words:</p>
 <p>Maximum 65 characters, comma seperated.</p>
-<p><input type=string name=key_words value="<%=func::escape_double($form_state{'key_words'})%>" maxlength=65 size=75></p>
+<p><input type=string name=canon_key_words value="<%=func::escape_double($form_state{'key_words'})%>" maxlength=65 size=75></p>
+
+<hr>
+
+<p>URL:</p>
+<p>Maximum 256 characters.</p>
+<p><input type=string name=canon_url value="<%=func::escape_double($form_state{'url'})%>" maxlength=256 size=75></p>
 
 <hr>
 
 <p>Attribution Nick Name:</p>
-<p><select name="submitter">
+<p><select name="canon_submitter">
 	<%
 	my $id;
 	foreach $id (sort {$a <=> $b} (keys %nick_names)) {
@@ -217,6 +250,14 @@ sub new_topic_form {
 
 <%
 }
+
+
+sub format_error {
+	$errors++;
+	return('<p class="error_message">' . $_[0] . '</p>');
+}
+
+
 
 %>
 <!--#include file = "includes/default/page.asp"-->
