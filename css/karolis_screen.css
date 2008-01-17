@@ -551,6 +551,12 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 }
 
 
+.main_content_container .section_container .header_1 #statement
+{
+	color: green;
+	font-weight: bold;
+}
+
 .main_content_container .section_container .embedded_footer
 {
 	border-top: 1px solid silver;
