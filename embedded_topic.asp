@@ -30,7 +30,9 @@ if (!$topic_num) {
 	$Response->End();
 }
 
-my $statement_num = 1; # 1 is the default ageement statement;
+
+my $help_statement = 0;
+my $statement_num = 0; # 0 is the default help statmenet.
 if ($Request->Form('statement_num')) {
 	$statement_num = int($Request->Form('statement_num'));
 } elsif ($pi_statement_num) {
@@ -39,9 +41,15 @@ if ($Request->Form('statement_num')) {
 	$statement_num = int($Request->QueryString('statement_num'));
 }
 
+if (! $statement_num) {
+	$help_statement = 1;
+	$statement_num = 1;
+}
+
+
 my $dbh = func::dbh_connect(1) || die "unable to connect to database";
 
-my $topic_data = lookup_topic_data($dbh, $topic_num, $statement_num);
+my $topic_data = lookup_topic_data($dbh, $topic_num, $statement_num, $help_statement);
 
 if ($topic_data->{'error_message'}) {
 	embedded_error_page($topic_data->{'error_message'});
@@ -51,9 +59,10 @@ if ($topic_data->{'error_message'}) {
 
 
 sub lookup_topic_data {
-	my $dbh           = $_[0];
-	my $topic_num     = $_[1];
-	my $statement_num = $_[2];
+	my $dbh            = $_[0];
+	my $topic_num      = $_[1];
+	my $statement_num  = $_[2];
+	my $help_statement = $_[3];
 
 	my $error_message = '';
 
@@ -73,9 +82,14 @@ sub lookup_topic_data {
 
 	my text $short_text = 0;
 
-	$short_text = new_num text ($dbh, $topic_num, $statement_num, 0);
+	if ($help_statement) {
+		$short_text = new_num text ($dbh, 58, 2);
+	} else {
+		$short_text = new_num text ($dbh, $topic_num, $statement_num);
+	}
+
 	if ($short_text->{error_message}) {
-		$short_text = 0;
+		# $short_text->{value} = $short_text->{error_message} . " ($topic_num, $statement_num, $help_statement)";
 	}
 
 	my $topic_data = {
@@ -115,13 +129,28 @@ sub present_topic {
 
 	<div class="section_container">
 		<div class="header_1">
-		<span id="title">Canonizer Sorted Position (POV) Statement Tree</span>
+		<span id="title">Canonizer Sorted Position (POV) Statement Tree</span><br><br>
+		<%
+		if ($help_statement) {
+				%>
+				<span id="statement">Help / Introduction</span>
+				<%
+		} else {
+				%>
+				<a href="http://<%=func::get_host()%>/embedded_topic.asp/<%=$topic_num%>">Help / Introduction</a>
+				<%
+		}
+		%>
 		</div>
 
 		<div class="statement_tree" id="statement_tree">
 		<%
-		$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{topic_name}, $topic_num, 1, '/embedded_topic.asp/', '/topic.asp/'));
-         # 1 -> no_active_link
+		my $no_active_link = 1;
+		if ($help_statement) {
+			$no_active_link = 0;
+		}
+
+		$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{topic_name}, $topic_num, $no_active_link, '/embedded_topic.asp/', '/topic.asp/'));
 		%>
 		</div>
 
@@ -162,15 +191,17 @@ sub present_topic {
 		$html_text_short .= '<p><a target=TARGET="_blank" href="https://' . func::get_host() . "/secure/edit.asp?class=text&topic_num=$topic_num&statement_num=$statement_num\">Add new camp statement text</a></p>\n";
 	}
 
-	my $camp_agreement = 'Camp';
-	if ($statement_num == 1) {
-		$camp_agreement = "Agreement";
+	my $statement_header = 'Camp Statement';
+	if ($help_statement) {
+		$statement_header = "Help / Introduction";
+	} elsif ($statement_num == 1) {
+		$statement_header = 'Agreement Statement';
 	}
 
 	%>
 	<div class="section_container">
 		<div class="header_1">
-			<span id="title"><%=$camp_agreement%> Statement</span>
+			<span id="title"><%=$statement_header%></span>
 		</div>
 
 		<div class="content_1">
