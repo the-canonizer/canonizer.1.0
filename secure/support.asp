@@ -97,6 +97,16 @@ if ($error_message) {
 
 
 sub delete_support {
+	# We don't want to do this.
+	# We want them to see the entire support list, and confirm they want to delete support.
+	%>
+	<p>This operation is not suported, use modify support instead.</p>
+	<%
+	$Response->End();
+
+
+
+
 	# some day I should reorder (create new ones) the lessor support records.
 	# it is a mess till I do this since support numberings will show up all wrong.
 
@@ -110,6 +120,8 @@ sub delete_support {
 		Failed to delete support <%=$delete_id%>.
 		<%
 	} else {
+		
+
 		func::send_email("Deleting support", "Deleting support id $delete_id with nick_clause $nick_clause.\nfrom support.asp.\n");
 		sleep(1);
 	        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num/$statement_num");
