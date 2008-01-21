@@ -130,10 +130,12 @@ everyone's preferred words.</p>
 <br>
 
 <h3>Canonized Feedback on Your Web Pages</h3>
-<p>Would you like to have free and easy canonized feedback from the
-masses on your web pages about a product, a company, a belief or
-anything?  You can now create a topic in the canonizer for such, and
-then add a simple block of HTML to your web page to show the information on your
+<p>Do you have thousands of useless comments for feedback on your web
+pages from the masses about products, beliefs, or anything?  Would you
+like to get all the similar ones grouped, concisely stated,
+quantitatively measured, or canonized on your web pages for free?  You
+can now create a topic in the canonizer for such, and then add a
+simple block of HTML to your web page to show the information on your
 page as is done here: <a
 href="http://home.comcast.net/~brent.allsop">http://home.comcast.net/~brent.allsop</a>.</p>
 <br>
