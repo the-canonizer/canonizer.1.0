@@ -133,12 +133,12 @@ sub delete_support {
 
 sub save_support {
 
-
 	my $idx = 0;
 	my $del_idx = 0;
 	my $nick_name_id = $Request->Form('nick_name');
 	my $support_statement_num;
 	my support $delegate_support = undef;
+	my %form_support_hash = ();
 	while ($support_statement_num = $Request->Form('support_' . $idx)) {
 		if (! $Request->Form('delete_' . $idx)) {
 			if ($delegate_id) { # use delegate's primary (0 order) support
