@@ -384,7 +384,7 @@ sub support_form {
 		%>
 		<script language=javascript>
 
-		var support_array = new Array();
+		var support_array = new Array(0);
 		var support_object;
 		<%
 
