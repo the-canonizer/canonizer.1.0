@@ -18,6 +18,8 @@ use text;
 #		2	both long and short
 #
 
+print(STDERR 'If_Modified_Since: ', $Request->ServerVariables('HTTP_IF_MODIFIED_SINCE'), ".\n");
+
 my $error_message = '';
 
 my $path_info = $ENV{'PATH_INFO'};
@@ -78,6 +80,8 @@ if ($topic_data->{'error_message'}) {
 	display_page('Unknown Topic Number', 'Unknown Topic Number', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&error_page]);
 } else {
 
+	add_modified_header($topic_data);
+
 	my $title = 'Topic: ' . $topic_data->{'topic'}->{topic_name} . ' ' .
 		    'Statement: ' . $topic_data->{'statement'}->{statement_name};
 
@@ -92,6 +96,21 @@ if ($topic_data->{'error_message'}) {
 	} else {					# normal mode
 		display_page($title, $header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&present_topic]);
 	}
+}
+
+
+sub add_modified_header {
+	my $topic_data = $_[0];
+
+	my $modified_time;
+	if ($topic_data->{'short_text'}) {
+		$modified_time = $topic_data->{'short_text'}->{go_live_time};
+	} else {
+		$modified_time = $topic_data->{'statement'}->{go_live_time};
+	}
+	my ($sec, $min, $hour, $mday, $mon, $year, $wday) = gmtime($modified_time);
+	my $modified_str = POSIX::strftime("%a, %d %b %Y %H:%M:%S GMT", $sec, $min, $hour, $mday, $mon, $year, $wday);
+	$Response->AddHeader('Last-Modified', $modified_str);
 }
 
 
