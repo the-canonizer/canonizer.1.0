@@ -76,10 +76,10 @@ sub manage_record {
 
 <p>This record management page shows the history of this record with
 the latest version on top.  To make a change to this <%=$class%>
-record, select the record below you want to start with and take the
-"Propose Modification" link.  This will take you to a form page with
-the selected record values pre-populated in the fields where you can
-make changes and submit them.</p>
+record, select the version of the record below you want to start with
+and take the "Propose Modification" link.  This will take you to a
+form page with the selected record values pre-populated in the fields
+where you can make changes and submit them.</p>
 
 <table>
 <tr class=proposed_record><td>Yellow</td><td>Proposed version</td></tr>
