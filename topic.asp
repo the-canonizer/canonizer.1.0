@@ -249,12 +249,12 @@ sub present_topic {
      <div class="footer_1">
      <span id="buttons">
 
-<p>Note: This section is like the Table of Contents for this topic.
-It has links to the agreement statement always on the top, and all
-other sub statement in a hierarchical order, along with how much
-support each statement has, sorted according to your current
-Canonizer.  The green one, that is not the link, is the POV statement
-you are currently viewing.</p>
+<p>Note: This section is a table of contents for this topic. It has a
+link to the agreement statement at the top, and all sub statements in
+hierarchical order, indicating how much support each statement has,
+sorted according to your current Canonizer. The title of the POV
+statement you are currently viewing is green.</p>
+
 
      </span>
      </div>
