@@ -76,11 +76,12 @@ sub os_values_compare {
 
 		if ($friend_cid) { # otherwise user is not linked up, no entry in open_social_link table.
 			my $friend_support_struct = $support_array[$idx];
-			$compare_array[idx]->{'linked'} = 1;
+			$compare_array[$idx]->{'cid'} = $friend_cid;
+			$compare_array[$idx]->{'linked'} = 1;
 			my @null = ();
-			$compare_array[idx]->{'same'} = \@null;
+			$compare_array[$idx]->{'same'} = \@null;
 			my @null = (); # you get the same array without a my everywhere;
-			$compare_array[idx]->{'different'} = \@null;
+			$compare_array[$idx]->{'different'} = \@null;
 			foreach my $topic_num (keys %{$my_support_struct}) {
 				if (exists($support_array[$idx]->{$topic_num})) {
 					my ($same, $use_friend) = compare_camps($my_support_struct->{$topic_num}->{'array'}, $friend_support_struct->{$topic_num}->{'array'});
@@ -92,18 +93,18 @@ sub os_values_compare {
 						my $same_hash =      {'topic'        => $my_support_struct    ->{$topic_num}->{'topic_title'},
 										      'topic_num'    => $topic_num,
 										      'camps'        => $short_array                                           };
-						push(@{$compare_array[idx]->{'same'}},  $same_hash);
+						push(@{$compare_array[$idx]->{'same'}},  $same_hash);
 					} else {
 						my $different_hash = {'topic'        => $my_support_struct    ->{$topic_num}->{'topic_title'},
 											  'topic_num'    => $topic_num,
 											  'my_camps'     => $my_support_struct    ->{$topic_num}->{'array'},
 											  'friend_camps' => $friend_support_struct->{$topic_num}->{'array'} };
-						push(@{$compare_array[idx]->{'different'}}, $different_hash);
+						push(@{$compare_array[$idx]->{'different'}}, $different_hash);
 					}
 				}
 			}
 		} else {
-			$compare_array[idx]->{'linked'} = 0;
+			$compare_array[$idx]->{'linked'} = 0;
 		}
 	}
 
