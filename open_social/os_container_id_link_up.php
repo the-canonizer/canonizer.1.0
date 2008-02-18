@@ -10,12 +10,12 @@ if (! $ok) {
     die ('Error: authOrkut failed');
 }
 
-if (! (isset($_GET['oauth_consumer_key']) && isset($_GET['opensocial_ownerid']))) {
-    die ('Error: missing oauth_consumer_key or opensocial_ownerid');
+if (! (isset($_GET['oauth_consumer_key']) && isset($_GET['os_user_id_token']))) {
+    die ('Error: missing oauth_consumer_key or os_user_id_token');
 }
 
 
-if (! (isset($_POST['canonizer_id']) && isset($_POST['canonizer_pw']))) {
+if (! (isset($_GET['canonizer_id']) && isset($_GET['canonizer_pw']))) {
     die ('Error: missing canonizer_id or canonizer_pw');
 }
 
@@ -23,8 +23,8 @@ $perl = new Perl();
 $perl->require("/usr/local/webtools/func.pm");
 $perl->eval('use MIME::Base64;');
 
-$canonizer_id = $_POST['canonizer_id'];
-$canonizer_pw = $perl->eval('func::canon_encode(' . $_POST['canonizer_pw'] . ')');
+$canonizer_id = $_GET['canonizer_id'];
+$canonizer_pw = $perl->eval('func::canon_encode(' . $_GET['canonizer_pw'] . ')');
 
 
 # $link = mysql_connect('localhost:/var/lib/mysql/mysql.sock', 'canonizer', '1ularity');
@@ -59,7 +59,7 @@ if ($row = mysql_fetch_assoc($result)) {
 
 $sql = sprintf("select id from open_social_link where os_container_id='%s' and os_user_id_token='%s'",
 	       mysql_real_escape_string($_GET['oauth_consumer_key'], $link),
-	       mysql_real_escape_string($_GET['opensocial_ownerid'], $link) );
+	       mysql_real_escape_string($_GET['os_user_id_token'], $link) );
 
 $result = mysql_query($sql, $link);
 
@@ -90,7 +90,7 @@ $next_id++;
 
 $sql = sprintf("insert into open_social_link (id, cid, os_container_id, os_user_id_token) values ($next_id, $cid, '%s', '%s')",
 	       mysql_real_escape_string($_GET['oauth_consumer_key'], $link),
-	       mysql_real_escape_string($_GET['opensocial_ownerid'], $link) );
+	       mysql_real_escape_string($_GET['os_user_id_token'], $link) );
 
 
 mysql_query($sql, $link);
@@ -113,7 +113,7 @@ exit; # comment this out for debug
 <h2>sql: <?=$sql?></h2>
 <h2>next_id: <?=$next_id?></h2>
 <h2>oauth_consumer_key: <?=$_GET['oauth_consumer_key']?></h2>
-<h2>opensocial_ownerid: <?=$_GET['opensocial_ownerid']?></h2>
+<h2>os_user_id_token: <?=$_GET['os_user_id_token']?></h2>
 <h2>post array:</h2>
 <pre>
 <?
