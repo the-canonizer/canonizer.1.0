@@ -4,27 +4,55 @@ require("authOrkut.php");
 
 $ok = authOrkut();
 
-# $ok = 1;
+$ok = 1;
 
 if (! $ok) {
     die ('Error: authOrkut failed');
 }
 
-if (! (isset($_GET['oauth_consumer_key']) && isset($_GET['os_user_id_token']))) {
+if (isset( $_GET['oauth_consumer_key'] )) {
+    $oauth_consumer_key = $_GET['oauth_consumer_key'];
+} else {
+    $oauth_consumer_key = $_POST['oauth_consumer_key'];
+}
+
+if (isset( $_GET['os_user_id_token'] )) {
+    $os_user_id_token = $_GET['os_user_id_token'];
+} else {
+    $os_user_id_token = $_POST['os_user_id_token'];
+}
+
+echo("???? oauth_consumer_key, " . $oauth_consumer_key . " os_user_id_token: " . $os_user_id_token . ".\n");
+
+if (! ((strlen($oauth_consumer_key) > 0) && (strlen($os_user_id_token) > 0)) ) {
     die ('Error: missing oauth_consumer_key or os_user_id_token');
 }
 
 
-if (! (isset($_GET['canonizer_id']) && isset($_GET['canonizer_pw']))) {
+if (isset( $_GET['canonizer_id'] )) {
+    $canonizer_id = $_GET['canonizer_id'];
+} else {
+    $canonizer_id = $_POST['canonizer_id'];
+}
+
+if (isset( $_GET['canonizer_pw'] )) {
+    $canonizer_pw = $_GET['canonizer_pw'];
+} else {
+    $canonizer_pw = $_POST['canonizer_pw'];
+}
+
+
+if (! ((strlen($canonizer_id) > 0) && (strlen($canonizer_pw) > 0)) ) {
     die ('Error: missing canonizer_id or canonizer_pw');
 }
 
 $perl = new Perl();
+
 $perl->require("/usr/local/webtools/func.pm");
 $perl->eval('use MIME::Base64;');
 
-$canonizer_id = $_GET['canonizer_id'];
-$canonizer_pw = $perl->eval('func::canon_encode(' . $_GET['canonizer_pw'] . ')');
+$canonizer_id = getVariable('canonizer_id');
+$canonizer_pw = $perl->eval('func::canon_encode(' . getVariable('canonizer_pw') . ')');
 
 
 # $link = mysql_connect('localhost:/var/lib/mysql/mysql.sock', 'canonizer', '1ularity');
@@ -58,8 +86,8 @@ if ($row = mysql_fetch_assoc($result)) {
 
 
 $sql = sprintf("select id from open_social_link where os_container_id='%s' and os_user_id_token='%s'",
-	       mysql_real_escape_string($_GET['oauth_consumer_key'], $link),
-	       mysql_real_escape_string($_GET['os_user_id_token'], $link) );
+	       mysql_real_escape_string(getVariable('oauth_consumer_key'), $link),
+	       mysql_real_escape_string(getVariable('os_user_id_token'), $link) );
 
 $result = mysql_query($sql, $link);
 
@@ -89,8 +117,8 @@ if ($row = mysql_fetch_assoc($result)) {
 $next_id++;
 
 $sql = sprintf("insert into open_social_link (id, cid, os_container_id, os_user_id_token) values ($next_id, $cid, '%s', '%s')",
-	       mysql_real_escape_string($_GET['oauth_consumer_key'], $link),
-	       mysql_real_escape_string($_GET['os_user_id_token'], $link) );
+	       mysql_real_escape_string(getVariable('oauth_consumer_key'), $link),
+	       mysql_real_escape_string(getVariable('os_user_id_token'), $link) );
 
 
 mysql_query($sql, $link);
@@ -104,6 +132,11 @@ mysql_close($link);
 echo "ok\n";
 
 exit; # comment this out for debug
+
+function getVariable( $var_name ){
+  return isset( $_GET[ $var_name ] ) ? $_GET[ $var_name ] : $_POST[ $var_name ];
+}
+
 
 ?>
 
