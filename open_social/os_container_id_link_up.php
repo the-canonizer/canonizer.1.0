@@ -22,8 +22,6 @@ if (isset( $_GET['os_user_id_token'] )) {
     $os_user_id_token = $_POST['os_user_id_token'];
 }
 
-echo("???? oauth_consumer_key, " . $oauth_consumer_key . " os_user_id_token: " . $os_user_id_token . ".\n");
-
 if (! ((strlen($oauth_consumer_key) > 0) && (strlen($os_user_id_token) > 0)) ) {
     die ('Error: missing oauth_consumer_key or os_user_id_token');
 }
