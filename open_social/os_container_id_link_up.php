@@ -4,7 +4,7 @@ require("authOrkut.php");
 
 $ok = authOrkut();
 
-$ok = 1;
+# $ok = 1;
 
 if (! $ok) {
     die ('Error: authOrkut failed');
