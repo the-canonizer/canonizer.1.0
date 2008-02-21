@@ -44,6 +44,10 @@ sub os_values_compare {
 
 	my $cid = $link_map{$open_social_ownerid};
 
+	if (! $cid) {
+		return("Error: unknown user id (\"$open_social_ownerid\")");
+	}
+
 	my %owner_nick_names = func::get_nick_name_hash($cid, $dbh);
 	my $my_support_struct = {};
 
