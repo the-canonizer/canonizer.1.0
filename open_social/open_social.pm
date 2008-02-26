@@ -51,10 +51,16 @@ sub os_values_compare {
 	my %owner_nick_names = func::get_nick_name_hash($cid, $dbh);
 	my $my_support_struct = {};
 
+	my $no_non_private = 1;
 	foreach my $nick_name_id (keys %owner_nick_names) {
 		if (! $owner_nick_names{$nick_name_id}->{'private'}) {
 			support::get_supported_statements($dbh, $nick_name_id, 'default', '', $my_support_struct);
+			$no_non_private = 0;
 		}
+	}
+
+	if ($no_non_private) {
+	    return("Error: User must have at least one non private nick name.\n");
 	}
 
 	my $idx;
@@ -67,7 +73,7 @@ sub os_values_compare {
 			$support_array[$idx] = {};
 
 			foreach my $nick_name_id (keys %friend_nick_names) {
-				if (! $owner_nick_names{$nick_name_id}->{'private'}) {
+				if (! $friend_nick_names{$nick_name_id}->{'private'}) {
 					support::get_supported_statements($dbh, $nick_name_id, 'default', '', $support_array[$idx]);
 				}
 			}
