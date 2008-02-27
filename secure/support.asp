@@ -120,7 +120,6 @@ sub delete_support {
 		Failed to delete support <%=$delete_id%>.
 		<%
 	} else {
-		
 
 		func::send_email("Deleting support", "Deleting support id $delete_id with nick_clause $nick_clause.\nfrom support.asp.\n");
 		sleep(1);
@@ -220,7 +219,7 @@ sub save_support {
 
 	func::send_email("Adding support", "Nick name id $nick_name_id is adding support for topic $topic_num, statement: $statement_num.\nfrom support.asp.\n");
 	sleep(1);
-        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num");
+        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num/$statement_num");
 	$Response->End();
 
 	%>
