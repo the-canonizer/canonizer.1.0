@@ -80,7 +80,9 @@ if ($topic_data->{'error_message'}) {
 	display_page('Unknown Topic Number', 'Unknown Topic Number', [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&error_page]);
 } else {
 
-	add_modified_header($topic_data);
+	# this makes browsers and such cach pages.
+	# messes up changing canonizer and everything.
+	# add_modified_header($topic_data);
 
 	my $title = 'Topic: ' . $topic_data->{'topic'}->{topic_name} . ' ' .
 		    'Statement: ' . $topic_data->{'statement'}->{statement_name};
