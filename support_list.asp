@@ -296,9 +296,8 @@ EOF
 
 
 
+# ???? need to convert this to use the support.pm version.
 sub list_support {
-
-
 
 	if ($Session->{'cid'} != 1) {
 		%>
