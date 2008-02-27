@@ -24,7 +24,7 @@ $sth->finish();
 <%
 
 
-display_page('Env and State info', 'Env and State info', [\&identity, \&search, \&as_of, \&main_ctl], [\&env]);
+display_page('Env and State info', 'Env and State info', [\&identity, \&search, \&canonizer, \&as_of, \&main_ctl], [\&env]);
 
 
 
@@ -44,14 +44,16 @@ sub env {
 	<tr><td>members in db</td><td><%=$members%></td></tr>
 	<tr><td>$mode</td><td><%=$mode%></td></tr>
 
-	<tr><td>Session->{'gid'}</td><td><%=$Session->{'gid'}%></td></tr>
-	<tr><td>Session->{'cid'}</td><td><%=$Session->{'cid'}%></td></tr>
-	<tr><td>Session->{'email'}</td><td><%=$Session->{'email'}%></td></tr>
-	<tr><td>Session->{'logged_in'}</td><td><%=$Session->{'logged_in'}%></td></tr>
-	<tr><td>Session->{'page_count'}</td><td><%=$Session->{'page_count'}%></td></tr>
-	<tr><td>Session->{'SessionID'}</td><td><%=$Session->{'SessionID'}%></td></tr>
-	<tr><td>Session->{'as_of_mode'}</td><td><%=$Session->{'as_of_mode'}%></td></tr>
-	<tr><td>Session->{'as_of_date'}</td><td><%=$Session->{'as_of_date'}%></td></tr>
+	<%
+	my $key;
+	foreach $key (sort (keys %{$Session})) {
+		%>
+		<tr><td>Session->{<%=$key%>}</td><td><%=$Session->{$key}%></td></tr>
+		<%
+	}
+	%>
+	<tr><th colspan = 2 height = 30>&nbsp;</th></tr>
+	<tr><td>--------------</td><td>----------------</td></tr>
 
 	<%
 	my $guests = $Application->{'guests'};
@@ -70,6 +72,8 @@ sub env {
 
 	<tr><th colspan = 2 height = 30>&nbsp;</th></tr>
 
+	<tr><td>--------------</td><td>----------------</td></tr>
+
 	<tr><th colspan = 2 align = left>ENV values:</th></tr>
 
 	<%
@@ -82,6 +86,8 @@ sub env {
 	%>
 
 	<tr><th colspan = 2 height = 30>&nbsp;</th></tr>
+
+	<tr><td>--------------</td><td>----------------</td></tr>
 
 	<tr><th colspan = 2 align = left>$Request->Form() values:</th></tr>
 
@@ -103,6 +109,7 @@ sub env {
 <!--#include file = "includes/page_sections.asp"-->
 
 <!--#include file = "includes/identity.asp"-->
+<!--#include file = "includes/canonizer.asp"-->
 <!--#include file = "includes/as_of.asp"-->
 <!--#include file = "includes/search.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
