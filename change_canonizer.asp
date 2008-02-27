@@ -16,5 +16,6 @@ $Response->Redirect($query_string);
 
 %>
 
+<p>canonizer: <%=$canonizer%></p>
 <p><%=$query_string%></p>
 
