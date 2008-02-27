@@ -66,28 +66,37 @@ sub os_values_compare {
 	my $idx;
 	my @support_array = ();
 	my @friend_array = @{$friend_array};
+	my @compare_array = ();
 	for ($idx = 0; $idx <= $#friend_array; $idx++) {
 		my $friend_cid = $link_map{$friend_array[$idx]};
 		if ($friend_cid) {
 			my %friend_nick_names = func::get_nick_name_hash($friend_cid, $dbh);
 			$support_array[$idx] = {};
 
+			$no_non_private = 1;
 			foreach my $nick_name_id (keys %friend_nick_names) {
 				if (! $friend_nick_names{$nick_name_id}->{'private'}) {
 					support::get_supported_statements($dbh, $nick_name_id, 'default', '', $support_array[$idx]);
+					$no_non_private = 0;
+				}
+
+				$compare_array[$idx]->{'cid'} = $friend_cid;
+				if ($no_non_private) {
+				    $compare_array[$idx]->{'linked'} = -1; # no publick nick name.
+				} else {
+				    $compare_array[$idx]->{'linked'} = 1;
 				}
 			}
+		} else {
+			$compare_array[$idx]->{'linked'} = 0;
 		}
 	}
 
-	my @compare_array = ();
 	for ($idx = 0; $idx <= $#friend_array; $idx++) {
 		my $friend_cid = $link_map{$friend_array[$idx]};
 
-		if ($friend_cid) { # otherwise user is not linked up, no entry in open_social_link table.
+		if ($friend_array[$idx]->{'linked'} > 0) { # otherwise user is not linked up, or no public nick name.  No entry in open_social_link table.
 			my $friend_support_struct = $support_array[$idx];
-			$compare_array[$idx]->{'cid'} = $friend_cid;
-			$compare_array[$idx]->{'linked'} = 1;
 			my @null = ();
 			$compare_array[$idx]->{'same'} = \@null;
 			my @null = (); # you get the same array without a my everywhere;
@@ -113,8 +122,6 @@ sub os_values_compare {
 					}
 				}
 			}
-		} else {
-			$compare_array[$idx]->{'linked'} = 0;
 		}
 	}
 
