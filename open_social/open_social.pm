@@ -95,7 +95,7 @@ sub os_values_compare {
 	for ($idx = 0; $idx <= $#friend_array; $idx++) {
 		my $friend_cid = $link_map{$friend_array[$idx]};
 
-		if ($friend_array[$idx]->{'linked'} > 0) { # otherwise user is not linked up, or no public nick name.  No entry in open_social_link table.
+		if ($compare_array[$idx]->{'linked'} > 0) { # otherwise user is not linked up, or no public nick name.  No entry in open_social_link table.
 			my $friend_support_struct = $support_array[$idx];
 			my @null = ();
 			$compare_array[$idx]->{'same'} = \@null;
