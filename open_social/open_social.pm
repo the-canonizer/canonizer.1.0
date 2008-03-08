@@ -32,10 +32,15 @@ sub os_values_compare {
 	my @compare_array = ();
 
 	for ($idx = 0; $idx <= $#friend_array; $idx++) {
+		my $not_linked = 1;
 		for my $comparison (keys %{$compare_hash}) {
 			if ($comparison eq $friend_array[$idx]) {
+				$not_linked = 0;
 				$compare_array[$idx] = $compare_hash->{$comparison};
 			}
+		}
+		if ($not_linked) {
+			$compare_array[$idx] = {'linked' => 0};
 		}
 	}
 
@@ -154,7 +159,7 @@ sub compare_friends {
 				my $delegated_nick = $friend_nick_name_id;
 
 				if ($friend_support->{delegate_nick_name_id}) { # replace with delegated array
-					$delegated_nick = $support->{support_order}; # support array's nick name
+					$delegated_nick = $friend_support->{support_order}; # support array's nick name
 					@friend_support_array = @{$statement->{support_hash}->{$delegated_nick}};
 				}
 				# $ret_val = "friend_id: $delegated_nick, statement: 
