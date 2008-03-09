@@ -201,7 +201,9 @@ sub compare_camps {
 
 		my statement $my_statement = $statement->{statement_tree_hash}->{$matching_num};
 
-		if (! $my_statement->is_related($friend_array[$idx]->{'statement_num'})) {
+		if ($my_statement->is_ancestor($friend_array[$idx]->{'statement_num'})) {
+			$matching_num = $friend_array[$idx]->{'statement_num'};
+		} elsif (!$my_statement->is_descendant($friend_array[$idx]->{'statement_num'})) {
 			return(0, 0);
 		}
 		push(@matching_camps, {'title' => $statement->{statement_tree_hash}->{$matching_num}->{title},
