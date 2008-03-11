@@ -193,6 +193,25 @@ sub display_topic_form {
 
 %>
 
+<p>Anything about a topic can be changed at any time, by anyone.  So
+don't worry about making mistakes.  Just get any thoughts you have out
+there to get things started and moving in the right direction.  That
+is the way wiki's work - lots of easy steps by lots of people.</p>
+
+<p>This page is for creating and managing a topic.  The camps,
+statements, and support camps are done on other pages.  Remember that
+non supported camps more or less indicate nobody is in this camp or
+topic, or that nobody holds this POV.  Like wikipedia articles, anyone
+can change anything about a non supported topic, at any time.  Such
+goes live instantly.</p>
+
+<p>If someone is supporting any camp in a topic, changes go into a
+review mode for 1 week before going live.  All direct supporters will
+be notified of any proposed changes.  If anyone objects to any
+proposed changes they will be rejected and not go live.  All such
+differing POV can always be added to a forked topic.  The most
+supported topics will be the most popular.</p>
+
 <div class="main_content_container">
 
 <div class="section_container">
@@ -218,7 +237,12 @@ sub display_topic_form {
 <hr>
 
 <p>Namespace:</p>
-<p>Nothing for main default namespace. Begins and Ends with '/'. Maximum 65 characters.</p>
+
+<p>Nothing for the main default namespace.  Other name spaces are
+paths that begin with, are separated by, and end with '/'.  See the
+browse page for a list of all available name spaces that can be
+specified here.  Contact support to request a new name space.</p>
+
 <p><input type=string name=namespace value="<%=func::escape_double($record->{namespace})%>" maxlength=65 size=65></p>
 
 <%
@@ -279,36 +303,7 @@ sub display_topic_form {
 }
 
 
-sub print_parent_option {
-	my statement $statement_tree = $_[0];
-	my $selected                 = $_[1];
-	my $current_statement_num    = $_[2];
-	my $indent	             = $_[3];
-
-	my $num = $statement_tree->{statement_num};
-
-	if ($current_statement_num == $num) { # can't set self, or any children, to my parent.
-		return();
-	}
-
-	if ($num == $selected) {
-		%>
-		<option value=<%=$num%> selected><%=$indent . $statement_tree->{statement_name}%></option>
-		<%
-	} else {
-		%>
-		<option value=<%=$num%>><%=$indent . $statement_tree->{statement_name}%></option>
-		<%
-	}
-
-	my statement $child;
-	foreach $child (@{$statement_tree->{children}}) {
-		&print_parent_option($child, $selected, $current_statement_num, $indent);
-	}
-}
-
-
-sub display_statement_form {
+sub display_statement_form{
 
 	my $submit_value = 'Create Statement';
 	if ($record->{proposed}) {
@@ -328,7 +323,30 @@ sub display_statement_form {
 
 %>
 
- <div class="main_content_container">
+
+<p>Anything about a camp, including its parent, can be changed at any
+time, by anyone.  So don't worry about making mistakes.  Just get any
+thoughts you have out there to get things started and moving in the
+right direction.  That is the way wiki's work - lots of easy steps by
+lots of people.</p>
+
+<p>This page is for creating and managing the camp itself.  The text
+or camp statement and support of the camp are done on other pages
+after the camp is created.  Remember that non supported camps more or
+less indicate nobody is in this camp, or that nobody holds this POV.
+Like wikipedia articles, anyone can change anything about a non
+supported camp, at any time.  Such goes live instantly.</p>
+
+<p>If someone is supporting a camp, changes go into a review mode for
+1 week before going live.  All direct supporters will be notified of
+any proposed changes.  If anyone objects to any proposed changes they
+will be rejected and not go live.  All such differing POV can always
+be added to a supporting sub camp or competing sibling camp as a
+fork.</p>
+
+
+
+<div class="main_content_container">
 
 <div class="section_container">
 <div class="header_1">
@@ -348,7 +366,7 @@ sub display_statement_form {
 <input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
 <p>Statement Name: <span class="required_field">*</span></p>
-<p>Maximum 25 characters.</p>
+<p>Maximum 25 characters.  Very short abbreviation used in limited places like paths.  Spaces are not recommended.</p>
 <p><input type=string name=statement_name value="<%=func::escape_double($record->{'statement_name'})%>" maxlength=25 size=25 <%=$agreement_disable_str%>></p>
 
 <hr>
@@ -365,7 +383,9 @@ sub display_statement_form {
 
 <hr>
 <p>URL:</p>
-<p>Maximum 65 characters, comma seperated.</p>
+<p>Maximum 65 characters.  The /www/ name space is for canonized POV
+information about web sites.  This URL field is a place to formally
+specify such a link and is not required.</p>
 <p><input type=string name=canon_url value="<%=func::escape_double($record->{'url'})%>" maxlength=65 size=65></p>
 
 <%
@@ -419,10 +439,9 @@ if ($statement_tree) { # if not then it is the agreement statement (no parent)
 
      <div class="footer_1">
      <span id="buttons">
-     
 
-&nbsp;    
-     
+&nbsp;
+
      </span>
      </div>
 
@@ -547,6 +566,35 @@ sub display_text_form {
 </div>
 
 	<%
+}
+
+
+sub print_parent_option {
+	my statement $statement_tree = $_[0];
+	my $selected                 = $_[1];
+	my $current_statement_num    = $_[2];
+	my $indent	             = $_[3];
+
+	my $num = $statement_tree->{statement_num};
+
+	if ($current_statement_num == $num) { # can't set self, or any children, to my parent.
+		return();
+	}
+
+	if ($num == $selected) {
+		%>
+		<option value=<%=$num%> selected><%=$indent . $statement_tree->{statement_name}%></option>
+		<%
+	} else {
+		%>
+		<option value=<%=$num%>><%=$indent . $statement_tree->{statement_name}%></option>
+		<%
+	}
+
+	my statement $child;
+	foreach $child (@{$statement_tree->{children}}) {
+		&print_parent_option($child, $selected, $current_statement_num, $indent);
+	}
 }
 
 
