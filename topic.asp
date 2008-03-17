@@ -3,15 +3,15 @@
 use Time::Local;
 use managed_record;
 use topic;
-use statement;
+use camp;
 use support;
-use text;
+use statement;
 
 #
-#	present a topic with a statement (default agreement statement)
-#	?topic_num=#[&statement_num=#]
+#	present a topic with a camp (default agreement camp)
+#	?topic_num=#[&camp_num=#]
 #
-#	optional specification of long/short text:
+#	optional specification of long/short statement:
 #	&long_short=#
 #		0	short only (default)
 #		1	long only
@@ -24,11 +24,11 @@ my $error_message = '';
 
 my $path_info = $ENV{'PATH_INFO'};
 my $pi_topic_num = 0;
-my $pi_statement_num = 0;
+my $pi_camp_num = 0;
 if ($path_info =~ m|/(\d+)/?(\d*)|) {
 	$pi_topic_num = $1;
 	if ($2) {
-		$pi_statement_num = $2;
+		$pi_camp_num = $2;
 	}
 }
 
@@ -46,13 +46,13 @@ if (!$topic_num) {
 	$Response->End();
 }
 
-my $statement_num = 1; # 1 is the default ageement statement;
-if ($Request->Form('statement_num')) {
-	$statement_num = int($Request->Form('statement_num'));
-} elsif ($pi_statement_num) {
-	$statement_num = $pi_statement_num;
-} elsif ($Request->QueryString('statement_num')) {
-	$statement_num = int($Request->QueryString('statement_num'));
+my $camp_num = 1; # 1 is the default ageement camp;
+if ($Request->Form('camp_num')) {
+	$camp_num = int($Request->Form('camp_num'));
+} elsif ($pi_camp_num) {
+	$camp_num = $pi_camp_num;
+} elsif ($Request->QueryString('camp_num')) {
+	$camp_num = int($Request->QueryString('camp_num'));
 }
 
 my $long_short = 0;
@@ -73,7 +73,7 @@ my $dbh = func::dbh_connect(1) || die "unable to connect to database";
 # ???? is this the right place for this?  Was this only for oracle?
 $dbh->{LongReadLen} = 1000000; # what and where should this really be ????
 
-my $topic_data = lookup_topic_data($dbh, $topic_num, $statement_num, $long_short);
+my $topic_data = lookup_topic_data($dbh, $topic_num, $camp_num, $long_short);
 
 if ($topic_data->{'error_message'}) {
 	$error_message = $topic_data->{'error_message'};
@@ -85,12 +85,12 @@ if ($topic_data->{'error_message'}) {
 	# add_modified_header($topic_data);
 
 	my $title = 'Topic: ' . $topic_data->{'topic'}->{topic_name} . ' ' .
-		    'Statement: ' . $topic_data->{'statement'}->{statement_name};
+		    'Camp: ' . $topic_data->{'camp'}->{camp_name};
 
 	my $header = '<table><tr><td class="label">Topic:</td>' .
 				'<td class="topic">' . $topic_data->{'topic'}->{topic_name} . '</td></tr>' .
-			    '<tr><td class="label">Statement:</td>' .
-			        '<td class="statement">' . $topic_data->{'statement'}->make_statement_path() . "</td></tr></table>\n";
+			    '<tr><td class="label">Camp:</td>' .
+			        '<td class="camp">' . $topic_data->{'camp'}->make_camp_path() . "</td></tr></table>\n";
 
 	if ($Request->Form('submit_edit')) {		# preview mode
 
@@ -105,10 +105,10 @@ sub add_modified_header {
 	my $topic_data = $_[0];
 
 	my $modified_time;
-	if ($topic_data->{'short_text'}) {
-		$modified_time = $topic_data->{'short_text'}->{go_live_time};
+	if ($topic_data->{'short_statement'}) {
+		$modified_time = $topic_data->{'short_statement'}->{go_live_time};
 	} else {
-		$modified_time = $topic_data->{'statement'}->{go_live_time};
+		$modified_time = $topic_data->{'camp'}->{go_live_time};
 	}
 	my ($sec, $min, $hour, $mday, $mon, $year, $wday) = gmtime($modified_time);
 	my $modified_str = POSIX::strftime("%a, %d %b %Y %H:%M:%S GMT", $sec, $min, $hour, $mday, $mon, $year, $wday);
@@ -117,10 +117,10 @@ sub add_modified_header {
 
 
 sub lookup_topic_data {
-	my $dbh           = $_[0];
-	my $topic_num     = $_[1];
-	my $statement_num = $_[2];
-	my $long_short    = $_[3];
+	my $dbh        = $_[0];
+	my $topic_num  = $_[1];
+	my $camp_num   = $_[2];
+	my $long_short = $_[3];
 
 	my $error_message = '';
 
@@ -130,72 +130,72 @@ sub lookup_topic_data {
 		$error_message .= $topic->{error_message};
 	}
 
-	my statement $statement = new_tree statement ($dbh, $topic_num, $statement_num, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
+	my camp $camp = new_tree camp ($dbh, $topic_num, $camp_num, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 
-	if ($statement->{error_message}) {
-		$error_message .= $statement->{error_message};
+	if ($camp->{error_message}) {
+		$error_message .= $camp->{error_message};
 	} else {
-		$statement->canonize($dbh, $Session->{'canonizer'}, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
+		$camp->canonize($dbh, $Session->{'canonizer'}, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
 	}
 
-	my text $short_text = 0;
-	my text $long_text = 0;
+	my statement $short_statement = 0;
+	my statement $long_statement = 0;
 
 	if ($Request->Form('submit_edit')) {
 
-		if ($Request->Form('text_size')) {	# long text
-			$long_text = new_form text ($Request);
-			if ($long_text->{error_message}) {
-				$long_text = 0;
+		if ($Request->Form('statement_size')) {	# long statement
+			$long_statement = new_form statement ($Request);
+			if ($long_statement->{error_message}) {
+				$long_statement = 0;
 			}
-		} else {				# short text
-			$short_text = new_form text ($Request);
-			if ($short_text->{error_message}) {
-				$short_text = 0;
+		} else {				# short statement
+			$short_statement = new_form statement ($Request);
+			if ($short_statement->{error_message}) {
+				$short_statement = 0;
 			}
 		}
 
 	} else {
 
-		if ($long_short == 0 || $long_short == 2) {			    # 0 -> short text;
-			$short_text = new_num text ($dbh, $topic_num, $statement_num, 0, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
-			if ($short_text->{error_message}) {
-				$short_text = 0;
+		if ($long_short == 0 || $long_short == 2) {		       # 0 -> short statement;
+			$short_statement = new_num statement ($dbh, $topic_num, $camp_num, 0, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
+			if ($short_statement->{error_message}) {
+				$short_statement = 0;
 			}
 		}
 
-		if ($long_short == 1 || $long_short == 2) {			   # 1 -> long text;
-			$long_text = new_num text ($dbh, $topic_num, $statement_num, 1, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
-			if ($long_text->{error_message}) {
-				$long_text = 0;
+		if ($long_short == 1 || $long_short == 2) {		      # 1 -> long statement;
+			$long_statement = new_num statement ($dbh, $topic_num, $camp_num, 1, $Session->{'as_of_mode'}, $Session->{'as_of_date'});
+			if ($long_statement->{error_message}) {
+				$long_statement = 0;
 			}
 		}
 	}
 
 # I may want to convert back to something like this old way some day, since it reduced the number of DB queries by one...
-#	$selstmt = "select value, text_size from text where topic_num=$topic_num and statement_num=$statement_num and proposed = 0 and replacement is null";
+#	$selstmt = "select value, text_size from text where topic_num=$topic_num and statement_num=$camp_num and proposed = 0 and replacement is null";
 #	$sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 #	$sth->execute() || die "Failed to execute " . $selstmt;
 #	while ($rs = $sth->fetch()) {
 #		if ($rs->[1] == 1) { # long text
 #			if ($topic_data->{'long_text'}) {
-#				print(STDERR "Warning evidently topic $topic_num and statement $statement_num has more than one active long text record.\n");
+#				print(STDERR "Warning evidently topic $topic_num and camp $camp_num has more than one active long text record.\n");
 #			}
 #			$topic_data->{'long_text'} = $rs->[0];
 #		} else { # short text
 #			if ($topic_data->{'short_text'}) {
-#				print(STDERR "Warning evidently topic $topic_num and statement $statement_num has more than one active short text record.\n");
+#				print(STDERR "Warning evidently topic $topic_num and camp $camp_num has more than one active short text record.\n");
 #			}
 #			$topic_data->{'short_text'} = $rs->[0];
 #		}
 #	}
 
 	my $topic_data = {
-		'topic'		=> $topic,
-		'statement'	=> $statement,
-		'short_text'	=> $short_text,
-		'long_text'	=> $long_text,
-		'error_message'	=> $error_message
+		'topic'		  => $topic,
+		'camp'	          => $camp,
+		'short_statement' => $short_statement,
+		'long_statement'  => $long_statement,
+		'error_message'	  => $error_message
 	};
 
 	return($topic_data);
@@ -220,7 +220,7 @@ sub present_topic {
 
 	<script language:javascript>
 	function change_long_short(val) {
-		var location_str = "/topic.asp/<%=$topic_num%>/<%=$statement_num%>";
+		var location_str = "/topic.asp/<%=$topic_num%>/<%=$camp_num%>";
 		if (val == 2) {
 			location_str += "?long_short=2";
 		} else if (val == 1) {
@@ -235,15 +235,15 @@ sub present_topic {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Canonizer Sorted Position (POV) Statement Tree</span>
+     <span id="title">Canonizer Sorted Position (POV) Camp Tree</span>
 
 </div>
 
-<div class="statement_tree" id="statement_tree">
+<div class="camp_tree" id="camp_tree">
 	<%
-	$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{topic_name}, $topic_num, 1)); # 1 -> no_active_link
+	$Response->Write($topic_data->{'camp'}->display_camp_tree($topic_data->{'topic'}->{topic_name}, $topic_num, 1)); # 1 -> no_active_link
 
-	my $score = func::c_num_format($topic_data->{'statement'}->{score});
+	my $score = func::c_num_format($topic_data->{'camp'}->{score});
 
 	%>
 </div>
@@ -252,10 +252,10 @@ sub present_topic {
      <span id="buttons">
 
 <p>Note: This section is a table of contents for this topic. It has a
-link to the agreement statement at the top, and all sub statements in
-hierarchical order, indicating how much support each statement has,
+link to the agreement camp at the top, and all sub camps in
+hierarchical order, indicating how much support each camp has,
 sorted according to your current Canonizer. The title of the POV
-statement you are currently viewing is green.</p>
+camp you are currently viewing is green.</p>
 
 
      </span>
@@ -267,19 +267,19 @@ statement you are currently viewing is green.</p>
 
 	if ($Request->Form('submit_edit')) {
 		%>
-		Preview Text Only
-		<form method=post action='https://<%=func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>'>
+		Preview Statement Only
+		<form method=post action='https://<%=func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&camp_num=<%=$camp_num%>'>
 			<input type=hidden name=topic_num value="<%=$Request->Form('topic_num')%>">
-			<input type=hidden name=statement_num value="<%=$Request->Form('statement_num')%>">
+			<input type=hidden name=camp_num value="<%=$Request->Form('camp_num')%>">
 			<input type=hidden name=record_id value="<%=$Request->Form('record_id')%>">
 			<input type=hidden name=value value="<%=func::hex_encode($Request->Form('value'))%>">
-			<input type=hidden name=text_size value="<%=$Request->Form('text_size')%>">
+			<input type=hidden name=statement_size value="<%=$Request->Form('statement_size')%>">
 			<input type=hidden name=proposed value="<%=$Request->Form('proposed')%>">
 			<input type=hidden name=note value="<%=$Request->Form('note')%>">
 			<input type=hidden name=submitter value="<%=$Request->Form('submitter')%>">
 
-			<input type=submit name=submit_edit value="Edit Text">
-			<input type=submit name=submit_edit value="Commit Text">
+			<input type=submit name=submit_edit value="Edit Statement">
+			<input type=submit name=submit_edit value="Commit Statement">
 
 		</form>
 
@@ -291,34 +291,34 @@ statement you are currently viewing is green.</p>
 
 	<%
 
-	my $html_text_short = '<p>No short statement has been provided yet.</p>';
-        my $html_text_long = '<p>No long statement has been provided yet.</p>';
+	my $html_statement_short = '<p>No short camp has been provided yet.</p>';
+        my $html_statement_long = '<p>No long camp has been provided yet.</p>';
 
 	my $camp_agreement = 'Camp';
-	if ($statement_num == 1) {
+	if ($camp_num == 1) {
 		$camp_agreement = "Agreement";
 	}
 
-	# short text:
+	# short statement:
 	if ($long_short == 0 || $long_short == 2) {
 				%>
 
                         <div class="section_container">
 
 			<div class="header_1">
-     <span id="title"><%=$camp_agreement%> Statement</span>
+     <span id="title"><%=$camp_agreement%> Camp</span>
  </div>
 
 
 <%
-if ($topic_data->{'short_text'}) {
+if ($topic_data->{'short_statement'}) {
 
-			$html_text_short = func::wikitext_to_html($topic_data->{'short_text'}->{value});
+			$html_statement_short = func::wikitext_to_html($topic_data->{'short_statement'}->{value});
 
 			my $num_clause = '';
 
 			my $replace_str = '&amp;canonized_topic_list\(([^\)]*)\)';
-			if ($html_text_short =~ m|$replace_str|) {
+			if ($html_statement_short =~ m|$replace_str|) {
 				my @topic_nums = split(', ', $1);
 				my $topic_num;
 				foreach $topic_num (@topic_nums) {
@@ -338,11 +338,11 @@ if ($topic_data->{'short_text'}) {
 					my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
 					$sth->execute() || die "Failed to execute $selstmt";
 					my $canonize_list_str = 
-						'<div class="statement_tree" id="statement_tree">' . "\n" .
+						'<div class="camp_tree" id="camp_tree">' . "\n" .
 						topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}, $Session->{'canonizer'}) . "\n" .
 						"</div>\n";
 
-					$html_text_short =~ s|$replace_str|$canonize_list_str|;
+					$html_statement_short =~ s|$replace_str|$canonize_list_str|;
 				}
 			}
 
@@ -352,7 +352,7 @@ if ($topic_data->{'short_text'}) {
 } %>
 
 
-<div class="content_1"><%=$html_text_short%></div>		
+<div class="content_1"><%=$html_statement_short%></div>		
 
 
 <div class="footer_1">
@@ -360,16 +360,16 @@ if ($topic_data->{'short_text'}) {
 
      			<%
 
-		if ($topic_data->{'short_text'}) {
+		if ($topic_data->{'short_statement'}) {
 
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$statement_num%>?class=text">Manage/Edit Statement Text</a><br><br>
+				<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$camp_num%>?class=statement">Manage/Edit Camp Statement</a><br><br>
 				<%
 			}
 		} else {
 			%>
-			<a href="https://<%=func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Add Statement Text</a><br><br>
+			<a href="https://<%=func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&camp_num=<%=$camp_num%>">Add Camp Statement</a><br><br>
 			<%
 		}
 
@@ -377,9 +377,9 @@ if ($topic_data->{'short_text'}) {
 		<a href="http://<%=func::get_host()%>/forum.asp/<%=$topic_num%>/1">Topic Forum</a><br>
 		<%
 
-		if ($statement_num > 1) {
+		if ($camp_num > 1) {
 			%>
-			<br><a href="http://<%=func::get_host()%>/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Camp Forum</a><br><br>
+			<br><a href="http://<%=func::get_host()%>/forum.asp/<%=$topic_num%>/<%=$camp_num%>">Camp Forum</a><br><br>
 			<%
 		}
 		%>
@@ -390,7 +390,7 @@ if ($topic_data->{'short_text'}) {
 		</div><%
 	}
 
-	# long text:
+	# long statement:
 	if ($long_short == 1 || $long_short == 2) {
 	
 	           			%>
@@ -401,13 +401,13 @@ if ($topic_data->{'short_text'}) {
      
        	<%
 	
-		if ($topic_data->{'long_text'}) {
+		if ($topic_data->{'long_statement'}) {
 
-			$html_text_long = func::wikitext_to_html($topic_data->{'long_text'}->{value});
+			$html_statement_long = func::wikitext_to_html($topic_data->{'long_statement'}->{value});
 		
 			    
 		}%>
-                      <div class="content_1"><%=$html_text_long%></div>
+                      <div class="content_1"><%=$html_statement_long%></div>
                       
      <div class="footer_1">
      <span id="buttons">
@@ -415,14 +415,14 @@ if ($topic_data->{'short_text'}) {
 			
 			<%
 	
-		if ($topic_data->{'long_text'}) {
+		if ($topic_data->{'long_statement'}) {
 
-			$html_text_long = func::wikitext_to_html($topic_data->{'long_text'}->{value});
+			$html_statement_long = func::wikitext_to_html($topic_data->{'long_statement'}->{value});
 
 
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
-				<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$statement_num%>?class=text&long=1">Manage/Edit Long Statement Text</a>
+				<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$camp_num%>?class=statement&long=1">Manage/Edit Long Statement</a>
 			         
 				<%
 			}
@@ -431,7 +431,7 @@ if ($topic_data->{'short_text'}) {
 			<%
 		} else {
 			%>
-			<a href="https://<%=func::get_host()%>/secure/edit.asp?class=text&topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&long=1">Add Long Statement Text</a>
+			<a href="https://<%=func::get_host()%>/secure/edit.asp?class=statement&topic_num=<%=$topic_num%>&camp_num=<%=$camp_num%>&long=1">Add Long Statement</a>
                           	
                 
 			<%
@@ -447,17 +447,17 @@ if ($topic_data->{'short_text'}) {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Support Tree for "<%=$topic_data->{'statement'}->{statement_name}%>" Statement</span>
+     <span id="title">Support Tree for "<%=$topic_data->{'camp'}->{camp_name}%>" Camp</span>
 
 </div>
 	
   <div class="content_1">
 
-	<p>Total Support for This Statement (including sub-statements): <%=$score%></p>
+	<p>Total Support for This Camp (including sub-camps): <%=$score%></p>
 	
 	<%
 	my %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
-	$Response->Write($topic_data->{'statement'}->display_support_tree($topic_num, $statement_num, \%nick_names));
+	$Response->Write($topic_data->{'camp'}->display_support_tree($topic_num, $camp_num, \%nick_names));
 	%>
 
 
@@ -472,19 +472,19 @@ if ($topic_data->{'short_text'}) {
 
      	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
-		if (($Session->{'cid'}) && $topic_data->{'statement'}->is_supporting(\%nick_names)) {
+		if (($Session->{'cid'}) && $topic_data->{'camp'}->is_supporting(\%nick_names)) {
 			%>
-			<a href="https://<%=func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Modify Support for This Statement</a>
+			<a href="https://<%=func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&camp_num=<%=$camp_num%>">Modify Support for This Camp</a>
 			<%
 		} else {
 			%>
-			<a href="https://<%=func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>">Join or Directly Support This Camp</a>
+			<a href="https://<%=func::get_host()%>/secure/support.asp?topic_num=<%=$topic_num%>&camp_num=<%=$camp_num%>">Join or Directly Support This Camp</a>
 			<%
 		}
 		%>
 
-<p>Note: Any supporter of a statement can object to any proposed
-changes they disagree with.  If you directly support a statement, you
+<p>Note: Any supporter of a camp can object to any proposed
+changes they disagree with.  If you directly support a camp, you
 will receive e-mail notifications of proposed changes.  If you do not
 wish to receive such notifications, you can delegate your support to
 another supporter.</p>
@@ -531,20 +531,20 @@ another supporter.</p>
 <div class="header_1">
 
 
-     <span id="title">Statement</span>
+     <span id="title">Camp</span>
 
 
 </div>
 
 <div class="content_1">
-<p>Statement Name: <%=$topic_data->{'statement'}->{statement_name}%> </p>
-<p>Title: <%=$topic_data->{'statement'}->{title}%></p>
-<p>Key Words: <%=$topic_data->{'statement'}->{key_words}%></p>
-<p>URL: <%=$topic_data->{'statement'}->{url}%></p>
+<p>Camp Name: <%=$topic_data->{'camp'}->{camp_name}%> </p>
+<p>Title: <%=$topic_data->{'camp'}->{title}%></p>
+<p>Key Words: <%=$topic_data->{'camp'}->{key_words}%></p>
+<p>URL: <%=$topic_data->{'camp'}->{url}%></p>
 	<%
-	if ($topic_data->{'statement'}->{parent_statement_num}) {
+	if ($topic_data->{'camp'}->{parent_camp_num}) {
 		%>
-		<p>Parent Statement: <%=$topic_data->{'statement'}->{parent}->{statement_name}%></p>
+		<p>Parent Camp: <%=$topic_data->{'camp'}->{parent}->{camp_name}%></p>
 		<%
 	}
 	%>
@@ -557,7 +557,7 @@ another supporter.</p>
 	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 		%>
-		<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$statement_num%>?class=statement">Manage/Edit This Statement</a>
+		<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$camp_num%>?class=camp">Manage/Edit This Camp</a>
 		<%
 	}
 	%>     

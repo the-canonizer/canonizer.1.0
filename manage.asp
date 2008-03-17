@@ -2,8 +2,8 @@
 
 use managed_record;
 use topic;
+use camp;
 use statement;
-use text;
 
 use history_class;
 
@@ -60,11 +60,11 @@ sub manage_record {
 
 	my $topic_url = 'http://' . &func::get_host() . '/topic.asp/' . $record->{'topic_num'};
 
-	if ($class eq 'statement') {
-		$topic_url .= ('/' . $record->{statement_num});
-	} elsif ($class eq 'text') {
-		$topic_url .= ('/' . $record->{statement_num});
-		if ($record->{text_size}) { # specify the long to be displayed with the short.
+	if ($class eq 'camp') {
+		$topic_url .= ('/' . $record->{camp_num});
+	} elsif ($class eq 'statement') {
+		$topic_url .= ('/' . $record->{camp_num});
+		if ($record->{statement_size}) { # specify the long to be displayed with the short.
 			$topic_url .= '?long_short=2';
 		}
 	}
@@ -72,7 +72,7 @@ sub manage_record {
 	%>
 	<div class="main_content_container">
 
-	<p><a href="<%=$topic_url%>">Return to statement page</a></p>
+	<p><a href="<%=$topic_url%>">Return to camp page</a></p>
 
 <p>This record management page shows the history of this record with
 the latest version on top.  To make a change to this <%=$class%>

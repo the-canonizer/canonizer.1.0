@@ -2,7 +2,7 @@
 
 use managed_record;
 use topic;
-use statement;
+use camp;
 use support;
 
 if(!$ENV{"HTTPS"}){
@@ -39,11 +39,11 @@ if (!$topic_num) { # this is the only required one.
 	$error_message .= "No topic specified to support\n";
 }
 
-my $statement_num = 1; # 1 is the default ageement statement;
-if ($Request->Form('statement_num')) {
-	$statement_num = int($Request->Form('statement_num'));
-} elsif ($Request->QueryString('statement_num')) {
-	$statement_num = int($Request->QueryString('statement_num'));
+my $camp_num = 1; # 1 is the default ageement camp;
+if ($Request->Form('camp_num')) {
+	$camp_num = int($Request->Form('camp_num'));
+} elsif ($Request->QueryString('camp_num')) {
+	$camp_num = int($Request->QueryString('camp_num'));
 }
 
 # this nick stuff is used by both save_support and support_form
@@ -57,7 +57,7 @@ if ($nick_names{'error_message'}) {
 my $nick_clause = func::get_nick_name_clause(\%nick_names);
 
 if ($Request->QueryString('delete_id')) {
-	# does not return if successful (rederects to topic.asp for original statement.)
+	# does not return if successful (rederects to topic.asp for original camp.)
 	delete_support();
 }
 
@@ -74,10 +74,10 @@ if ($topic->{error_message}) {
 }
 
 
-my statement $statement = new_tree statement ($dbh, $topic_num, $statement_num);
-if ($statement->{error_message}) {
+my camp $camp = new_tree camp ($dbh, $topic_num, $camp_num);
+if ($camp->{error_message}) {
 	%>
-	<%=$statement->{error_message}%>
+	<%=$camp->{error_message}%>
 	<%
 	return();
 }
@@ -86,7 +86,7 @@ if ($statement->{error_message}) {
 if ($error_message) {
 	display_page('Support Errorr', 'Support Errorr', [\&identity, \&search, \&main_ctl], [\&error_page]);
 } elsif ($Request->Form('submit')) {
-	# does not return if successful (rederects to topic.asp for original statement.)
+	# does not return if successful (rederects to topic.asp for original camp.)
 	save_support();
 } else {
 	display_page('Add Support Topic: ' . $topic->{topic_name}, 'Add Support Topic: ' . $topic->{topic_name}, [\&identity, \&search, \&main_ctl], [\&support_form]);
@@ -123,7 +123,7 @@ sub delete_support {
 
 		func::send_email("Deleting support", "Deleting support id $delete_id with nick_clause $nick_clause.\nfrom support.asp.\n");
 		sleep(1);
-	        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num/$statement_num");
+	        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num/$camp_num");
 	}
 	$Response->End();
 }
@@ -135,15 +135,15 @@ sub save_support {
 	my $idx = 0;
 	my $del_idx = 0;
 	my $nick_name_id = $Request->Form('nick_name');
-	my $support_statement_num;
+	my $support_camp_num;
 	my support $delegate_support = undef;
 	my %form_support_hash = ();
-	while ($support_statement_num = $Request->Form('support_' . $idx)) {
+	while ($support_camp_num = $Request->Form('support_' . $idx)) {
 		if (! $Request->Form('delete_' . $idx)) {
 			if ($delegate_id) { # use delegate's primary (0 order) support
-				$delegate_support = $statement->{support_hash}->{$delegate_id}->[0];
+				$delegate_support = $camp->{support_hash}->{$delegate_id}->[0];
 				if ($delegate_support) {
-					# $support_statement_num = $delegate_support->{statement_num};
+					# $support_camp_num = $delegate_support->{camp_num};
 					# no need to change this to the deligate's primary.
 					# this is never used for a delegator's support so might as well not change it.
 					# (And it must be this way so when the deligates primary changes
@@ -157,7 +157,7 @@ sub save_support {
 					return();
 				}
 			}
-			$form_support_hash{$del_idx} = $support_statement_num;
+			$form_support_hash{$del_idx} = $support_camp_num;
 			$del_idx++;
 		}
 		$idx++;
@@ -166,24 +166,24 @@ sub save_support {
 	my $now_time = time;
 
 	# end any modified support
-	my $selstmt = "select support_id, statement_num, nick_name_id, delegate_nick_name_id, support_order from support where topic_num = $topic_num and ((start < $now_time) and (end = 0 or end > $now_time)) and ($nick_clause)";
+	my $selstmt = "select support_id, camp_num, nick_name_id, delegate_nick_name_id, support_order from support where topic_num = $topic_num and ((start < $now_time) and (end = 0 or end > $now_time)) and ($nick_clause)";
 
 	my $sth = $dbh->prepare($selstmt) || die "save_support failed to prepair $selstmt";
 
 	$sth->execute() || die "save_support failed to execute $selstmt";
 
 	my $rs;
-	my $statement_num;
+	my $camp_num;
 	my $support_order;
 	my $support_id;
 
 	while ($rs = $sth->fetchrow_hashref()) {
-		$statement_num = $rs->{'statement_num'};
+		$camp_num = $rs->{'camp_num'};
 		$support_order = $rs->{'support_order'};
 		$support_id = $rs->{'support_id'};
-		if (($rs->{'nick_name_id'} == $nick_name_id)               &&
-		    ($form_support_hash{$support_order} == $statement_num) &&
-		    ($rs->{'delegate_nick_name_id'} == $delegate_id)           ) { # no change
+		if (($rs->{'nick_name_id'} == $nick_name_id)          &&
+		    ($form_support_hash{$support_order} == $camp_num) &&
+		    ($rs->{'delegate_nick_name_id'} == $delegate_id)     ) { # no change
 			delete($form_support_hash{$support_order});
 		} else {							# modify (terminate old, add new record);
 			$selstmt = "update support set end=$now_time where support_id = $support_id";
@@ -198,7 +198,7 @@ sub save_support {
 	# ? got to add the delegate stuff ?
 	foreach $support_order (keys %form_support_hash) {
 		$support_id = func::get_next_id($dbh, 'support', 'support_id');
-		$statement_num = $form_support_hash{$support_order};
+		$camp_num = $form_support_hash{$support_order};
 		my $real_support_order = $support_order;
 		if ($delegate_id) {
 			if ($delegate_support->{delegate_nick_name_id}) { # get root delegate id
@@ -209,24 +209,24 @@ sub save_support {
 		}
 
 		$selstmt = 'insert into support ' .
-			   '(support_id,  nick_name_id,  topic_num,  statement_num,  support_order,       delegate_nick_name_id, start    ) values ' .
-			   "($support_id, $nick_name_id, $topic_num, $statement_num, $real_support_order, $delegate_id, $now_time)";
+			   '(support_id,  nick_name_id,  topic_num,  camp_num,  support_order,       delegate_nick_name_id, start    ) values ' .
+			   "($support_id, $nick_name_id, $topic_num, $camp_num, $real_support_order, $delegate_id, $now_time)";
 		# print(STDERR "save_support selstmt: $selstmt.\n");
 		if (!$dbh->do($selstmt)) {
 			die "Failed to insert support: $selstmt.\n";
 		}
 	}
 
-	func::send_email("Adding support", "Nick name id $nick_name_id is adding support for topic $topic_num, statement: $statement_num.\nfrom support.asp.\n");
+	func::send_email("Adding support", "Nick name id $nick_name_id is adding support for topic $topic_num, camp: $camp_num.\nfrom support.asp.\n");
 	sleep(1);
-        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num/$statement_num");
+        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num/$camp_num");
 	$Response->End();
 
 	%>
 	Submitted
 	topic: <%=$topic_num%>
 	nick id: <%=$nick_name_id%>
-	New statement num: <%=$statement_num%>
+	New camp num: <%=$camp_num%>
 	selstmt: <%=$selstmt%>
 	Adding support for: 
 	<%
@@ -248,7 +248,7 @@ sub support_form {
 	my $nick_name_id;
 	my $old_support_array_ref = undef;
 	foreach $nick_name_id (keys %nick_names) {
-		$old_support_array_ref = $statement->{support_hash}->{$nick_name_id};
+		$old_support_array_ref = $camp->{support_hash}->{$nick_name_id};
 		if ($old_support_array_ref) {
 			last;
 		}
@@ -257,13 +257,13 @@ sub support_form {
 	my $old_delegate_nick_name_id;
 	my support $old_support;
 	if (! $old_support_array_ref) {
-		# wasn't yet supporting any statements.
+		# wasn't yet supporting any camps.
 	} else {
 		$old_support = $old_support_array_ref->[0];
 		if ($old_support) {
 			$old_delegate_nick_name_id = $old_support->{delegate_nick_name_id};
 			if ($old_delegate_nick_name_id) {
-				$old_support_array_ref = $statement->{support_hash}->{$old_support->{support_order}};
+				$old_support_array_ref = $camp->{support_hash}->{$old_support->{support_order}};
 				if (! $old_support_array_ref) {
 					%>
 					support <%=$nick_name_id%> is delegated to non existant root support id: <%=$old_support->{support_order}%>
@@ -278,10 +278,10 @@ sub support_form {
 	# and the new support will be added to this ref, so the entire list order can be edited in the direct case:
 
 	if ($delegate_id) {	# new delegated support (show old support if any.)
-		my $new_support_array_ref = $statement->{support_hash}->{$delegate_id};
+		my $new_support_array_ref = $camp->{support_hash}->{$delegate_id};
 		my support $delegate_support = $new_support_array_ref->[0];
 		if ($delegate_support->{delegate_nick_name_id}) { # lookup root support array.
-			$new_support_array_ref = $statement->{support_hash}->{$delegate_support->{support_order}};
+			$new_support_array_ref = $camp->{support_hash}->{$delegate_support->{support_order}};
 		}
 
 		if (! $new_support_array_ref) {
@@ -298,13 +298,13 @@ sub support_form {
 				$old_plural = 's';
 			}
 			if ($old_delegate_nick_name_id) {
-				my $old_delegate_name = $statement->{support_hash}->{$old_delegate_nick_name_id}->[0]->{nick_name};
+				my $old_delegate_name = $camp->{support_hash}->{$old_delegate_nick_name_id}->[0]->{nick_name};
 				%>
 				Previously, you were delegating the following support from <%=$old_delegate_name%>.
 				<%
 			} else {
 				%>
-				Previously, you were directly supporting the folowing statement<%=$old_plural%>.
+				Previously, you were directly supporting the folowing camp<%=$old_plural%>.
 				<%
 			}
 			%>
@@ -318,7 +318,7 @@ sub support_form {
 				if ($old_support_array_ref->[$idx]) { # may be null if deleted.
 					%>
 					<tr><td><%=$idx%></td>
-					<td><%=$statement->{statement_tree_hash}->{$old_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%></td></tr>
+					<td><%=$camp->{camp_tree_hash}->{$old_support_array_ref->[$idx]->{camp_num}}->make_camp_path(1)%></td></tr>
 					<%
 				}
 			}
@@ -329,16 +329,16 @@ sub support_form {
 			<%
 		}
 
-		my $delegate_name = $statement->{support_hash}->{$delegate_id}->[0]->{nick_name};
+		my $delegate_name = $camp->{support_hash}->{$delegate_id}->[0]->{nick_name};
 		my $new_plural = '';
 		if ($#{$new_support_array_ref} > 0) {
 			$new_plural = 's';
 		}
 
 		%>
-		After committing this delegated support to <%=$delegate_name%> you will be supporting the below statement<%=$new_plural%>.  If <%=$delegate_name%> changes camps your support will follow as long as it is so delegated.
+		After committing this delegated support to <%=$delegate_name%> you will be supporting the below camp<%=$new_plural%>.  If <%=$delegate_name%> changes camps your support will follow as long as it is so delegated.
                 <form method=post>
-		<input type=hidden name=support_0 value=<%=$statement_num%>>
+		<input type=hidden name=support_0 value=<%=$camp_num%>>
 		<input type=hidden name=delegate_id value=<%=$delegate_id%>>
 		<br>
 		<center>
@@ -348,7 +348,7 @@ sub support_form {
 		for ($idx = 0; $idx <= $#{$new_support_array_ref}; $idx++) {
 			%>
 			<tr><td><%=$idx%></td>
-			<td><%=$statement->{statement_tree_hash}->{$new_support_array_ref->[$idx]->{statement_num}}->make_statement_path(1)%></td></tr>
+			<td><%=$camp->{camp_tree_hash}->{$new_support_array_ref->[$idx]->{camp_num}}->make_camp_path(1)%></td></tr>
 			<%
 		}
 		%>
@@ -394,22 +394,22 @@ sub support_form {
 		my $replacement_idx = -1; # where to put the replacement.
 
 		if ($old_support_array_ref) {
-			my statement $old_statement;
+			my camp $old_camp;
 			foreach $old_support (@{$old_support_array_ref}) {
 				if ($old_support) {
-					if ($statement->{statement_num} == $old_support->{statement_num}) { # modify support
+					if ($camp->{camp_num} == $old_support->{camp_num}) { # modify support
 						$replacement_idx = $support_order_idx++;
 						$replacement_hdr = 'Modify Support';
 					} else {
-						$old_statement = $statement->{statement_tree_hash}->{$old_support->{statement_num}};
-						if ($statement->is_related($old_statement->{statement_num})) {
+						$old_camp = $camp->{camp_tree_hash}->{$old_support->{camp_num}};
+						if ($camp->is_related($old_camp->{camp_num})) {
 							if ($replacement_idx == -1) {
 								$replacement_idx = $support_order_idx++;
-								$replacement_str = '<br>This new support will replace the existing support for the following related statements:';
+								$replacement_str = '<br>This new support will replace the existing support for the following related camps:';
 							}
-							$replacement_str .= '<br>' . $old_statement->make_statement_path(1);
+							$replacement_str .= '<br>' . $old_camp->make_camp_path(1);
 						} else {
-							$Response->Write(make_js_support_object_str($support_order_idx++, $old_statement, '', ''));
+							$Response->Write(make_js_support_object_str($support_order_idx++, $old_camp, '', ''));
 						}
 					}
 				}
@@ -417,9 +417,9 @@ sub support_form {
 		}
 
 		if ($replacement_idx == -1) {
-			$Response->Write(make_js_support_object_str($support_order_idx++, $statement, '<font color=green>New Support:</font><br>'));
+			$Response->Write(make_js_support_object_str($support_order_idx++, $camp, '<font color=green>New Support:</font><br>'));
 		} else {
-			$Response->Write(make_js_support_object_str($replacement_idx, $statement, $replacement_hdr, $replacement_str));
+			$Response->Write(make_js_support_object_str($replacement_idx, $camp, $replacement_hdr, $replacement_str));
 		}
 
 		%>
@@ -447,7 +447,7 @@ sub support_form {
 			render_str += "<center>\n";
 			render_str += "<form method=post>\n";
 			render_str += "  <input type=hidden name=topic_num value=<%=$topic_num%>>\n";
-			render_str += "  <input type=hidden name=statement_num value=<%=$statement_num%>>\n";
+			render_str += "  <input type=hidden name=camp_num value=<%=$camp_num%>>\n";
 			render_str += "  <table class=support_table>\n";
 
 			var idx;
@@ -462,7 +462,7 @@ sub support_form {
 				support_object = support_array[idx];
 				render_str += "<tr>\n";
 				render_str += "  <td>" + idx + "</td>\n";
-				render_str += "  <td>" + support_object.statement_info + "</td>\n";
+				render_str += "  <td>" + support_object.camp_info + "</td>\n";
 				if (support_array.length > 1) { // no move buttons if only supporting one.
 					if (idx < (support_array.length - 1)) {
 						render_str += "  <td><button onclick=move_down(" + idx + ")>v</button></td>";
@@ -477,7 +477,7 @@ sub support_form {
 				}
 				render_str += "  <td align=center>Delete<br><input type=checkbox name=delete_" + idx + "></td>\n";
 				render_str += "</tr>\n";
-				render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.statement_num + ">\n";
+				render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.camp_num + ">\n";
 
 			}
 			render_str += "  </table>\n";
@@ -512,7 +512,7 @@ sub support_form {
 			render_str += "\n";
 			render_str += "<form method=post>\n";
 			render_str += "  <input type=hidden name=topic_num value=<%=$topic_num%>>\n";
-			render_str += "  <input type=hidden name=statement_num value=<%=$statement_num%>>\n";
+			render_str += "  <input type=hidden name=camp_num value=<%=$camp_num%>>\n";
 			render_str += "\n";
 			var idx;
 
@@ -526,7 +526,7 @@ sub support_form {
 				support_object = support_array[idx];
 				render_str += "\n";
 				render_str += "" + idx + "\n";
-				render_str += "" + support_object.statement_info + "\n";
+				render_str += "" + support_object.camp_info + "\n";
 				if (support_array.length > 1) { // no move buttons if only supporting one.
 					if (idx < (support_array.length - 1)) {
 						render_str += "  <button onclick=move_down(" + idx + ")>v</button>";
@@ -541,7 +541,7 @@ sub support_form {
 				}
 				render_str += "Delete <input type=checkbox name=delete_" + idx + ">\n";
 				render_str += "\n";
-				render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.statement_num + ">\n";
+				render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.camp_num + ">\n";
 
 			}
 			render_str += "  \n";
@@ -573,7 +573,7 @@ sub support_form {
 
 		</script>
 
-		<p><a href="http://<%=func::get_host()%>/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to statement (no change)</a></p>
+		<p><a href="http://<%=func::get_host()%>/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp (no change)</a></p>
 
 		<span id = 'support_block'></span>
 
@@ -588,20 +588,20 @@ sub support_form {
 
 
 sub make_js_support_object_str {
-	my $support_order_idx   = $_[0];
-	my statement $statement = $_[1];
-	my $header		= $_[2];
-	my $replacement_str     = $_[3];
+	my $support_order_idx = $_[0];
+	my camp $camp         = $_[1];
+	my $header	      =  $_[2];
+	my $replacement_str   = $_[3];
 
 	my $ret_str = '';
 
-	my $statement_info .= $header . $statement->make_statement_path(1) . $replacement_str;
+	my $camp_info .= $header . $camp->make_camp_path(1) . $replacement_str;
 
-	$statement_info =~ s|"|\\"|g;
+	$camp_info =~ s|"|\\"|g;
 
 	$ret_str .= "support_object = new Object();\n";
-	$ret_str .= "support_object.statement_num = $statement->{statement_num};\n";
-	$ret_str .= "support_object.statement_info = \"$statement_info\";\n";
+	$ret_str .= "support_object.camp_num = $camp->{camp_num};\n";
+	$ret_str .= "support_object.camp_info = \"$camp_info\";\n";
 	$ret_str .= "support_array[$support_order_idx] = support_object;\n";
 
 	return($ret_str);

@@ -18,8 +18,8 @@ if(!$ENV{"HTTPS"}){
 
 use managed_record;
 use topic;
+use camp;
 use statement;
-use text;
 use person;
 
 
@@ -65,7 +65,7 @@ if ($Request->Form('record_id')) {
 	$copy_record_id = $Request->QueryString('record_id');
 }
 
-if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic preview page.
+if ($Request->Form('submit_edit') eq 'Edit Statement') {	# edit command from topic preview page.
 	$record = new_form $class ($Request);
 	if ($record->{error_message}) {
 		$error_message = $record->{error_message};
@@ -80,19 +80,19 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 	if ($record->{error_message}) {
 		$error_message = $record->{error_message};
 	} else {
-		if ($Request->Form('submit_edit') eq 'Commit Text') { # from topic preview page.
+		if ($Request->Form('submit_edit') eq 'Commit Statement') { # from topic preview page.
 			$record->{value} = func::hex_decode($record->{value});
 		}
 		$record->save($dbh, $Session->{'cid'});
 		my $any_record = $record;
 		my $url = 'http://' . func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
 
-		if ($class eq 'statement' || $class eq 'text') {
-			$url .= ('&statement_num=' . $any_record->{'statement_num'});
+		if ($class eq 'camp' || $class eq 'statement') {
+			$url .= ('&camp_num=' . $any_record->{'camp_num'});
 		}
 
-		if ($class eq 'text' && $any_record->{'text_size'}) {
-			$url .= ('&long=' . $any_record->{'text_size'});
+		if ($class eq 'statement' && $any_record->{'statement_size'}) {
+			$url .= ('&long=' . $any_record->{'statement_size'});
 		}
 
 		sleep(1); # or else it goes to the next page before the new data is live.
@@ -109,7 +109,7 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 	}
 	$record->{proposed} = 1;
 	$record->{note} = ''; # we don't want to copy the old note.
-	$subtitle = $record->get_edit_ident($dbh, $record->{topic_num}, $record->{statement_num});
+	$subtitle = $record->get_edit_ident($dbh, $record->{topic_num}, $record->{camp_num});
 
 } else { # create a first version of a managed record (not a topic)
 
@@ -117,31 +117,31 @@ if ($Request->Form('submit_edit') eq 'Edit Text') {	# edit command from topic pr
 		$error_message .= "Must have a topic_num in order to create a $class.\n";
 	}
 
-	if ($class eq 'statement') {
-		if ($Request->QueryString('parent_statement_num')) {
-			$record = new_blank statement ();
+	if ($class eq 'camp') {
+		if ($Request->QueryString('parent_camp_num')) {
+			$record = new_blank camp ();
 			$record->{topic_num} = int($Request->QueryString('topic_num'));
-			$record->{statement_num} = 0; # a new one will be created on insert.
-			$record->{parent_statement_num} = $Request->QueryString('parent_statement_num');
+			$record->{camp_num} = 0; # a new one will be created on insert.
+			$record->{parent_camp_num} = $Request->QueryString('parent_camp_num');
 			$record->{note} = 'First Version';
 			$record->{proposed} = 0;
 		} else {
-			$error_message .= "Must have a prent_statement_num in order to create a new statement.\n";
+			$error_message .= "Must have a prent_camp_num in order to create a new camp.\n";
 		}
-	} else {  # I am assuming 'topic' class will never come through this create new block so this is 'text' case.
-		if ($Request->QueryString('statement_num')) {
-			$record = new_blank text ();
+	} else {  # I am assuming 'topic' class will never come through this create new block so this is 'statement' case.
+		if ($Request->QueryString('camp_num')) {
+			$record = new_blank statement ();
 			$record->{topic_num} = $Request->QueryString('topic_num');
-			$record->{statement_num} = $Request->QueryString('statement_num');
+			$record->{camp_num} = $Request->QueryString('camp_num');
 			$record->{note} = 'First Version';
 			$record->{proposed} = 0;
 			if ($Request->QueryString('long')) {
-				$record->{text_size} = int($Request->QueryString('long'));
+				$record->{statement_size} = int($Request->QueryString('long'));
 			} else {
-				$record->{text_size} = 0; # default to small text size.
+				$record->{statement_size} = 0; # default to small statement size.
 			}
 		} else {
-			$error_message .= "Must have a statement_num in order to create a text record.\n";
+			$error_message .= "Must have a camp_num in order to create a statement record.\n";
 		}
 	}
 	if ($error_message) {
@@ -168,16 +168,16 @@ if ($nick_names{'error_message'}) {
 # it would be nice to object orient this, but alas, we must have asp ability to do html.
 sub display_form {
 	my $url = 'http://' . func::get_host() . "/topic.asp/" . $record->{topic_num};
-	if ($record->{statement_num}) {
-		$url .= '/' . $record->{statement_num};
+	if ($record->{camp_num}) {
+		$url .= '/' . $record->{camp_num};
 	}
 	%>
-	<p><a href="<%=$url%>">Return to statement (no change)</a></p>
+	<p><a href="<%=$url%>">Return to camp (no change)</a></p>
 	<%
-	if ($class eq 'text') {
-		&display_text_form();
-	} elsif ($class eq 'statement') {
+	if ($class eq 'statement') {
 		&display_statement_form();
+	} elsif ($class eq 'camp') {
+		&display_camp_form();
 	} else {
 		&display_topic_form();
 	}
@@ -199,18 +199,18 @@ there to get things started and moving in the right direction.  That
 is the way wiki's work - lots of easy steps by lots of people.</p>
 
 <p>This page is for creating and managing a topic.  The camps,
-statements, and support camps are done on other pages.  Remember that
-non supported camps more or less indicate nobody is in this camp or
-topic, or that nobody holds this POV.  Like wikipedia articles, anyone
-can change anything about a non supported topic, at any time.  Such
-goes live instantly.</p>
+statements, and support of camps are done on other pages.  Remember
+that non supported camps more or less indicate nobody is in this camp
+or topic, or that nobody holds this POV.  Like wikipedia articles,
+anyone can change anything about a non supported topic, at any time.
+Such goes live instantly.</p>
 
-<p>If someone is supporting any camp in a topic, changes go into a
-review mode for 1 week before going live.  All direct supporters will
-be notified of any proposed changes.  If anyone objects to any
-proposed changes they will be rejected and not go live.  All such
-differing POV can always be added to a forked topic.  The most
-supported topics will be the most popular.</p>
+<p>If someone is supporting any camp in a topic, submitted changes go
+into a review mode for 1 week before going live.  All direct
+supporters will be notified of any proposed changes.  If anyone
+objects to any proposed changes they will be rejected and not go live.
+All such differing POV can always be added to a forked topic.  The
+most supported topics will be the most popular.</p>
 
 <div class="main_content_container">
 
@@ -303,20 +303,20 @@ specified here.  Contact support to request a new name space.</p>
 }
 
 
-sub display_statement_form{
+sub display_camp_form{
 
-	my $submit_value = 'Create Statement';
+	my $submit_value = 'Create Camp';
 	if ($record->{proposed}) {
-		$submit_value = 'Propose Statement Modification';
+		$submit_value = 'Propose Camp Modification';
 	}
 
-	my statement $statement_tree = '';
+	my camp $camp_tree = '';
 
 	my $agreement_disable_str = '';
-	if ($record->{statement_num} == 1) {
+	if ($record->{camp_num} == 1) {
 		$agreement_disable_str = 'disabled';
 	} else {
-		$statement_tree = new_tree statement ($dbh, $record->{topic_num}, 1);
+		$camp_tree = new_tree camp ($dbh, $record->{topic_num}, 1);
 	}
 
 
@@ -362,12 +362,12 @@ fork.</p>
 <form method=post>
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
 <input type=hidden name=topic_num value=<%=$record->{topic_num}%>>
-<input type=hidden name=statement_num value=<%=$record->{statement_num}%>>
+<input type=hidden name=camp_num value=<%=$record->{camp_num}%>>
 <input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
-<p>Statement Name: <span class="required_field">*</span></p>
+<p>Camp Name: <span class="required_field">*</span></p>
 <p>Maximum 25 characters.  Very short abbreviation used in limited places like paths.  Spaces are not recommended.</p>
-<p><input type=string name=statement_name value="<%=func::escape_double($record->{'statement_name'})%>" maxlength=25 size=25 <%=$agreement_disable_str%>></p>
+<p><input type=string name=camp_name value="<%=func::escape_double($record->{'camp_name'})%>" maxlength=25 size=25 <%=$agreement_disable_str%>></p>
 
 <hr>
 
@@ -383,19 +383,25 @@ fork.</p>
 
 <hr>
 <p>URL:</p>
+
 <p>Maximum 65 characters.  The /www/ name space is for canonized POV
 information about web sites.  This URL field is a place to formally
-specify such a link and is not required.</p>
-<p><input type=string name=canon_url value="<%=func::escape_double($record->{'url'})%>" maxlength=65 size=65></p>
+specify such a link and is not required.  Normally, only the agreement
+statement of a topic is used to link an entire canoninzed reputation
+topic to any particular web page</p>
+
+<p><input type=string name=canon_url
+value="<%=func::escape_double($record->{'url'})%>" maxlength=65
+size=65></p>
 
 <%
-if ($statement_tree) { # if not then it is the agreement statement (no parent)
+if ($camp_tree) { # if not then it is the agreement camp (no parent)
 	%>
 	<hr>
 	Parent:
-	<p><select name="parent_statement_num">
+	<p><select name="parent_camp_num">
 	<%
-	&print_parent_option($statement_tree, $record->{'parent_statement_num'}, $record->{statement_num}, '');
+	&print_parent_option($camp_tree, $record->{'parent_camp_num'}, $record->{camp_num}, '');
 	%>
 	</select></p>
 <%
@@ -452,15 +458,15 @@ if ($statement_tree) { # if not then it is the agreement statement (no parent)
 <%
 }
 
-sub display_text_form {
+sub display_statement_form {
 
-	my $submit_value = 'Create Text';
+	my $submit_value = 'Create Statement';
 	if ($record->{proposed}) {
-		$submit_value = 'Propose Text Modification';
+		$submit_value = 'Propose Statement Modification';
 	}
 
 	my $agreement_disable_str = '';
-	if ($record->{statement_num} == 1) {
+	if ($record->{camp_num} == 1) {
 		$agreement_disable_str = 'disabled';
 	}
 
@@ -471,17 +477,17 @@ sub display_text_form {
 		return false;
 	}
 
-	function preview_text() {
-		if (document.edit_text.value.value == '') {
+	function preview_statement() {
+		if (document.edit_statement.value.value == '') {
 			alert("Must have some text.");
 			return false;
 		}
-		if (document.edit_text.note.value == '') {
+		if (document.edit_statement.note.value == '') {
 			alert("Must have a note.");
 			return false;
 		}
-		document.edit_text.action = 'https://<%=func::get_host()%>/topic.asp';
-		// document.edit_text.action = 'https://<%=func::get_host()%>/env.asp'; // for testing.
+		document.edit_statement.action = 'https://<%=func::get_host()%>/topic.asp';
+		// document.edit_statement.action = 'https://<%=func::get_host()%>/env.asp'; // for testing.
 		return true;
 	}
 	</script>
@@ -499,14 +505,14 @@ sub display_text_form {
 
 	<%=$error_message%>
 
-	<form method=post name=edit_text>
+	<form method=post name=edit_statement>
 	<input type=hidden name=record_id value=<%=$copy_record_id%>>
 	<input type=hidden name=topic_num value=<%=$record->{'topic_num'}%>>
-	<input type=hidden name=statement_num value=<%=$record->{'statement_num'}%>>
-	<input type=hidden name=text_size value=<%=$record->{text_size}%>>
+	<input type=hidden name=camp_num value=<%=$record->{'camp_num'}%>>
+	<input type=hidden name=statement_size value=<%=$record->{statement_size}%>>
 	<input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
-	<p>Text: <span class="required_field">*</span></p>
+	<p>Statement: <span class="required_field">*</span></p>
 
 	<p><textarea NAME="value" ROWS="20" COLS="90"><%=$record->{'value'}%></textarea></p>
 
@@ -541,7 +547,7 @@ sub display_text_form {
 
 	<p><input type=reset value="Reset"></p>
 	<!-- we want to force a preview before commit. -->
-	<p><input type=submit name=submit_edit value="Preview" onClick="return preview_text()"></p>
+	<p><input type=submit name=submit_edit value="Preview" onClick="return preview_statement()"></p>
 	<!-- <p><input type=submit name=submit_edit value="<%=$submit_value%>"></p> -->
 
 	</form>
@@ -570,30 +576,30 @@ sub display_text_form {
 
 
 sub print_parent_option {
-	my statement $statement_tree = $_[0];
-	my $selected                 = $_[1];
-	my $current_statement_num    = $_[2];
-	my $indent	             = $_[3];
+	my camp $camp_tree   = $_[0];
+	my $selected         = $_[1];
+	my $current_camp_num = $_[2];
+	my $indent	     = $_[3];
 
-	my $num = $statement_tree->{statement_num};
+	my $num = $camp_tree->{camp_num};
 
-	if ($current_statement_num == $num) { # can't set self, or any children, to my parent.
+	if ($current_camp_num == $num) { # can't set self, or any children, to my parent.
 		return();
 	}
 
 	if ($num == $selected) {
 		%>
-		<option value=<%=$num%> selected><%=$indent . $statement_tree->{statement_name}%></option>
+		<option value=<%=$num%> selected><%=$indent . $camp_tree->{camp_name}%></option>
 		<%
 	} else {
 		%>
-		<option value=<%=$num%>><%=$indent . $statement_tree->{statement_name}%></option>
+		<option value=<%=$num%>><%=$indent . $camp_tree->{camp_name}%></option>
 		<%
 	}
 
-	my statement $child;
-	foreach $child (@{$statement_tree->{children}}) {
-		&print_parent_option($child, $selected, $current_statement_num, $indent);
+	my camp $child;
+	foreach $child (@{$camp_tree->{children}}) {
+		&print_parent_option($child, $selected, $current_camp_num, $indent);
 	}
 }
 

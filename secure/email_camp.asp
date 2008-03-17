@@ -1,15 +1,15 @@
 <%
 
 use person;
-use statement;
+use camp;
 
 my $path_info = $ENV{'PATH_INFO'};
 my $pi_topic_num = 0;
-my $pi_statement_num = 0;
+my $pi_camp_num = 0;
 my $pi_thread_num = 0;
 if ($path_info =~ m|/(\d+)/(\d+)/?(\d*)|) {
 	$pi_topic_num = $1;
-	$pi_statement_num = $2;
+	$pi_camp_num = $2;
 	if ($3) {
 		$pi_thread_num = $3;
 	}
@@ -57,16 +57,16 @@ if (!$topic_num) {
 }
 
 
-my $statement_num = 1; # 1 is the default ageement statement;
-if ($Request->Form('statement_num')) {
-	$statement_num = int($Request->Form('statement_num'));
-} elsif ($pi_statement_num) {
-	$statement_num = $pi_statement_num;
-} elsif ($Request->QueryString('statement_num')) {
-	$statement_num = int($Request->QueryString('statement_num'));
+my $camp_num = 1; # 1 is the default ageement camp;
+if ($Request->Form('camp_num')) {
+	$camp_num = int($Request->Form('camp_num'));
+} elsif ($pi_camp_num) {
+	$camp_num = $pi_camp_num;
+} elsif ($Request->QueryString('camp_num')) {
+	$camp_num = int($Request->QueryString('camp_num'));
 }
 
-my $thread_num = 0; # 1 is the default ageement statement;
+my $thread_num = 0;
 if ($Request->Form('thread_num')) {
 	$thread_num = int($Request->Form('thread_num'));
 } elsif ($pi_thread_num) {
@@ -81,10 +81,10 @@ my ($topic_name, $msg) = topic::get_name($dbh, $topic_num);
 
 
 
-my statement $tree = new_tree statement ($dbh, $topic_num, $statement_num);
+my camp $tree = new_tree camp ($dbh, $topic_num, $camp_num);
 
 my $topic_camp = 'Camp';
-if ($statement_num == 1) {
+if ($camp_num == 1) {
 	$topic_camp = 'Topic';
 }
 
@@ -94,21 +94,21 @@ my $subject_line = '';
 if ($Request->Form('canon_subject')) {
 	$subject = $Request->Form('canon_subject');
 	$subject_line = '<tr><td class="label">' . $topic_camp . ' Forum Thread:</td>' .
-			'<td class="statement">' . $subject    . "</td></tr>\n";
+			'<td class="camp">' . $subject    . "</td></tr>\n";
 } elsif ($thread_num) {
-	$subject = func::get_thread_subject($dbh, $topic_num, $statement_num, $thread_num);
+	$subject = func::get_thread_subject($dbh, $topic_num, $camp_num, $thread_num);
 	$subject_line = '<tr><td class="label">' . $topic_camp . ' Forum Thread:</td>' .
-			'<td class="statement">' . $subject . "</td></tr>\n";
+			'<td class="camp">' . $subject . "</td></tr>\n";
 }
 
 
-my $title = "Topic: $topic_name Statement: " . $tree->{statement_name};
+my $title = "Topic: $topic_name Camp: " . $tree->{camp_name};
 
 
 my $header .= '<table><tr><td class="label">Topic:</td>' .
 				'<td class="topic">' . $topic_name . "</td></tr>\n" .
-			    '<tr><td class="label">Statement:</td>' .
-			        '<td class="statement">' . $tree->make_statement_path() . "</td></tr>\n" .
+			    '<tr><td class="label">Camp:</td>' .
+			        '<td class="camp">' . $tree->make_camp_path() . "</td></tr>\n" .
 			    $subject_line .
 	      "</table>\n";
 
@@ -176,7 +176,7 @@ sub email_camp_form {
 	} else {
 		%>
 
-		<p><a href="http://<%=func::get_host()%>/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to statement</a></p>
+		<p><a href="http://<%=func::get_host()%>/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp</a></p>
 
 		<%
 		if ($error_message) {
@@ -234,9 +234,9 @@ sub preview_post_page {
 	%>
 	<div class="main_content_container">
 
-	<p><a href="/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to <%=$statement_num==1 ? 'agreement' : 'camp'%> statement page</a></p>
+	<p><a href="/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to <%=$camp_num==1 ? 'agreement' : 'camp'%> camp page</a></p>
 
-	<p><a href="/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Return to <%=$statement_num==1 ? 'topic' : 'camp'%> forum</a></p>
+	<p><a href="/forum.asp/<%=$topic_num%>/<%=$camp_num%>">Return to <%=$camp_num==1 ? 'topic' : 'camp'%> forum</a></p>
 
 	<center>
 	<h1><b>Preview Post</b></h1>
@@ -281,16 +281,16 @@ sub send_email_page {
 
 	if ($sender_nick_id and length($sender_nick_name) > 0) {
 
-		$thread_num = save_post($dbh, $subject, $message, $topic_num, $statement_num, $thread_num, $sender_nick_id);
+		$thread_num = save_post($dbh, $subject, $message, $topic_num, $camp_num, $thread_num, $sender_nick_id);
 
 		$message = func::wikitext_to_text($message);
 		# $message = func::wikitext_to_html($message);  # you've somehow got to set the mime type if you want this.
 
 		$message = $sender_nick_name . " has sent this message " .
-			"to all the supporters of the $tree->{statement_name} camp on the topic: $topic_name.\n\n" .
+			"to all the supporters of the $tree->{camp_name} camp on the topic: $topic_name.\n\n" .
 			"Rather than reply to this e-mail (which only goes to canonizer\@canonizer.com) " .
 			"please post all replies to the camp forum thread page this message was sent from here:\n" .
-			"http://" . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num" .
+			"http://" . func::get_host() . "/thread.asp/$topic_num/$camp_num/$thread_num" .
 			"\n\n\n----------------------------------" .
 			"\n\n" .
 			$message .
@@ -304,7 +304,7 @@ sub send_email_page {
 		%>
 		<p>Mail successfully sent to supporters of this camp.
 
-		<p><a href="/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to statement</a></p>
+		<p><a href="/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp</a></p>
 		<%
 	} else {
 		%>
@@ -319,7 +319,7 @@ sub save_post {
 	my $subject        = $_[1];
 	my $message        = $_[2];
 	my $topic_num      = $_[3];
-	my $statement_num  = $_[4];
+	my $camp_num       = $_[4];
 	my $thread_num     = $_[5];
 	my $sender_nick_id = $_[6];
 
@@ -329,10 +329,10 @@ sub save_post {
 
 	if (!$thread_num) {
 		my $thread_id = func::get_next_id($dbh, 'thread', 'thread_id');
-		$thread_num = func::get_next_id($dbh, 'thread', 'thread_num', "where topic_num=$topic_num and statement_num = $statement_num");
+		$thread_num = func::get_next_id($dbh, 'thread', 'thread_num', "where topic_num=$topic_num and camp_num = $camp_num");
 
-		$selstmt = 'insert into thread ( thread_id,  thread_num,  topic_num,  statement_num, subject) values ' .
-					      "($thread_id, $thread_num, $topic_num, $statement_num, ?      )";
+		$selstmt = 'insert into thread ( thread_id,  thread_num,  topic_num,  camp_num, subject) values ' .
+					      "($thread_id, $thread_num, $topic_num, $camp_num, ?      )";
 
 		if (! $dbh->do($selstmt, \%dummy, $subject)) {
 			%>
@@ -343,11 +343,11 @@ sub save_post {
 	}
 
 	my $post_id = func::get_next_id($dbh, 'post', 'post_id');
-	my $post_num = func::get_next_id($dbh, 'post', 'post_num', "where topic_num=$topic_num and statement_num=$statement_num and thread_num=$thread_num");
+	my $post_num = func::get_next_id($dbh, 'post', 'post_num', "where topic_num=$topic_num and camp_num=$camp_num and thread_num=$thread_num");
 	my $now_time = time;
 
-	$selstmt = 'insert into post ( post_id,  post_num,  thread_num,  topic_num,  statement_num, nick_id,         submit_time, message) values ' .
-				    "($post_id, $post_num, $thread_num, $topic_num, $statement_num, $sender_nick_id, $now_time,   ?      )";
+	$selstmt = 'insert into post ( post_id,  post_num,  thread_num,  topic_num,  camp_num, nick_id,         submit_time, message) values ' .
+				    "($post_id, $post_num, $thread_num, $topic_num, $camp_num, $sender_nick_id, $now_time,   ?      )";
 
 	if (! $dbh->do($selstmt, \%dummy, $message)) {
 			%>

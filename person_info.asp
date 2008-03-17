@@ -63,7 +63,7 @@ sub nick_names {
 	<%
 	while ($rs = $sth->fetchrow_hashref()) {
 		my $not_supporting = 1;
-		# $selstmt = "select topic.name, support.name statement.delegate_id from suppo
+		# $selstmt = "select topic.name, support.name camp.delegate_id from suppo
 		%>
 		<li><%=$rs->{'first_name'} . ' ' . $rs->{'middle_name'} . ' ' . $rs->{'last_name'}%> [<%=$rs->{'cid'}%>] (<%=$rs->{'email'}%>)<br>
 		<%=$rs->{'address_1'} . ' ' . $rs->{'address_2'} . ' ' . $rs->{'city'} . ' ' . $rs->{'state'} . ' ' . $rs->{'postal_code'} . ' ' . $rs->{'contry'}%></li>

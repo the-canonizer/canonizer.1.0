@@ -35,7 +35,7 @@ sub browse {
 		$as_of_clause = 'and go_live_time < ' . time;
 	}
 
-	my $selstmt = "select t.topic_num, t.namespace, t.topic_name, s.title from (select topic_num, namespace, topic_name from topic where objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)) t, (select topic_num, title from statement where statement_num = 1 and objector is null $as_of_clause and go_live_time in (select max(go_live_time) from statement where statement_num = 1 and objector is null $as_of_clause group by topic_num)) s where t.topic_num = s.topic_num order by t.namespace, t.topic_name";
+	my $selstmt = "select t.topic_num, t.namespace, t.topic_name, s.title from (select topic_num, namespace, topic_name from topic where objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)) t, (select topic_num, title from camp where camp_num = 1 and objector is null $as_of_clause and go_live_time in (select max(go_live_time) from camp where camp_num = 1 and objector is null $as_of_clause group by topic_num)) s where t.topic_num = s.topic_num order by t.namespace, t.topic_name";
 
 	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 	$sth->execute() || die "Failed to execute " . $selstmt;

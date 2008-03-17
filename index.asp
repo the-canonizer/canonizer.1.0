@@ -1,7 +1,7 @@
 <%
 
 use managed_record;
-use statement;
+use camp;
 
 my $path_info = $ENV{'PATH_INFO'};
 my $pi_namespace = '';
@@ -184,7 +184,7 @@ Canonizer isn't yet what you'd like it to be.</p>
 
 </div>
 
-<div class="statement_tree" id="statement_tree">
+<div class="camp_tree" id="camp_tree">
 
 <%
 

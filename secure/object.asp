@@ -10,8 +10,8 @@ if(!$ENV{"HTTPS"}){
 use history_class;
 use managed_record;
 use topic;
+use camp;
 use statement;
-use text;
 
 
 ########
@@ -66,16 +66,16 @@ if ($record->{error_message}) {
 	$Response->End();
 }
 
-my statement $statement = undef;
+my camp $camp = undef;
 my $topic_num = $record->{topic_num};
-my $statement_num;
+my $camp_num;
 if ($class eq 'topic') {
-	$statement_num = 1;
+	$camp_num = 1;
 } else {
-	$statement_num = $record->{statement_num};
+	$camp_num = $record->{camp_num};
 }
 
-if (! can_object($dbh, $topic_num, $statement_num, $record)) {
+if (! can_object($dbh, $topic_num, $camp_num, $record)) {
 	# can_object must set error mesage if can't object.
 	&display_page('Object to Modification', 'Object to Modification', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
@@ -140,10 +140,10 @@ sub after_go_live_message {
 # and there are probably ways to spoof this by quickly delegating to lots of different people?
 #
 sub can_object {
-	my $dbh           = $_[0];
-	my $topic_num     = $_[1];
-	my $statement_num = $_[2];
-	my $record        = $_[3];
+	my $dbh       = $_[0];
+	my $topic_num = $_[1];
+	my $camp_num  = $_[2];
+	my $record    = $_[3];
 
 	my $submitter     = $record->{submitter};
 	my $go_live_time  = $record->{go_live_time};
@@ -162,33 +162,33 @@ sub can_object {
 
 	my $nick_name_clause = func::get_nick_name_clause(\%nick_names);
 
-	# key: statement_num	value: total time supporting this statement.
+	# key: camp_num	value: total time supporting this camp.
 	my %support_time_hash = ();
 	my %recorded_support_ids = ();
-	my $some_support = get_statement_support_times($dbh, $nick_name_clause, \%support_time_hash, \%recorded_support_ids, $go_live_time);
+	my $some_support = get_camp_support_times($dbh, $nick_name_clause, \%support_time_hash, \%recorded_support_ids, $go_live_time);
 
-	# if a user has ever supported a statement, that has ever been under this record, count that support time.
-	my %inverted_statement_tree = ();
+	# if a user has ever supported a camp, that has ever been under this record, count that support time.
+	my %inverted_camp_tree = ();
 	my $support_time = 0;
 	my $required_support_time = 60 * 60 * 24 * 7; # 7 days of seconds.
 
 	if ($some_support) {
-		$selstmt = "select statement_num, parent_statement_num from statement where topic_num = $topic_num";
+		$selstmt = "select camp_num, parent_camp_num from camp where topic_num = $topic_num";
 		$sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 		$sth->execute() || die "Failed to execute " . $selstmt;
 		$rs;
 		while ($rs = $sth->fetchrow_hashref()) {
-			if ($rs->{'parent_statement_num'}) {
-				$inverted_statement_tree{$rs->{'statement_num'}}->{$rs->{'parent_statement_num'}} = 1;
+			if ($rs->{'parent_camp_num'}) {
+				$inverted_camp_tree{$rs->{'camp_num'}}->{$rs->{'parent_camp_num'}} = 1;
 			}
 		}
 		$sth->finish();
 
-		my $supported_statement_num;
-		foreach $supported_statement_num (keys %support_time_hash) {
-			# print(STDERR "I once supported $supported_statement_num.\n");
-			if (once_was_sub_statement($supported_statement_num, $statement_num, \%inverted_statement_tree)) {
-				$support_time += $support_time_hash{$supported_statement_num};
+		my $supported_camp_num;
+		foreach $supported_camp_num (keys %support_time_hash) {
+			# print(STDERR "I once supported $supported_camp_num.\n");
+			if (once_was_sub_camp($supported_camp_num, $camp_num, \%inverted_camp_tree)) {
+				$support_time += $support_time_hash{$supported_camp_num};
 				if ($support_time > $required_support_time) {
 					return(1);
 				}
@@ -203,7 +203,7 @@ sub can_object {
 }
 
 
-sub get_statement_support_times {
+sub get_camp_support_times {
 	my $dbh                  = $_[0];
 	my $nick_name_clause     = $_[1];
 	my $support_time_hash    = $_[2];
@@ -214,7 +214,7 @@ sub get_statement_support_times {
 
 	my @support_array = ();
 
-# 	my $selstmt = "select support_id, statement_num, start, end, delegate_nick_name_id from support where topic_num = $topic_num and ($nick_name_clause)";
+# 	my $selstmt = "select support_id, camp_num, start, end, delegate_nick_name_id from support where topic_num = $topic_num and ($nick_name_clause)";
 	my $selstmt = "select * from support where topic_num = $topic_num and ($nick_name_clause)";
 
 	my support $support;
@@ -233,7 +233,7 @@ sub get_statement_support_times {
 		if ($support) { # this could be null if deleted.
 			$delegate_nick_name_id = $support->{delegate_nick_name_id};
 			if ($delegate_nick_name_id) {
-				get_statement_support_times($dbh,
+				get_camp_support_times($dbh,
 						    "nick_name_id = $delegate_nick_name_id",
 						    $support_time_hash,
 						    $recorded_support_ids,
@@ -247,7 +247,7 @@ sub get_statement_support_times {
 					if (!$support_end) {
 						$support_end = $go_live_time;
 					}
-					$support_time_hash->{$support->{statement_num}} += ($support_end - $support_start);
+					$support_time_hash->{$support->{camp_num}} += ($support_end - $support_start);
 				}
 			}
 		}
@@ -266,10 +266,10 @@ sub get_statement_support_times {
 
 
 
-sub once_was_sub_statement {
+sub once_was_sub_camp {
 	my $sub = $_[0];
 	my $sup = $_[1];
-	my $inverted_statement_tree = $_[2];
+	my $inverted_camp_tree = $_[2];
 
 	print(STDERR "???? sub: $sub, sup: $sup.\n");
 
@@ -277,8 +277,8 @@ sub once_was_sub_statement {
 		return(1);
 	}
 	my $parent;
-	foreach $parent (keys %{$inverted_statement_tree->{$sub}}) {
-		once_was_sub_statement($parent, $sup, $inverted_statement_tree);
+	foreach $parent (keys %{$inverted_camp_tree->{$sub}}) {
+		once_was_sub_camp($parent, $sup, $inverted_camp_tree);
 	}
 	return(0);
 }
@@ -393,12 +393,12 @@ sub make_manage_url {
 	my $class  = $_[1];
 
 	my $url = 'http://' . &func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $record->{topic_num};
-	if ($class eq 'statement') {
-		$url .= '&statement_num=' . $record->{statement_num};
-	} elsif ($class eq 'text') {
-		$url .= '&statement_num=' . $record->{statement_num};
-		if ($record->{text_size}) {
-			$url .= '&long=' . $record->{text_size};
+	if ($class eq 'camp') {
+		$url .= '&camp_num=' . $record->{camp_num};
+	} elsif ($class eq 'statement') {
+		$url .= '&camp_num=' . $record->{camp_num};
+		if ($record->{statement_size}) {
+			$url .= '&long=' . $record->{statement_size};
 		}
 	}
 	return($url);

@@ -42,8 +42,8 @@ if ($nick_name_id) {
 		$sth->finish();
 		$nick_name = $rs->{'nick_name'};
 		if ($rs->{'private'}) {
-			my $title = "Supported statements by nick name: $nick_name";
-			my $header = '<table><tr><td class="label">Supported statements by nick name: </td>' .
+			my $title = "Supported camps by nick name: $nick_name";
+			my $header = '<table><tr><td class="label">Supported camps by nick name: </td>' .
 					'<td class="topic">' . $nick_name. '</td></tr>' .
 					"</table>\n";
 			display_page($title, $header, [\&identity, \&search, \&as_of, \&main_ctl], [\&list_nick_support]);
@@ -204,24 +204,24 @@ sub list_nick_support {
 	<%
 
 # test version:
-# select u.topic_num, u.statement_num, u.title, p.support_order, p.delegate_nick_name_id from support p, 
+# select u.topic_num, u.camp_num, u.title, p.support_order, p.delegate_nick_name_id from support p, 
 # 
-# (select s.title, s.topic_num, s.statement_num from statement s,
-# (select topic_num, statement_num, max(go_live_time) as max_glt from statement where objector is null and go_live_time < 1193934040 group by topic_num, statement_num) t
-# where s.topic_num = t.topic_num and s.statement_num=t.statement_num and s.go_live_time = t.max_glt) u
+# (select s.title, s.topic_num, s.camp_num from camp s,
+# (select topic_num, camp_num, max(go_live_time) as max_glt from camp where objector is null and go_live_time < 1193934040 group by topic_num, camp_num) t
+# where s.topic_num = t.topic_num and s.camp_num=t.camp_num and s.go_live_time = t.max_glt) u
 # 
-# where u.topic_num = p.topic_num and ((u.statement_num = p.statement_num) or (u.statement_num = 1)) and p.nick_name_id = 1 and
+# where u.topic_num = p.topic_num and ((u.camp_num = p.camp_num) or (u.camp_num = 1)) and p.nick_name_id = 1 and
 # (p.start < 1193934040) and ((p.end = 0) or (p.end > 1193934040)) 
 
 
 	my $selstmt = <<EOF;
-select u.topic_num, u.statement_num, u.title, p.support_order, p.delegate_nick_name_id from support p, 
+select u.topic_num, u.camp_num, u.title, p.support_order, p.delegate_nick_name_id from support p, 
 
-(select s.title, s.topic_num, s.statement_num from statement s,
-(select topic_num, statement_num, max(go_live_time) as max_glt from statement where objector is null $as_of_clause group by topic_num, statement_num) t
-where s.topic_num = t.topic_num and s.statement_num=t.statement_num and s.go_live_time = t.max_glt) u
+(select s.title, s.topic_num, s.camp_num from camp s,
+(select topic_num, camp_num, max(go_live_time) as max_glt from camp where objector is null $as_of_clause group by topic_num, camp_num) t
+where s.topic_num = t.topic_num and s.camp_num=t.camp_num and s.go_live_time = t.max_glt) u
 
-where u.topic_num = p.topic_num and ((u.statement_num = p.statement_num) or (u.statement_num = 1)) and p.nick_name_id = $nick_name_id and
+where u.topic_num = p.topic_num and ((u.camp_num = p.camp_num) or (u.camp_num = 1)) and p.nick_name_id = $nick_name_id and
 (p.start < $as_of_time) and ((p.end = 0) or (p.end > $as_of_time))
 EOF
 
@@ -233,14 +233,14 @@ EOF
 	my $topic_num;
 	while ($rs = $sth->fetchrow_hashref()) {
 		$topic_num     = $rs->{'topic_num'};
-		my $statement_num = $rs->{'statement_num'};
+		my $camp_num = $rs->{'camp_num'};
 		if ($rs->{'delegate_nick_id'}) {
 			$delegate_hash->{$topic_num} = $rs->{'support_order'};
-		} elsif ($statement_num == 1) {
+		} elsif ($camp_num == 1) {
 			$support_struct{$topic_num}->{'topic_title'} = $rs->{'title'};
 		} else {
 			$support_struct{$topic_num}->{'array'}->[$rs->{'support_order'}]->{'title'} = $rs->{'title'};
-			$support_struct{$topic_num}->{'array'}->[$rs->{'support_order'}]->{'statement_num'} = $statement_num;
+			$support_struct{$topic_num}->{'array'}->[$rs->{'support_order'}]->{'camp_num'} = $camp_num;
 		}
 	}
 
@@ -263,7 +263,7 @@ EOF
 			my $hash_ref;
 			foreach $hash_ref (@{$support_struct{$topic_num}->{'array'}}) {
 				%>
-				<li><a href="http://<%=func::get_host()%>/topic.asp/<%=$topic_num%>/<%=$hash_ref->{'statement_num'}%>"><%=$hash_ref->{'title'}%></a></li>
+				<li><a href="http://<%=func::get_host()%>/topic.asp/<%=$topic_num%>/<%=$hash_ref->{'camp_num'}%>"><%=$hash_ref->{'title'}%></a></li>
 				<%
 			}
 			%>
@@ -281,13 +281,13 @@ EOF
 		<%
 	} else {
 		%>
-		<h1>No directly supported statements</h1>
+		<h1>No directly supported camps</h1>
 		<%
 	}
 
 	if ($delegate_hash) {
 
-		$selstmt = "select support_id, nick_name, s.nick_name_id, statement_num, delegate_nick_name_id, support_order from support s, nick_name n where s.nick_name_id = n.nick_name_id and topic_num = $topic_num and ((start < $as_of_time) and (end = 0 or end > $as_of_time))";
+		$selstmt = "select support_id, nick_name, s.nick_name_id, camp_num, delegate_nick_name_id, support_order from support s, nick_name n where s.nick_name_id = n.nick_name_id and topic_num = $topic_num and ((start < $as_of_time) and (end = 0 or end > $as_of_time))";
 
 
 	}
@@ -333,7 +333,7 @@ sub list_support {
 	<%
 	while ($rs = $sth->fetchrow_hashref()) {
 		my $not_supporting = 1;
-		# $selstmt = "select topic.name, support.name statement.delegate_id from suppo
+		# $selstmt = "select topic.name, support.name camp.delegate_id from suppo
 		%>
 		<li><%=$rs->{'first_name'} . ' ' . $rs->{'middle_name'} . ' ' . $rs->{'last_name'}%> [<%=$rs->{'cid'}%>] (<%=$rs->{'email'}%>)<br>
 		<%=$rs->{'address_1'} . ' ' . $rs->{'address_2'} . ' ' . $rs->{'city'} . ' ' . $rs->{'state'} . ' ' . $rs->{'postal_code'} . ' ' . $rs->{'contry'}%></li>

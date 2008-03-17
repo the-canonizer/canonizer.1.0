@@ -1,7 +1,7 @@
 <%
 
 use person;
-use statement;
+use camp;
 
 my $num_posts_per_page = 10;
 
@@ -9,12 +9,12 @@ my $error_message = '';
 
 my $path_info = $ENV{'PATH_INFO'};
 my $pi_topic_num = 0;
-my $pi_statement_num = 0;
+my $pi_camp_num = 0;
 my $pi_thread_num = 0;
 my $pi_post_num = 0;			# optional to specify what page.
 if ($path_info =~ m|/(\d+)/(\d+)/(\d+)/?(\d*)|) {
 	$pi_topic_num = $1;
-	$pi_statement_num = $2;
+	$pi_camp_num = $2;
 	$pi_thread_num = $3;
 	if ($4) {
 		$pi_post_num = $4;
@@ -36,16 +36,16 @@ if (!$topic_num) {
 }
 
 
-my $statement_num = 0;
-if ($Request->Form('statement_num')) {
-	$statement_num = int($Request->Form('statement_num'));
-} elsif ($pi_statement_num) {
-	$statement_num = $pi_statement_num;
-} elsif ($Request->QueryString('statement_num')) {
-	$statement_num = int($Request->QueryString('statement_num'));
+my $camp_num = 0;
+if ($Request->Form('camp_num')) {
+	$camp_num = int($Request->Form('camp_num'));
+} elsif ($pi_camp_num) {
+	$camp_num = $pi_camp_num;
+} elsif ($Request->QueryString('camp_num')) {
+	$camp_num = int($Request->QueryString('camp_num'));
 }
-if (!$statement_num) {
-	$error_message = "Must specify a statement_num.";
+if (!$camp_num) {
+	$error_message = "Must specify a camp_num.";
 	&display_page('Camp Forum Thread', 'Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
 	$Response->End();
 }
@@ -79,29 +79,29 @@ my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 my ($topic_name, $msg) = topic::get_name($dbh, $topic_num);
 
-my $subject = func::get_thread_subject($dbh, $topic_num, $statement_num, $thread_num);
+my $subject = func::get_thread_subject($dbh, $topic_num, $camp_num, $thread_num);
 
 if (length($subject) < 1) {
-		$error_message = "Unknown thread for topic_num $topic_num, statement_num: $statement_num, thread_num: $thread_num.";
+		$error_message = "Unknown thread for topic_num $topic_num, camp_num: $camp_num, thread_num: $thread_num.";
 		&display_page('Camp Forum Thread', 'Camp Forum Thread', [\&identity, \&search, \&main_ctl], [\&error_page]);
 		$Response->End();
 }
 
-my statement $tree = new_tree statement ($dbh, $topic_num, $statement_num);
+my camp $tree = new_tree camp ($dbh, $topic_num, $camp_num);
 
 my $topic_camp = 'Camp';
-if ($statement_num == 1) {
+if ($camp_num == 1) {
 	$topic_camp = 'Topic';
 }
 
-my $title = "Topic: $topic_name Statement: " . $tree->{statement_name} . " - $topic_camp Forum Thread: $subject\n";
+my $title = "Topic: $topic_name Camp: " . $tree->{camp_name} . " - $topic_camp Forum Thread: $subject\n";
 
 my $header .= '<table><tr><td class="label">Topic:</td>' .
 				'<td class="topic">' . $topic_name . "</td></tr>\n" .
-			    '<tr><td class="label">Statement:</td>' .
-			        '<td class="statement">' . $tree->make_statement_path() . "</td></tr>\n" .
+			    '<tr><td class="label">Camp:</td>' .
+			        '<td class="camp">' . $tree->make_camp_path() . "</td></tr>\n" .
 			    '<tr><td class="label">' . $topic_camp . ' Forum Thread:</td>' .
-			        '<td class="statement">' . $subject . "</td></tr>\n" .
+			        '<td class="camp">' . $subject . "</td></tr>\n" .
 	      "</table>\n";
 
 
@@ -116,11 +116,11 @@ sub display_thread {
 	%>
 	<div class="main_content_container">
 
-	<p><a href="/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to <%=$statement_num==1 ? 'agreement' : 'camp'%> statement page</a></p>
+	<p><a href="/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to <%=$camp_num==1 ? 'agreement' : 'camp'%> camp page</a></p>
 
-	<p><a href="/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Return to <%=$statement_num==1 ? 'topic' : 'camp'%> forum</a></p>
+	<p><a href="/forum.asp/<%=$topic_num%>/<%=$camp_num%>">Return to <%=$camp_num==1 ? 'topic' : 'camp'%> forum</a></p>
 
-	<p><a href="/secure/email_camp.asp/<%=$topic_num%>/<%=$statement_num%>/<%=$thread_num%>">New post to thread</a></p>
+	<p><a href="/secure/email_camp.asp/<%=$topic_num%>/<%=$camp_num%>/<%=$thread_num%>">New post to thread</a></p>
 	<%
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
@@ -128,7 +128,7 @@ sub display_thread {
 	my $min_max = 'max';		 # set to min for static ordered page from first thread.
 	my $first_last = 'Last post by'; # set to first post by for static page.
 
-	my $selstmt = "select post_num, nick_id, message, submit_time from post where topic_num=$topic_num and statement_num=$statement_num and thread_num=$thread_num";
+	my $selstmt = "select post_num, nick_id, message, submit_time from post where topic_num=$topic_num and camp_num=$camp_num and thread_num=$thread_num";
 
 	my @posts = ();
 	my $num_posts = 0;
@@ -177,11 +177,11 @@ sub display_thread {
 	if ($num_posts) {
 		%>
 		</table>
-		<p><a href="/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to camp statement page</a></p>
+		<p><a href="/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp page</a></p>
 
-		<p><a href="/forum.asp/<%=$topic_num%>/<%=$statement_num%>">Return to camp forum</a></p>
+		<p><a href="/forum.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp forum</a></p>
 
-		<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&statement_num=<%=$statement_num%>&thread_num=<%=$thread_num%>">New post to thread</a></p>
+		<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&camp_num=<%=$camp_num%>&thread_num=<%=$thread_num%>">New post to thread</a></p>
 
 		<%
 
@@ -213,7 +213,7 @@ sub make_pagination_str {
 		if (($num * $num_posts_per_page) == $post_num) {
 			$ret_val .= '<font color=green>' . ($num + 1) . '</font>, ';
 		} else {
-			$ret_val .= '<a href="http://' . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num/" . $posts_ref->[($num * $num_posts_per_page)]->{'post_num'} . '">' . ($num + 1) . '</a>, ';
+			$ret_val .= '<a href="http://' . func::get_host() . "/thread.asp/$topic_num/$camp_num/$thread_num/" . $posts_ref->[($num * $num_posts_per_page)]->{'post_num'} . '">' . ($num + 1) . '</a>, ';
 		}
 	}
 

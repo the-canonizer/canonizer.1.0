@@ -2,10 +2,10 @@
 
 #######################
 #
-# new_topic.asp creates both a new topic record and a new statement record.
-#	(Each topic must have at least one "agreement" statement.)
-# to create a new version of a topic or create a statement (new version or within an already
-# existing topic) alone, use edit_topic.asp or edit_statement.asp
+# new_topic.asp creates both a new topic record and a new camp record.
+#	(Each topic must have at least one "agreement" camp.)
+# To create a new version of a topic or create a camp (new version or within an already
+# existing topic) alone, use edit.asp
 #
 #######################
 
@@ -112,8 +112,8 @@ sub save_topic {
 
 		$new_topic_num = func::get_next_id($dbh, 'topic', 'topic_num');
 		my $new_topic_id = func::get_next_id($dbh, 'topic', 'record_id');
-		my $new_statement_num = 1; # first one (agreement statement) is always 1.
-		my $new_statement_id = func::get_next_id($dbh, 'statement', 'record_id');
+		my $new_camp_num = 1; # first one (agreement camp) is always 1.
+		my $new_camp_id = func::get_next_id($dbh, 'camp', 'record_id');
 		my $now_time = time;
 		my $go_live_time = $now_time;
 
@@ -123,8 +123,8 @@ sub save_topic {
 		my %dummy = ();
 		$dbh->do($selstmt, \%dummy, $form_state{'topic_name'}, $form_state{'namespace'}) || die "Failed to create new record with " . $selstmt;
 
-		$selstmt = "insert into statement (topic_num,      statement_name,        title, key_words, url, record_id,         statement_num,      note,                                   submitter,                submit_time, go_live_time) values " .
-						 "($new_topic_num, 'Agreement',           ?,     ?,         ?,   $new_statement_id, $new_statement_num, 'First Version of Agreement Statement', $form_state{'submitter'}, $now_time,   $go_live_time)";
+		$selstmt = "insert into camp (topic_num,      camp_name,        title, key_words, url, record_id,    camp_num,      note,                              submitter,                submit_time, go_live_time) values " .
+					   "($new_topic_num, 'Agreement',       ?,     ?,         ?,   $new_camp_id, $new_camp_num, 'First Version of Agreement Camp', $form_state{'submitter'}, $now_time,   $go_live_time)";
 
 		$dbh->do($selstmt, \%dummy, $form_state{'title'}, $form_state{'key_words'}, $form_state{'url'} ) || die "Failed to create new record with " . $selstmt;
 
@@ -151,6 +151,25 @@ sub new_topic_form {
 
 %>
 
+<p>Anything about a topic can be changed at any time, by anyone.  So
+don't worry about making mistakes.  Just get any thoughts you have out
+there to get things started and moving in the right direction.  That
+is the way wiki's work - lots of easy steps by lots of people.</p>
+
+<p>This page is for creating a topic.  The camps, statements, and
+support of camps are done on other pages.  Remember that non supported
+camps more or less indicate nobody is in this camp or topic, or that
+nobody holds this POV.  Like wikipedia articles, anyone can change
+anything about a non supported topic, at any time.  Such goes live
+instantly.</p>
+
+<p>If someone is supporting any camp in a topic, submitted changes go
+into a review mode for 1 week before going live.  All direct
+supporters will be notified of any proposed changes.  If anyone
+objects to any proposed changes they will be rejected and not go live.
+All such differing POV can always be added to a forked topic.  The
+most supported topics will be the most popular.</p>
+
 <div class="main_content_container">
 
 <div class="section_container">
@@ -175,17 +194,27 @@ if (length($message) > 0) {
 <form method=post>
 <p>Name: <span class="required_field">*</span></p>
 <p>Maximum 25 characters.</p>
-<p><input type=string name=canon_topic_name value="<%=func::escape_double($form_state{'topic_name'})%>" maxlength=25 size=25 /></p>
+
+<p><input type=string name=canon_topic_name
+value="<%=func::escape_double($form_state{'topic_name'})%>"
+maxlength=25 size=25 /></p>
 
 <hr>
 
 <p>Namespace:</p>
-<p>Nothing for main default namespace. Path that begins, seperated by, and ends with '/'. Maximum 65 characters.</p>
-<p><input type=string name=canon_namespace value="<%=func::escape_double($form_state{'namespace'})%>" maxlength=65 size=75></p>
+
+<p>Nothing for the main default namespace.  Other name spaces are
+paths that begin with, are separated by, and end with '/'.  See the
+browse page for a list of all available name spaces that can be
+specified here.  Contact support to request a new name space.</p>
+
+<p><input type=string name=canon_namespace
+value="<%=func::escape_double($form_state{'namespace'})%>"
+maxlength=65 size=75></p>
 
 <hr>
 <%
-# <p>Agreement Statement Values:</p>
+# <p>Agreement Camp Values:</p>
 #AKA: Comma separated - symbolic link created for each one.
 #<input type = string name = AKA maxlength = 255 size = 65>
 %>
@@ -203,8 +232,14 @@ if (length($message) > 0) {
 <hr>
 
 <p>URL:</p>
-<p>Maximum 256 characters.</p>
-<p><input type=string name=canon_url value="<%=func::escape_double($form_state{'url'})%>" maxlength=256 size=75></p>
+
+<p>Maximum 65 characters.  The /www/ name space is for canonized POV
+information about web sites.  This URL field is a place to formally
+specify such a link and is not required.</p>
+
+<p><input type=string name=canon_url
+value="<%=func::escape_double($form_state{'url'})%>" maxlength=256
+size=75></p>
 
 <hr>
 

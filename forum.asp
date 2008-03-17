@@ -3,15 +3,15 @@
 my $num_posts_per_page = 10;
 
 use person;
-use statement;
+use camp;
 
 my $path_info = $ENV{'PATH_INFO'};
 my $pi_topic_num = 0;
-my $pi_statement_num = 0;
+my $pi_camp_num = 0;
 my $pi_thread_num = 0;			# optional to specify what page.
 if ($path_info =~ m|/(\d+)/(\d+)/?(\d*)|) {
 	$pi_topic_num = $1;
-	$pi_statement_num = $2;
+	$pi_camp_num = $2;
 	if ($3) {
 		$pi_thread_num = $3;
 	}
@@ -36,32 +36,32 @@ if (!$topic_num) {
 }
 
 
-my $statement_num = 1; # 1 is the default ageement statement;
-if ($Request->Form('statement_num')) {
-	$statement_num = int($Request->Form('statement_num'));
-} elsif ($pi_statement_num) {
-	$statement_num = $pi_statement_num;
-} elsif ($Request->QueryString('statement_num')) {
-	$statement_num = int($Request->QueryString('statement_num'));
+my $camp_num = 1; # 1 is the default ageement camp;
+if ($Request->Form('camp_num')) {
+	$camp_num = int($Request->Form('camp_num'));
+} elsif ($pi_camp_num) {
+	$camp_num = $pi_camp_num;
+} elsif ($Request->QueryString('camp_num')) {
+	$camp_num = int($Request->QueryString('camp_num'));
 }
 
 my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 my ($topic_name, $msg) = topic::get_name($dbh, $topic_num);
 
-my statement $tree = new_tree statement ($dbh, $topic_num, $statement_num);
+my camp $tree = new_tree camp ($dbh, $topic_num, $camp_num);
 
 my $topic_camp = 'Camp';
-if ($statement_num == 1) {
+if ($camp_num == 1) {
 	$topic_camp = 'Topic';
 }
 
-my $title = "Topic: $topic_name - Statement: " . $tree->{statement_name} . " - $topic_camp Forum\n";
+my $title = "Topic: $topic_name - Camp: " . $tree->{camp_name} . " - $topic_camp Forum\n";
 
 my $header .= '<table><tr><td class="label">Topic:</td>' .
 				'<td class="topic">' . $topic_name . "</td></tr>\n" .
-		     '<tr><td class="label">Statement:</td>' .
-			 '<td class="statement">' . $tree->make_statement_path() . "</td></tr>\n" .
+		     '<tr><td class="label">Camp:</td>' .
+			 '<td class="camp">' . $tree->make_camp_path() . "</td></tr>\n" .
 		     '<tr><td class="forum" colspan=2>' . $topic_camp . " Forum</td></tr>\n" .
 	      "</table>\n";
 
@@ -77,9 +77,9 @@ sub display_forum {
 	%>
 	<div class="main_content_container">
 
-	<p><a href="/topic.asp/<%=$topic_num%>/<%=$statement_num%>">Return to camp statement page</a></p>
+	<p><a href="/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp statement page</a></p>
 
-	<p><a href="/secure/email_camp.asp/<%=$topic_num%>/<%=$statement_num%>">Start new thread</a></p>
+	<p><a href="/secure/email_camp.asp/<%=$topic_num%>/<%=$camp_num%>">Start new thread</a></p>
 	<%
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
@@ -92,18 +92,18 @@ select t.thread_num, min_post_num, min_nick_id, min_time, max_post_num, max_nick
 (select a.thread_num, a.post_num as min_post_num, a.nick_id as min_nick_id, a.submit_time as min_time, z.post_num as max_post_num, z.nick_id as max_nick_id, z.submit_time as max_time from
 
 (select p.post_num, p.nick_id, p.thread_num, p.submit_time from
-(select thread_num, min(submit_time) as submit_time from post where topic_num = $topic_num and statement_num = $statement_num group by thread_num) b,
-post p where topic_num=$topic_num and statement_num=$statement_num and p.thread_num=b.thread_num and p.submit_time = b.submit_time) a, 
+(select thread_num, min(submit_time) as submit_time from post where topic_num = $topic_num and camp_num = $camp_num group by thread_num) b,
+post p where topic_num=$topic_num and camp_num=$camp_num and p.thread_num=b.thread_num and p.submit_time = b.submit_time) a, 
 
 (select p.post_num, p.nick_id, p.thread_num, p.submit_time from
-(select thread_num, max(submit_time) as submit_time from post where topic_num = $topic_num and statement_num = $statement_num group by thread_num) y,
-post p where topic_num=$topic_num and statement_num=$statement_num and p.thread_num=y.thread_num and p.submit_time = y.submit_time) z
+(select thread_num, max(submit_time) as submit_time from post where topic_num = $topic_num and camp_num = $camp_num group by thread_num) y,
+post p where topic_num=$topic_num and camp_num=$camp_num and p.thread_num=y.thread_num and p.submit_time = y.submit_time) z
 
 where a.thread_num = z.thread_num) t,
 
 (select t.subject, t.thread_num, p.count from thread t,
-(select thread_num, count(*) as count from post p where topic_num=$topic_num and statement_num=$statement_num group by thread_num) p
-where t.topic_num = $topic_num and statement_num = $statement_num and t.thread_num = p.thread_num) c
+(select thread_num, count(*) as count from post p where topic_num=$topic_num and camp_num=$camp_num group by thread_num) p
+where t.topic_num = $topic_num and camp_num = $camp_num and t.thread_num = p.thread_num) c
 
 where t.thread_num = c.thread_num order by $min_max desc
 EOF
@@ -131,7 +131,7 @@ EOF
 		if ($count > $num_posts_per_page) {
 			$pagination = make_pagination_str($thread_num, $count);
 		}
-		my $post_url = 'http://' . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num";
+		my $post_url = 'http://' . func::get_host() . "/thread.asp/$topic_num/$camp_num/$thread_num";
 
 		my $last_post_str = '';
 		if ($count > 1) {
@@ -142,7 +142,7 @@ EOF
 		}
 
 		%>
-		<tr><td><%=$subject%><br><br><a href = "http://<%=func::get_host()%>/secure/email_camp.asp/<%=$topic_num%>/<%=$statement_num%>/<%=$thread_num%>">Post new reply to this thread.</a><%=$pagination%></td><td><%=$count%></td><td nowrap>First post: &nbsp; &nbsp; &nbsp;<a href="<%=$post_url%>"><%=$min_nick_name%><br>
+		<tr><td><%=$subject%><br><br><a href = "http://<%=func::get_host()%>/secure/email_camp.asp/<%=$topic_num%>/<%=$camp_num%>/<%=$thread_num%>">Post new reply to this thread.</a><%=$pagination%></td><td><%=$count%></td><td nowrap>First post: &nbsp; &nbsp; &nbsp;<a href="<%=$post_url%>"><%=$min_nick_name%><br>
 				<%=func::to_local_time($min_time)%></a><%=$last_post_str%></td></tr>
 		<%
 	}
@@ -172,7 +172,7 @@ sub make_pagination_str {
 
 	my $num;
 	for ($num = 0; ($num * $num_posts_per_page) < $num_posts; $num++) {
-		$ret_val .= '<a href="http://' . func::get_host() . "/thread.asp/$topic_num/$statement_num/$thread_num/" . ($num * $num_posts_per_page + 1) . '">' . ($num + 1) . '</a>, ';
+		$ret_val .= '<a href="http://' . func::get_host() . "/thread.asp/$topic_num/$camp_num/$thread_num/" . ($num * $num_posts_per_page + 1) . '">' . ($num + 1) . '</a>, ';
 	}
 
 	chop($ret_val);
