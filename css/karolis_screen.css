@@ -528,7 +528,7 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	border-left: 1px solid silver;
 	border-right: 1px solid silver;
 	/*background: #ffffff url(../images/bg1.png) bottom no-repeat right;/*
-	/*conflicted with images in the statement*/
+	/*conflicted with images in the camp*/
 }
 
 .main_content_container .section_container .header_1
@@ -551,7 +551,7 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 }
 
 
-.main_content_container .section_container .header_1 #statement
+.main_content_container .section_container .header_1 #camp
 {
 	color: green;
 	font-weight: bold;
@@ -656,9 +656,9 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	margin: 0; 
 }
 
-/* MAIN CONTENT STATEMENT TREE----------------------------------------------- */
+/* MAIN CONTENT CAMP TREE----------------------------------------------- */
 
-.main_content_container .section_container .statement_tree
+.main_content_container .section_container .camp_tree
 {
 	font-size: 100%;
 	margin: 0 0 0 0;
@@ -666,12 +666,12 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	background: #FFFFFF;
 }
 
-.main_content_container .section_container .statement_tree div
+.main_content_container .section_container .camp_tree div
 {
 	padding-bottom: 10px;
 }
 
-.main_content_container .section_container .statement_tree .top_branch
+.main_content_container .section_container .camp_tree .top_branch
 {
 	font-size: 100%;
 	font-weight: bold;
@@ -680,55 +680,55 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	padding-bottom: 0px;
 }
 
-.main_content_container .section_container .statement_tree .top_branch a
+.main_content_container .section_container .camp_tree .top_branch a
 {
 	font-size: 100%;
 	font-weight: bold;
 	color: #000099;
 }
 
-.main_content_container .section_container .statement_tree .branch
+.main_content_container .section_container .camp_tree .branch
 {
 	font-size: 100%;
 	margin: 0 0 0 20px;
 	padding: 0;
 }
 
-.main_content_container .section_container .statement_tree .branch div
+.main_content_container .section_container .camp_tree .branch div
 {
 	padding-bottom: 0px;
 }
 
-.main_content_container .section_container .statement_tree .new_camp
+.main_content_container .section_container .camp_tree .new_camp
 {
 	font-size: 150%;
 	margin: 0 0 0 20px;
 	padding: 0;
 }
 
-.main_content_container .section_container .statement_tree .new_camp div
+.main_content_container .section_container .camp_tree .new_camp div
 {
 	padding-bottom: 0px;
 }
 
-.main_content_container .section_container .statement_tree #score
+.main_content_container .section_container .camp_tree #score
 {
 	color: #000000;
 }
 
-.main_content_container .section_container .statement_tree #statement
+.main_content_container .section_container .camp_tree #camp
 {
 	color: green;
 	font-weight: bold;
 }
 
-.main_content_container .section_container .statement_tree a
+.main_content_container .section_container .camp_tree a
 {
 	color: #0000FF;
 	text-decoration: none;
 }
 
-.main_content_container .section_container .statement_tree a:hover
+.main_content_container .section_container .camp_tree a:hover
 {
 	color: #FF0000;
 	text-decoration: none;
@@ -865,7 +865,7 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	text-align: left;
 }
 
-#header td.statement
+#header td.camp
 {
 	font-size: 120%;
 	font-weight: bold;
