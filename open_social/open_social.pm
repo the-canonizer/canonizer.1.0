@@ -13,7 +13,7 @@ use DBI;
 use MIME::Base64;
 use func;
 use support;
-use statement;
+use camp;
 
 
 sub os_values_compare {
@@ -139,44 +139,44 @@ sub compare_friends {
 	while ($rs = $sth->fetch()) {
 		my $topic_num = $rs->[0];
 		my $nick_name_id = $rs->[1];
-		my statement $statement = new_tree statement ($dbh, $topic_num, 1);
-		my @support_array = @{$statement->{support_hash}->{$nick_name_id}};
+		my camp $camp = new_tree camp ($dbh, $topic_num, 1);
+		my @support_array = @{$camp->{support_hash}->{$nick_name_id}};
 		my support $support = $support_array[0];
 		if ($support->{delegate_nick_name_id}) { # replace with delegated array
 			$nick_name_id = $support->{support_order}; # support array's nick name
-			@support_array = @{$statement->{support_hash}->{$nick_name_id}};
+			@support_array = @{$camp->{support_hash}->{$nick_name_id}};
 		}
 
 		foreach my $friend_nick_name_id (keys %{$nick_id_to_os_id}) {
 
-			if (! exists($statement->{support_hash}->{$friend_nick_name_id})) { # doesn't support this topic.
+			if (! exists($camp->{support_hash}->{$friend_nick_name_id})) { # doesn't support this topic.
 				next;
 			}
 
-			my @friend_support_array = @{$statement->{support_hash}->{$friend_nick_name_id}};
+			my @friend_support_array = @{$camp->{support_hash}->{$friend_nick_name_id}};
 			my support $friend_support = $friend_support_array[0];
 			if ($friend_support) { # friend supports this topic.
 				my $delegated_nick = $friend_nick_name_id;
 
 				if ($friend_support->{delegate_nick_name_id}) { # replace with delegated array
 					$delegated_nick = $friend_support->{support_order}; # support array's nick name
-					@friend_support_array = @{$statement->{support_hash}->{$delegated_nick}};
+					@friend_support_array = @{$camp->{support_hash}->{$delegated_nick}};
 				}
-				# $ret_val = "friend_id: $delegated_nick, statement: 
+				# $ret_val = "friend_id: $delegated_nick, camp: 
 				my $friend_os_id = $nick_id_to_os_id->{$friend_nick_name_id};
 
 				if ($nick_name_id == $delegated_nick) { # delegated to same nick name.
-					push(@{$compare_hash->{$friend_os_id}->{'same'}}, make_same_struct($statement, $nick_name_id));
+					push(@{$compare_hash->{$friend_os_id}->{'same'}}, make_same_struct($camp, $nick_name_id));
 				} else {
-					my ($same, $matching_camps) = compare_camps($statement, \@support_array, \@friend_support_array);
-					my $struct = {'topic'     => $statement->{title},
-								  'topic_num' => $statement->{topic_num} };
+					my ($same, $matching_camps) = compare_camps($camp, \@support_array, \@friend_support_array);
+					my $struct = {'topic'     => $camp->{title},
+								  'topic_num' => $camp->{topic_num} };
 					if ($same) {
 						$struct->{'camps'} = $matching_camps;
 						push(@{$compare_hash->{$friend_os_id}->{'same'}}, $struct);
 					} else {
-						$struct->{'my_camps'}     = make_camp_array($statement, \@support_array);
-						$struct->{'friend_camps'} = make_camp_array($statement, \@friend_support_array);
+						$struct->{'my_camps'}     = make_camp_array($camp, \@support_array);
+						$struct->{'friend_camps'} = make_camp_array($camp, \@friend_support_array);
 						push(@{$compare_hash->{$friend_os_id}->{'different'}}, $struct);
 					}
 				}
@@ -187,9 +187,9 @@ sub compare_friends {
 
 
 sub compare_camps {
-	my statement $statement = $_[0];
-	my @my_array          = @{$_[1]};
-	my @friend_array      = @{$_[2]};
+	my camp $camp    = $_[0];
+	my @my_array     = @{$_[1]};
+	my @friend_array = @{$_[2]};
 
 	my @matching_camps = ();
 
@@ -197,45 +197,45 @@ sub compare_camps {
 		if ($idx > $#friend_array) { # don't compare additional camps.
 			return(1, \@matching_camps);
 		}
-		my $matching_num = $my_array[$idx]->{'statement_num'};
+		my $matching_num = $my_array[$idx]->{'camp_num'};
 
-		my statement $my_statement = $statement->{statement_tree_hash}->{$matching_num};
+		my camp $my_camp = $camp->{camp_tree_hash}->{$matching_num};
 
-		if ($my_statement->is_ancestor($friend_array[$idx]->{'statement_num'})) {
-			$matching_num = $friend_array[$idx]->{'statement_num'};
-		} elsif (!$my_statement->is_descendant($friend_array[$idx]->{'statement_num'})) {
+		if ($my_camp->is_ancestor($friend_array[$idx]->{'camp_num'})) {
+			$matching_num = $friend_array[$idx]->{'camp_num'};
+		} elsif (!$my_camp->is_descendant($friend_array[$idx]->{'camp_num'})) {
 			return(0, 0);
 		}
-		push(@matching_camps, {'title' => $statement->{statement_tree_hash}->{$matching_num}->{title},
-							   'statement_num' => $matching_num                                       });
+		push(@matching_camps, {'title' => $camp->{camp_tree_hash}->{$matching_num}->{title},
+							   'camp_num' => $matching_num                                       });
 	}
 	return(1, \@matching_camps);
 }
 
 
 sub make_same_struct {
-	my statement $statement = $_[0];
-	my $nick_name_id        = $_[1]; # can't be delegated, must be delegate
+	my camp $camp    = $_[0];
+	my $nick_name_id = $_[1]; # can't be delegated, must be delegate
 
 	my $same_struct = {
-		'topic'     => $statement->{title},
-		'topic_num' => $statement->{topic_num},
-		'camps'     => make_camp_array($statement, $statement->{support_hash}->{$nick_name_id}) };
+		'topic'     => $camp->{title},
+		'topic_num' => $camp->{topic_num},
+		'camps'     => make_camp_array($camp, $camp->{support_hash}->{$nick_name_id}) };
 
 	return($same_struct);
 }
 
 
 sub make_camp_array {
-	my statement $statement = $_[0];
-	my $support_array_ref   = $_[1];
+	my camp $camp         = $_[0];
+	my $support_array_ref = $_[1];
 
 	my @camps = ();
 	foreach my support $support (@{$support_array_ref}) {
-		my $statement_num = $support->{statement_num};
-		my statement $supported_statement = $statement->{statement_tree_hash}->{$statement_num};
-		push(@camps, {'title'         => $supported_statement->{title},
-					  'statement_num' => $statement_num                 });
+		my $camp_num = $support->{camp_num};
+		my camp $supported_camp = $camp->{camp_tree_hash}->{$camp_num};
+		push(@camps, {'title'         => $supported_camp->{title},
+					  'camp_num' => $camp_num                 });
 	}
 	return(\@camps);
 }
