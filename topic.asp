@@ -291,8 +291,8 @@ camp you are currently viewing is green.</p>
 
 	<%
 
-	my $html_statement_short = '<p>No short camp has been provided yet.</p>';
-        my $html_statement_long = '<p>No long camp has been provided yet.</p>';
+	my $html_statement_short = '<p>No camp statement has been provided yet.</p>';
+        my $html_statement_long = '<p>No long camp statement has been provided yet.</p>';
 
 	my $camp_agreement = 'Camp';
 	if ($camp_num == 1) {
