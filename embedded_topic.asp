@@ -3,17 +3,17 @@
 use Time::Local;
 use managed_record;
 use topic;
-use statement;
+use camp;
 use support;
-use text;
+use statement;
 
 my $path_info = $ENV{'PATH_INFO'};
 my $pi_topic_num = 0;
-my $pi_statement_num = 0;
+my $pi_camp_num = 0;
 if ($path_info =~ m|/(\d+)/?(\d*)|) {
 	$pi_topic_num = $1;
 	if ($2) {
-		$pi_statement_num = $2;
+		$pi_camp_num = $2;
 	}
 }
 
@@ -31,25 +31,25 @@ if (!$topic_num) {
 }
 
 
-my $help_statement = 0;
-my $statement_num = 0; # 0 is the default help statmenet.
-if ($Request->Form('statement_num')) {
-	$statement_num = int($Request->Form('statement_num'));
-} elsif ($pi_statement_num) {
-	$statement_num = $pi_statement_num;
-} elsif ($Request->QueryString('statement_num')) {
-	$statement_num = int($Request->QueryString('statement_num'));
+my $help_camp = 0;
+my $camp_num = 0; # 0 is the default help statmenet.
+if ($Request->Form('camp_num')) {
+	$camp_num = int($Request->Form('camp_num'));
+} elsif ($pi_camp_num) {
+	$camp_num = $pi_camp_num;
+} elsif ($Request->QueryString('camp_num')) {
+	$camp_num = int($Request->QueryString('camp_num'));
 }
 
-if (! $statement_num) {
-	$help_statement = 1;
-	$statement_num = 1;
+if (! $camp_num) {
+	$help_camp = 1;
+	$camp_num = 1;
 }
 
 
 my $dbh = func::dbh_connect(1) || die "unable to connect to database";
 
-my $topic_data = lookup_topic_data($dbh, $topic_num, $statement_num, $help_statement);
+my $topic_data = lookup_topic_data($dbh, $topic_num, $camp_num, $help_camp);
 
 if ($topic_data->{'error_message'}) {
 	embedded_error_page($topic_data->{'error_message'});
@@ -61,8 +61,8 @@ if ($topic_data->{'error_message'}) {
 sub lookup_topic_data {
 	my $dbh            = $_[0];
 	my $topic_num      = $_[1];
-	my $statement_num  = $_[2];
-	my $help_statement = $_[3];
+	my $camp_num       = $_[2];
+	my $help_camp      = $_[3];
 
 	my $error_message = '';
 
@@ -72,31 +72,31 @@ sub lookup_topic_data {
 		$error_message .= $topic->{error_message};
 	}
 
-	my statement $statement = new_tree statement ($dbh, $topic_num, $statement_num);
+	my camp $camp = new_tree camp ($dbh, $topic_num, $camp_num);
 
-	if ($statement->{error_message}) {
-		$error_message .= $statement->{error_message};
+	if ($camp->{error_message}) {
+		$error_message .= $camp->{error_message};
 	} else {
-		$statement->canonize($dbh, $Session->{'canonizer'});
+		$camp->canonize($dbh, $Session->{'canonizer'});
 	}
 
-	my text $short_text = 0;
+	my statement $short_statement = 0;
 
-	if ($help_statement) {
-		$short_text = new_num text ($dbh, 58, 2);
+	if ($help_camp) {
+		$short_statement = new_num statement ($dbh, 58, 2);
 	} else {
-		$short_text = new_num text ($dbh, $topic_num, $statement_num);
+		$short_statement = new_num statement ($dbh, $topic_num, $camp_num);
 	}
 
-	if ($short_text->{error_message}) {
-		# $short_text->{value} = $short_text->{error_message} . " ($topic_num, $statement_num, $help_statement)";
+	if ($short_statement->{error_message}) {
+		# $short_statement->{value} = $short_statement->{error_message} . " ($topic_num, $camp_num, $help_camp)";
 	}
 
 	my $topic_data = {
-		'topic'		=> $topic,
-		'statement'	=> $statement,
-		'short_text'	=> $short_text,
-		'error_message'	=> $error_message
+		'topic'		  => $topic,
+		'camp'	          => $camp,
+		'short_statement' => $short_statement,
+		'error_message'	  => $error_message
 	};
 
 	return($topic_data);
@@ -108,7 +108,7 @@ sub present_topic {
 	print page_header('Canonizer Embedded Topoc');
 	my $cur_host = func::get_host();
 
-	my $url = "http://$cur_host/change_canonizer.asp?destination=http://$cur_host/embedded_topic.asp/$topic_num/$statement_num?canonizer=";
+	my $url = "http://$cur_host/change_canonizer.asp?destination=http://$cur_host/embedded_topic.asp/$topic_num/$camp_num?canonizer=";
 
 	%>
 
@@ -129,11 +129,11 @@ sub present_topic {
 
 	<div class="section_container">
 		<div class="header_1">
-		<span id="title">Canonizer Sorted Position (POV) Statement Tree</span><br><br>
+		<span id="title">Canonizer Sorted Camp Tree</span><br><br>
 		<%
-		if ($help_statement) {
+		if ($help_camp) {
 				%>
-				<span id="statement">Help / Introduction</span>
+				<span id="camp">Help / Introduction</span>
 				<%
 		} else {
 				%>
@@ -143,14 +143,14 @@ sub present_topic {
 		%>
 		</div>
 
-		<div class="statement_tree" id="statement_tree">
+		<div class="camp_tree" id="camp_tree">
 		<%
 		my $no_active_link = 1;
-		if ($help_statement) {
+		if ($help_camp) {
 			$no_active_link = 0;
 		}
 
-		$Response->Write($topic_data->{'statement'}->display_statement_tree($topic_data->{'topic'}->{topic_name}, $topic_num, $no_active_link, '/embedded_topic.asp/', '/topic.asp/'));
+		$Response->Write($topic_data->{'camp'}->display_camp_tree($topic_data->{'topic'}->{topic_name}, $topic_num, $no_active_link, '/embedded_topic.asp/', '/topic.asp/'));
 		%>
 		</div>
 
@@ -183,29 +183,29 @@ sub present_topic {
 
 	<%
 
-	my $html_text_short;
-	if (length($topic_data->{'short_text'}->{value}) > 0) {
-		$html_text_short = func::wikitext_to_html($topic_data->{'short_text'}->{value});
+	my $html_statement_short;
+	if (length($topic_data->{'short_statement'}->{value}) > 0) {
+		$html_statement_short = func::wikitext_to_html($topic_data->{'short_statement'}->{value});
 	} else {
-		$html_text_short  = '<p>No statement text has been provided for this camp yet.</p>' . "\n";
-		$html_text_short .= '<p><a target=TARGET="_blank" href="https://' . func::get_host() . "/secure/edit.asp?class=text&topic_num=$topic_num&statement_num=$statement_num\">Add new camp statement text</a></p>\n";
+		$html_statement_short  = '<p>No statement text has been provided for this camp yet.</p>' . "\n";
+		$html_statement_short .= '<p><a target=TARGET="_blank" href="https://' . func::get_host() . "/secure/edit.asp?class=statement&topic_num=$topic_num&camp_num=$camp_num\">Add new camp statement text</a></p>\n";
 	}
 
-	my $statement_header = 'Camp Statement';
-	if ($help_statement) {
-		$statement_header = "Help / Introduction";
-	} elsif ($statement_num == 1) {
-		$statement_header = 'Agreement Statement';
+	my $camp_header = 'Camp Statement';
+	if ($help_camp) {
+		$camp_header = "Help / Introduction";
+	} elsif ($camp_num == 1) {
+		$camp_header = 'Agreement Statement';
 	}
 
 	%>
 	<div class="section_container">
 		<div class="header_1">
-			<span id="title"><%=$statement_header%></span>
+			<span id="title"><%=$camp_header%></span>
 		</div>
 
 		<div class="content_1">
-		<%=$html_text_short%>
+		<%=$html_statement_short%>
 		</div>
 
 		<div class="footer_1">
