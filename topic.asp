@@ -235,7 +235,7 @@ sub present_topic {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Canonizer Sorted Position (POV) Camp Tree</span>
+     <span id="title">Canonizer Sorted Camp Tree</span>
 
 </div>
 
