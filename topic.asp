@@ -306,7 +306,7 @@ camp you are currently viewing is green.</p>
                         <div class="section_container">
 
 			<div class="header_1">
-     <span id="title"><%=$camp_agreement%> Camp</span>
+     <span id="title"><%=$camp_agreement%> Statement</span>
  </div>
 
 
