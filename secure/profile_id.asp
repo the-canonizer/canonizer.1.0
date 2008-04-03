@@ -28,7 +28,8 @@ my %form_state = ();
 #		2	update existing info.
 #
 
-my $cid = $Session->{'cid'};
+my $cid = 0;
+
 # When I do 0, it seems to leave a lock active if it crashes.
 # restarting httpd cleans it up.
 # don't want to risk this for now, should probably clean this up some day.
@@ -37,12 +38,11 @@ my $cid = $Session->{'cid'};
 # my $dbh = func::dbh_connect(0) || die "unable to connect to database";
 my $dbh = func::dbh_connect(1) || die "unable to connect to database";
 
-
 my $register = 0; # registering a new user.
 if ($Request->QueryString('register') or $Request->Form('register')) {
 	$register = 1;
-} elsif(! $cid) { # there should be no links for this case, but just in case session times out...
-	$Response->Redirect("login.asp?destination=/secure/profile_id.asp");
+} else {
+	$cid = $Session->{'cid'};
 }
 
 my %nick_names = (); # this is only set if not $register and $cid (updating data.)
