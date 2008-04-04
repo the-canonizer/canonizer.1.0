@@ -251,12 +251,15 @@ sub present_topic {
      <div class="footer_1">
      <span id="buttons">
 
-<p>Note: This section is a table of contents for this topic. It has a
-link to the agreement camp at the top, and all sub camps in
-hierarchical order, indicating how much support each camp has,
-sorted according to your current Canonizer. The title of the POV
-camp you are currently viewing is green.</p>
-
+<p>Note: This section is a table of contents for this topic. It is in
+outline form, with supporting sub camps indented from the parent camp.
+If you are in a sub camp, you are also counted in all parent camps
+including the agreement camp at the top.  The numbers are canonized
+scores derived from the people in the camps based on your currently
+selected canonizer.  The camps are sorted according to these canonized
+scores.  Each entry is a link to the camp page which can contain a
+statement of belief.  The green link indicates the camp page you are
+currently on and the statement below is for that camp.</p>
 
      </span>
      </div>
