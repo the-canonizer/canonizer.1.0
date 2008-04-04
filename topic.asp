@@ -486,11 +486,13 @@ if ($topic_data->{'short_statement'}) {
 		}
 		%>
 
-<p>Note: Any supporter of a camp can object to any proposed
-changes they disagree with.  If you directly support a camp, you
-will receive e-mail notifications of proposed changes.  If you do not
-wish to receive such notifications, you can delegate your support to
-another supporter.</p>
+<p>Note: Supporters can delegate their support to others.  Direct
+supporters receive e-mail notifications of proposed camp changes,
+while for delegated supporters, such is not required.  People
+delegating their support to others are shown below and indented from
+their delegates in an outline form.  If your delegate changes camp,
+you and everyone with you as a delegate will also change camps with
+them.</p>
 
 		<%
 	}
