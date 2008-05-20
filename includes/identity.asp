@@ -28,6 +28,11 @@ sub guest_cookie_expire_time {
 	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = gmtime(time + (60*60*24));
 	my @days = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
 	my @months = (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec);
+
+	if (length($sec) < 2) {
+	   $sec = "0$sec";
+	}
+
 	$wday = @days[$wday];
 	$mon  = $months[$mon];
 	$year = $year + 1900;
