@@ -129,6 +129,18 @@ canonized so we can know it concisely, quantitatively, and in
 everyone's preferred words.</p>
 <br>
 
+<h3>Online Petition System</h3>
+
+<p>Do you have a grass roots effort trying to collect signatures on a
+petition?  Would an online version, with a way to sign camps in a
+reputable way help?  Do you want your effort to go viral?  Your
+petition in a canonized camp statement is a very easy and free way to
+do all this.</p>
+<br>
+
+
+
+
 <h3>Canonized Feedback on Your Web Pages</h3>
 <p>Do you have thousands of useless comments for feedback on your web
 pages from the masses about products, beliefs, or anything?  Would you
@@ -140,13 +152,16 @@ page as is done here: <a
 href="http://home.comcast.net/~brent.allsop">http://home.comcast.net/~brent.allsop</a>.</p>
 <br>
 
-<h3>Canonized Yellow Pages / Product Reviews.</h3>
-<p>Do you have a professional service or product that is, in your POV,
-the best?  And do you have lots of happy customers willing to prove
-it?  Then you can get such canonized.  For an example, see this topic
-on <a href=" http://test.canonizer.com/topic.asp/18">who is the best
-family dentist</a>.</p>
-<br>
+<h3>Canonized Reputations Building</h3> <p>Do you live in Nigeria, yet
+want to do business online?  Do you have a professional service or
+product that is, in your POV, the best?  Do you have lots of happy
+customers willing to prove it?  Is everybody ignoring your collection
+of testimonials?  Then you can get such canonized.  Nobody puts much
+creed in a collection of testimonials, but a canonized reputation is
+very reputable since it is an open system where both pro and con
+customers can contribute.  For an example, see this topic on <a href="
+http://test.canonizer.com/topic.asp/18">who is the best family
+dentist</a>.</p> <br>
 
 <h3>Canonized Science</h3>
 <p>Are you researching an area of science with lots of competing
