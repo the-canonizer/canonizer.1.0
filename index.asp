@@ -129,8 +129,18 @@ canonized so we can know it concisely, quantitatively, and in
 everyone's preferred words.</p>
 <br>
 
-<h3>Online Petition System</h3>
+<h3>Canonized Science (concise and quantitative measures of consensus)</h3>
+<p>Are you researching an area of science with lots of competing
+theories, yet still no consensus on what theory will turn out right?
+Do you wonder just how accurate certain claims of consensus on such
+topics as global warming are?  Would you like to have some kind of
+quantitative measure to help know such?  Then get it canonized as has
+started with this very controversial scientific topic on the <a
+href="http://test.canonizer.com/topic.asp/23">Hard Problem of
+Consciousness</a>.</p>
+<br>
 
+<h3>Online Petition System</h3>
 <p>Do you have a grass roots effort trying to collect signatures on a
 petition?  Would an online version, with a way to sign camps in a
 reputable way help?  Do you want your effort to go viral?  Your
@@ -162,17 +172,6 @@ very reputable since it is an open system where both pro and con
 customers can contribute.  For an example, see this topic on <a href="
 http://test.canonizer.com/topic.asp/18">who is the best family
 dentist</a>.</p> <br>
-
-<h3>Canonized Science</h3>
-<p>Are you researching an area of science with lots of competing
-theories, yet still no consensus on what theory will turn out right?
-Do you wonder just how accurate certain claims of consensus on such
-topics as global warming are?  Would you like to have some kind of
-quantitative measure to help know such?  Then get it canonized as has
-started with this very controversial scientific topic on the <a
-href="http://test.canonizer.com/topic.asp/23">Hard Problem of
-Consciousness</a>.</p>
-<br>
 
 <h3>Canonizers Yahoo Group</h3>
 <p>canonizer.com is being developed by a grass roots group of
