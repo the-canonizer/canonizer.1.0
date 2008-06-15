@@ -71,7 +71,6 @@ sub login_form {
 		$cookie_test = 1;
 	}
 
-	$cookie_test = 0; # ????
 	if (! $cookie_test) {
 		my $et = guest_cookie_expire_time();
 		chop($et);
