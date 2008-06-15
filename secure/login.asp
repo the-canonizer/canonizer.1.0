@@ -46,7 +46,7 @@ if ($Request->Form('submit')) {
 	do_login();
 }
 
-display_page('Login', 'Login', [\&main_ctl], [\&login_form]);
+display_page('Login', 'Login', [\&identity, \&main_ctl], [\&login_form]);
 
 
 ########
@@ -71,7 +71,15 @@ sub login_form {
 		$cookie_test = 1;
 	}
 
+	$cookie_test = 0; # ????
 	if (! $cookie_test) {
+		my $et = guest_cookie_expire_time();
+		chop($et);
+		my $now = time;
+		print(STDERR "Someone can not login ($now-$et)\n");
+
+		func::send_email("someone can not log in.", "Someone can not log in.\nfrom login.asp.\n($now-$et)\n\n");
+
 		%>
 		<p>Browser failed to return Canonizer identity cookie.</p>
 
@@ -199,4 +207,4 @@ sub do_login {
 <!--#include file = "includes/default/page.asp"-->
 <!--#include file = "includes/page_sections.asp"-->
 <!--#include file = "includes/main_ctl.asp"-->
-
+<!--#include file = "includes/identity.asp"-->
