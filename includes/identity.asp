@@ -29,15 +29,13 @@ sub guest_cookie_expire_time {
 	my @days = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
 	my @months = (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec);
 
-	if (length($sec) < 2) {
-	   $sec = "0$sec";
-	}
-
 	$wday = @days[$wday];
 	$mon  = $months[$mon];
 	$year = $year + 1900;
 
-	return("$wday, $mday $mon $year $hour:$min:$sec GMT\n");
+	my $ret_val = sprintf("%s, %02d %s %04d %02d:%02d:%02d GMT\n", $wday, $mday, $mon, $year, $hour, $min, $sec);
+
+	return($ret_val);
 }
 
 
