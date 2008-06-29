@@ -117,17 +117,17 @@ help link.</p>
 <br>
 
 
-<h3>What does Everyone Want?</h3>
-<p>What does everyone value?  What does everyone believe?  What is the
-gospel according to you?  There are a quickly approaching infinite set
-of individual testimonials about all such contained in books, op / ed
-pieces, blogs, comments to such, product review sites, web pages, and
-so on.  As much as you'd like to know quantitatively what the masses
-are saying in all this you probably don't have time to read, let alone
-digest and tally it all right?  So lets all work together to get it all
-canonized so we can know it concisely, quantitatively, and in
-everyone's preferred words.</p>
-<br>
+<h3>What do you believe?</h3>
+<p>Tired of fighting edit wars on Wikis?  Want to know concisely and
+quantitatively how many people believe or value what?  Have you ever
+been dissatisfied with the choices on a particular belief survey?
+Tired of trying to digest thousands of testimonials or comments to get
+an idea of what a trusted majority of people think?  Don't want to
+waste your time adding the one thousand and first testimonial or
+comment no one will ever get to?  Our goal is to make huge steps
+forward in all these directions.
+
+</p> <br>
 
 <h3>Canonized Science (concise and quantitative measures of consensus)</h3>
 <p>Are you researching an area of science with lots of competing
