@@ -278,7 +278,7 @@ currently on and the statement below is for that camp.</p>
 			<input type=hidden name=value value="<%=func::hex_encode($Request->Form('value'))%>">
 			<input type=hidden name=statement_size value="<%=$Request->Form('statement_size')%>">
 			<input type=hidden name=proposed value="<%=$Request->Form('proposed')%>">
-			<input type=hidden name=note value="<%=$Request->Form('note')%>">
+			<input type=hidden name=note value="<%=func::hex_encode($Request->Form('note'))%>">
 			<input type=hidden name=submitter value="<%=$Request->Form('submitter')%>">
 
 			<input type=submit name=submit_edit value="Edit Statement">
