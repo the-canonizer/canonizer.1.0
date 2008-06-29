@@ -73,6 +73,7 @@ if ($Request->Form('submit_edit') eq 'Edit Statement') {	# edit command from top
 		$Response->End();
 	}
 	$record->{value} = func::hex_decode($record->{value});
+	$record->{note} = func::hex_decode($record->{note});
 } elsif ($Request->Form('submit_edit')) {
 
 	$record = new_form $class ($Request);
@@ -82,6 +83,7 @@ if ($Request->Form('submit_edit') eq 'Edit Statement') {	# edit command from top
 	} else {
 		if ($Request->Form('submit_edit') eq 'Commit Statement') { # from topic preview page.
 			$record->{value} = func::hex_decode($record->{value});
+			$record->{note} = func::hex_decode($record->{note});
 		}
 		$record->save($dbh, $Session->{'cid'});
 		my $any_record = $record;
