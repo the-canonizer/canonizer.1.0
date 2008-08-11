@@ -38,17 +38,11 @@ sub make_namespace_select_str {
 	$sth->execute() || die "Failed to execute $selstmt";
 	my $rs;
 
-	my @namespaces = ();
-
-	while ($rs = $sth->fetch()) {
-		push(@namespaces, $rs->[0]);
-	}
+	my @namespaces = func::get_name_spaces($dbh);
 
 	if (length($cur_namespace) < 1) {
 		$cur_namespace = 'general';
 	}
-
-	$namespaces[0] = 'general';
 
 	my $namespace_select_str = "<select name=\"namespace\" onchange=\"javascript:change_namespace(value)\">\n";
 
