@@ -18,7 +18,7 @@ use statement;
 #		2	both long and short
 #
 
-print(STDERR 'If_Modified_Since: ', $Request->ServerVariables('HTTP_IF_MODIFIED_SINCE'), ".\n");
+# print(STDERR 'If_Modified_Since: ', $Request->ServerVariables('HTTP_IF_MODIFIED_SINCE'), ".\n");
 
 my $error_message = '';
 
