@@ -475,7 +475,11 @@ sub support_form {
 						render_str += "  <td>&nbsp;</td>\n"; // the move buttons go here.
 					}
 				}
-				render_str += "  <td align=center>Delete<br><input type=checkbox name=delete_" + idx + "></td>\n";
+				if (support_array.length == 1) {
+				    render_str += "<td>&nbsp</td>\n";
+				} else {
+				    render_str += "  <td align=center>Delete<br><input type=checkbox name=delete_" + idx + "></td>\n";
+				}
 				render_str += "</tr>\n";
 				render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.camp_num + ">\n";
 
