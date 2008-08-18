@@ -60,8 +60,16 @@ sub manage_record {
 
 	my $topic_url = 'http://' . &func::get_host() . '/topic.asp/' . $record->{'topic_num'};
 
+	my $camp_note = '';
+
 	if ($class eq 'camp') {
 		$topic_url .= ('/' . $record->{camp_num});
+		$camp_note =
+'Note: Camp records only represents camp information such as the
+camp name and parent camp.  If you want to add a camp statement, that
+is done on the statement record of a camp and can only be done from
+the camp page once this camp is created.';
+
 	} elsif ($class eq 'statement') {
 		$topic_url .= ('/' . $record->{camp_num});
 		if ($record->{statement_size}) { # specify the long to be displayed with the short.
@@ -73,6 +81,8 @@ sub manage_record {
 	<div class="main_content_container">
 
 	<p><a href="<%=$topic_url%>">Return to camp page</a></p>
+
+<%=$camp_note%>
 
 <p>This record management page shows the history of this record with
 the latest version on top.  To make a change to this <%=$class%>
