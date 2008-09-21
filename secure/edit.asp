@@ -560,12 +560,11 @@ sub display_statement_form {
      <span id="buttons">
      
 	<p>The Canonizer currently uses the Purple Wiki text parser/formatter. For a reference see
-	<a href="http://purplewiki.blueoxen.net/cgi-bin/wiki.pl?TextFormattingRules" target="_blank">
-	Purple Wiki Text Formatting Rules</a></p>
-	
+	this <a href="http://canonizer.com/topic.asp/73" target="_blank">
+	Purple Wiki Text topic</a></p>
 
-&nbsp;    
-     
+&nbsp;
+
      </span>
      </div>
 
