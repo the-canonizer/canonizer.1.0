@@ -29,10 +29,18 @@ foreach $sub (@$bar_subs)
 &$sub();
 }
 %>
-     
+
 </div>
 
 <div id="block_adverts">
+
+<%
+if ($ENV{'HTTPS'} eq 'on') {
+%>
+&nbsp;
+<%
+} else {
+%>
 
 <script type="text/javascript"><!--
 google_ad_client = "pub-6646446076038181";
@@ -44,6 +52,10 @@ google_ad_height = 600;
 <script type="text/javascript"
 src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
+
+<%
+}
+%>
 
 </div>
 
