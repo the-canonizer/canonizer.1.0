@@ -133,12 +133,21 @@ sub after_go_live_message {
 }
 
 
-#
+#######################################
 # What a mess.
 # This isn't perfect.
 # If a sub record was ever supported, count that time, even if not at that time for now.
 # and there are probably ways to spoof this by quickly delegating to lots of different people?
 #
+# also I need to figure the start and stop times 
+# of when each camp is under a parent camp based on 
+# painful analasys of start time for each camp record.
+# and analyze the inverted tree structure based on this and
+# the start and stop time of the support.
+#
+# first get the 'some_support' hash indicating how many hours I've ever supported each camp.
+# then make an inverted_camp_tree structure indicating all parent camps all camps in this topic have ever been under.
+
 sub can_object {
 	my $dbh       = $_[0];
 	my $topic_num = $_[1];
@@ -174,6 +183,7 @@ sub can_object {
 
 	if ($some_support) {
 		$selstmt = "select camp_num, parent_camp_num from camp where topic_num = $topic_num";
+
 		$sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
 		$sth->execute() || die "Failed to execute " . $selstmt;
 		$rs;
@@ -184,11 +194,26 @@ sub can_object {
 		}
 		$sth->finish();
 
+		# debug stuff:
+		# print(STDERR "inverted_camp_tree:\n");
+		# my $key;
+		# foreach $key (keys %inverted_camp_tree) {
+		# 	print(STDERR "\tcamp $key parents: (");
+		# 	my $parent_str = '';
+		# 	foreach $parent (keys %{$inverted_camp_tree{$key}}) {
+		# 		$parent_str .= "$parent, ";
+		# 	}
+		# 	chop($parent_str);
+		# 	chop($parent_str);
+		# 	print(STDERR "$parent_str)\n");
+		# }
+
 		my $supported_camp_num;
 		foreach $supported_camp_num (keys %support_time_hash) {
 			# print(STDERR "I once supported $supported_camp_num.\n");
 			if (once_was_sub_camp($supported_camp_num, $camp_num, \%inverted_camp_tree)) {
 				$support_time += $support_time_hash{$supported_camp_num};
+print("camp $supported_camp_num supported for $supporte_time.\n");
 				if ($support_time > $required_support_time) {
 					return(1);
 				}
@@ -196,12 +221,24 @@ sub can_object {
 		}
 	}
 
-	$error_message .= 'Only original submitters of a record, or someone that has supported it for more than 1 week, can object to and there by cancel it.';
+        my $manage_url = 'http://' . &func::get_host() . "/manage.asp/$topic_num/$camp_num?class=$class";
+        my $camp_url = 'http://' . &func::get_host() . "/topic.asp/$topic_num/$camp_num";
+
+	$error_message .= qq{
+<p>Only original submitters of a record, or someone that has supported it for more than 1 week, can object to and there by prevent it from going live.<p>
+<p><a href="$manage_url">Return to camp management page</a>.</p>
+<p><a href="$camp_url">Return to camp page</a>.</p>
+};
 
 	return(0);
 
 }
 
+
+##################################################
+# produces the 'some_support' hash.
+# key: camp number
+# val: number of hours supporting till go live time of proposed change.
 
 sub get_camp_support_times {
 	my $dbh                  = $_[0];
@@ -214,7 +251,6 @@ sub get_camp_support_times {
 
 	my @support_array = ();
 
-# 	my $selstmt = "select support_id, camp_num, start, end, delegate_nick_name_id from support where topic_num = $topic_num and ($nick_name_clause)";
 	my $selstmt = "select * from support where topic_num = $topic_num and ($nick_name_clause)";
 
 	my support $support;
@@ -271,14 +307,17 @@ sub once_was_sub_camp {
 	my $sup = $_[1];
 	my $inverted_camp_tree = $_[2];
 
-	print(STDERR "???? sub: $sub, sup: $sup.\n");
+	# for debug:
+	# print(STDERR "once_was_sub_camp sub: $sub, sup: $sup.\n");
 
 	if ($sub == $sup) {
 		return(1);
 	}
 	my $parent;
 	foreach $parent (keys %{$inverted_camp_tree->{$sub}}) {
-		once_was_sub_camp($parent, $sup, $inverted_camp_tree);
+		if (once_was_sub_camp($parent, $sup, $inverted_camp_tree)) {
+		   return(1);
+		}
 	}
 	return(0);
 }
