@@ -377,13 +377,16 @@ fork.</p>
 <input type=hidden name=proposed value=<%=$record->{proposed}%>>
 
 <p>Camp Name: <span class="required_field">*</span></p>
-<p>Maximum 25 characters.  Very short abbreviation used in limited places like paths.  Spaces are not recommended.</p>
+<p>Maximum 25 characters.  Very short abbreviation used in limited places like paths.</p>
 <p><input type=string name=camp_name value="<%=func::escape_double($record->{'camp_name'})%>" maxlength=25 size=25 <%=$agreement_disable_str%>></p>
 
 <hr>
 
 <p>Title: <span class="required_field">*</span></p>
-<p>Maximum 65 characters.</p>
+<p>Maximum 65 characters.  It should be obvious that this is the same as
+the name above.  They will be used interchangeably and if they are not
+similar enough it will result in confusion.  If possible (when names
+are used and so on) make it identical.</p>
 <p><input type=string name=title value="<%=func::escape_double($record->{'title'})%>" maxlength=65 size=65></p>
 
 <hr>
