@@ -195,6 +195,8 @@ sub lookup_topic_data {
 		'camp'	          => $camp,
 		'short_statement' => $short_statement,
 		'long_statement'  => $long_statement,
+		'any_short'	  => statement::any_statement_check($dbh, $topic_num, $camp_num, 0),
+		'any_long'	  => statement::any_statement_check($dbh, $topic_num, $camp_num, 1),
 		'error_message'	  => $error_message
 	};
 
@@ -363,7 +365,7 @@ if ($topic_data->{'short_statement'}) {
 
      			<%
 
-		if ($topic_data->{'short_statement'}) {
+		if ($topic_data->{'any_short'}) {
 
 			if (! $Request->Form('submit_edit')) {		# turn off in preview mode
 				%>
@@ -414,11 +416,11 @@ if ($topic_data->{'short_statement'}) {
                       
      <div class="footer_1">
      <span id="buttons">
-     
-			
+
+
 			<%
-	
-		if ($topic_data->{'long_statement'}) {
+
+		if ($topic_data->{'any_long'}) {
 
 			$html_statement_long = func::wikitext_to_html($topic_data->{'long_statement'}->{value});
 
@@ -499,7 +501,7 @@ them.</p>
 	%>
 
      </span>
-     </div>	
+     </div>
 </div>
 
 <div class="section_container">
