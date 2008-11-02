@@ -213,7 +213,6 @@ sub can_object {
 			# print(STDERR "I once supported $supported_camp_num.\n");
 			if (once_was_sub_camp($supported_camp_num, $camp_num, \%inverted_camp_tree)) {
 				$support_time += $support_time_hash{$supported_camp_num};
-print("camp $supported_camp_num supported for $supporte_time.\n");
 				if ($support_time > $required_support_time) {
 					return(1);
 				}
@@ -221,13 +220,11 @@ print("camp $supported_camp_num supported for $supporte_time.\n");
 		}
 	}
 
-        my $manage_url = 'http://' . &func::get_host() . "/manage.asp/$topic_num/$camp_num?class=$class";
-        my $camp_url = 'http://' . &func::get_host() . "/topic.asp/$topic_num/$camp_num";
+        my $manage_url = make_manage_url($record, $class);
 
 	$error_message .= qq{
 <p>Only original submitters of a record, or someone that has supported it for more than 1 week, can object to and there by prevent it from going live.<p>
-<p><a href="$manage_url">Return to camp management page</a>.</p>
-<p><a href="$camp_url">Return to camp page</a>.</p>
+<p><a href="$manage_url">Return to $class management page</a>.</p>
 };
 
 	return(0);
@@ -380,6 +377,8 @@ sub object_to_topic_page {
 
 	<div class="main_content_container">
 
+	<p>Selected Record:</p>
+
 	<%
 	$record->print_record($dbh, $history_class::proposed_color);
 	%>
@@ -404,8 +403,9 @@ sub do_object {
 	}
 
 	my $objector = int($Request->Form('submitter'));
-	if ($objector < 1) {
-		$message .= "Invalid submitter id.\n";
+	my $objector_nick_name = func::get_nick_name($dbh, $objector);
+	if ($objector == $objector_nick_name) {
+		$message .= "$objector is an invalid submitter id.<br>\n";
 	}
 
 	if (! $message) {
@@ -414,10 +414,7 @@ sub do_object {
 		# what a pain!! if ($dbh->do($selstmt, $object_reason))
 		my $sth = $dbh->prepare($selstmt);
 		if ($sth->execute($object_reason)) {
-			my $notify_msg = "Proposal objected to.\n" .
-					"Topic: $record->{'topic_num'}.\n" .
-					"Class: $class.\n";
-			func::send_email('Canonizer Objection', $notify_msg);
+			notify_of_cancel($dbh, $objector_nick_name, $record, $class, $object_reason);
 			$Response->Redirect(&make_manage_url($record, $class));
 		} else {
 			$message = "Failed to update for some reason.\n";
@@ -425,6 +422,65 @@ sub do_object {
 	}
 	return ($message . &object_form_message($record, $class));
 }
+
+
+sub notify_of_cancel {
+	my $dbh                = $_[0];
+	my $objector_nick_name = $_[1];
+	my $record             = $_[2];
+	my $class              = $_[3];
+	my $object_reason      = $_[4];
+
+	my $record_url = make_manage_url($record, $class);
+
+	my ($proposer_name, $proposer_cid) = get_nick_info($dbh, $record->{submitter});
+
+	my $notify_msg = qq{
+
+Dear $proposer_name,
+
+$objector_nick_name has objected to your proposed change listed here:
+
+$record_url
+
+This reason was given for the objection: $object_reason.
+
+Sincerely,
+
+The Canonizer
+
+};
+
+	my $subject = 'Your proposed change was canceled';
+
+	person::send_email_to_cid($dbh, 1, $subject,  $notify_msg); # send one to brent.
+	person::send_email_to_cid($dbh, $proposer_cid, $subject,  $notify_msg);
+}
+
+
+
+sub get_nick_info {
+	my $dbh = $_[0];
+	my $id = $_[1];
+
+	my $nick_name = '';
+	my $ownder_cid = 0;
+
+	my $selstmt = 'select nick_name, owner_code from nick_name where nick_name_id = ' . $id;
+
+	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair " . $selstmt;
+	$sth->execute() || die "Failed to execute " . $selstmt;
+	my $rs;
+	if ($rs = $sth->fetch()) {
+		$nick_name  = $rs->[0];
+		$owner_cid = func::canon_decode($rs->[1]);
+	}
+	$sth->finish();
+	return($nick_name, $owner_cid);
+}
+
+
+
 
 
 sub make_manage_url {
