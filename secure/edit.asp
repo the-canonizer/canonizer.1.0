@@ -254,11 +254,6 @@ most supported topics will be the most popular.</p>
 
 <p>Namespace:</p>
 
-<p>Nothing for the main default namespace.  Other name spaces are
-paths that begin with, are separated by, and end with '/'.  See the
-browse page for a list of all available name spaces that can be
-specified here.  Contact support to request a new name space.</p>
-
 <%=$namespace_select_str%>
 
 <%
