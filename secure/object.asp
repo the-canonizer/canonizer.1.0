@@ -443,7 +443,7 @@ $objector_nick_name has objected to your proposed change listed here:
 
 $record_url
 
-This reason was given for the objection: $object_reason.
+This reason was given for the objection: $object_reason
 
 Sincerely,
 
