@@ -193,6 +193,20 @@ sub display_topic_form {
 		$submit_value = 'Propose Topic Modification';
 	}
 
+	my @namespaces = func::get_name_spaces($dbh);
+	my $namespace = $record->{namespace};
+
+	my $namespace_select_str = "<select name=\"namespace\">\n";
+
+	my $cur_namespace;
+	foreach $cur_namespace (@namespaces) {
+		$namespace_select_str .= "\t<option value=\"$cur_namespace\" " . (($namespace eq $cur_namespace) ? 'selected' : '') . ">$cur_namespace</option>\n";
+	}
+
+	$namespace_select_str .= "</select>\n";
+
+
+
 %>
 
 <p>Anything about a topic can be changed at any time, by anyone.  So
@@ -245,7 +259,7 @@ paths that begin with, are separated by, and end with '/'.  See the
 browse page for a list of all available name spaces that can be
 specified here.  Contact support to request a new name space.</p>
 
-<p><input type=string name=namespace value="<%=func::escape_double($record->{namespace})%>" maxlength=65 size=65></p>
+<%=$namespace_select_str%>
 
 <%
 # AKA: Comma separated - symbolic link created for each one.
