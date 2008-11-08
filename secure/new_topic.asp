@@ -197,16 +197,19 @@ if (length($message) > 0) {
 
 <p><input type=string name=canon_topic_name
 value="<%=func::escape_double($form_state{'topic_name'})%>"
-maxlength=25 size=25 /></p>
+maxlength=25 size=28 /></p>
 
 <hr>
 
 <p>Namespace:</p>
 
-<p>Nothing for the main default namespace.  Other name spaces are
-paths that begin with, are separated by, and end with '/'.  See the
-browse page for a list of all available name spaces that can be
-specified here.  Contact support to request a new name space.</p>
+<p>Leave this blank to get the default name space.  Unless you are
+aware of what you want to enter into this field, just leaving it blank
+is probably the correct choice.  Name spaces are to separate topics
+not of interest to the general population.  They are paths that begin
+with, are separated by, and end with '/'.  See the browse page for a
+list of all available name spaces that can be specified here.  Contact
+support to request a new name space.</p>
 
 <p><input type=string name=canon_namespace
 value="<%=func::escape_double($form_state{'namespace'})%>"
@@ -233,9 +236,10 @@ maxlength=65 size=75></p>
 
 <p>URL:</p>
 
-<p>Maximum 65 characters.  The /www/ name space is for canonized POV
-information about web sites.  This URL field is a place to formally
-specify such a link and is not required.</p>
+<p>Maximum 65 characters.  This field is normally not used unless
+there is a specific web page or topic this particular topic is about.
+The /www/ name space is for canonized POV information about specific
+web sites.</p>
 
 <p><input type=string name=canon_url
 value="<%=func::escape_double($form_state{'url'})%>" maxlength=256
