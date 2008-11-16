@@ -507,8 +507,8 @@ them.</p>
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Topic</span>
-    
+     <span id="title">Current Topic Record:</span>
+
 </div>
  <div class="content_1">
 <p>Topic Name: <%=$topic_data->{'topic'}->{topic_name}%></p>
@@ -538,7 +538,7 @@ them.</p>
 <div class="header_1">
 
 
-     <span id="title">Camp</span>
+     <span id="title">Current Camp Record:</span>
 
 
 </div>
