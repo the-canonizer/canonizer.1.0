@@ -829,6 +829,17 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 }
 
 
+.main_content_container .forum_table b
+{
+	font-weight: bold;
+}
+
+.main_content_container .forum_table i
+{
+	font-style: italic
+}
+
+
 /* ID TABLE ----------------------------------------------------------- */
 
 .main_content_container .separator
