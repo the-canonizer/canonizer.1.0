@@ -262,6 +262,21 @@ sub preview_post_page {
 }
 
 
+sub get_to_str {
+	my $to_str = '';
+	my %nick_hash = ();
+	$tree->get_support_nicks($dbh, \%nick_hash);
+	foreach my $nick_name (keys %nick_hash) {
+		my $nick_name_id = $nick_hash{$nick_name};
+		$to_str .= "<a href=\"/support_list.asp?nick_name_id=$nick_name_id\">$nick_name</a>, ";
+	}
+	chop($to_str); # remove trailing , and space.
+	chop($to_str);
+
+	return($to_str);
+}
+
+
 sub send_email_page {
 
 	my %support_hash = ();
@@ -281,30 +296,43 @@ sub send_email_page {
 
 	if ($sender_nick_id and length($sender_nick_name) > 0) {
 
-		$thread_num = save_post($dbh, $subject, $message, $topic_num, $camp_num, $thread_num, $sender_nick_id);
+		my ($thread_num, $post_num) = save_post($dbh, $subject, $message, $topic_num, $camp_num, $thread_num, $sender_nick_id);
 
 		$message = func::wikitext_to_text($message);
 		# $message = func::wikitext_to_html($message);  # you've somehow got to set the mime type if you want this.
 
-		$message = $sender_nick_name . " has sent this message " .
-			"to all the supporters of the $tree->{camp_name} camp on the topic: $topic_name.\n\n" .
-			"Rather than reply to this e-mail (which only goes to canonizer\@canonizer.com) " .
-			"please post all replies to the camp forum thread page this message was sent from here:\n" .
-			"http://" . func::get_host() . "/thread.asp/$topic_num/$camp_num/$thread_num" .
-			"\n\n\n----------------------------------" .
-			"\n\n" .
-			$message .
-			"\n\n----------------------------------" .
-			"\n\n" .
-			"Please report any abuse to support\@canonizer.com.\n";
+		my $message_url = "http://" . func::get_host() . "/thread.asp/$topic_num/$camp_num/$thread_num/$post_num#$post_num";
+
+		$message = qq{
+
+$sender_nick_name has sent this message to all the supporters of the
+$tree->{camp_name} camp on the topic: $topic_name.
+
+Rather than reply to this e-mail (which only goes to canonizer\@canonizer.com)
+please post all replies to the camp forum thread page this message was sent from here:
+
+$message_url
+
+----------------------------------
+
+$message
+
+----------------------------------
+
+Please report any abuse to support\@canonizer.com.
+};
 
 		person::send_email_to_hash($dbh, \%support_hash, $subject, $message);
 		# person::send_email_to_cid($dbh, 1, $subject, $message); # for debugging.
 
-		%>
-		<p>Mail successfully sent to supporters of this camp.
+		my $to_str = get_to_str($dbh);
 
-		<p><a href="/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp</a></p>
+		%>
+		<p>Mail successfully sent to the folowing direct supporters of this camp: <%=$to_str%>.</p>
+
+		<p><a href="<%=$message_url%>">See your new message in the forum thread page</a></p>
+
+		<p><a href="/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp page</a></p>
 		<%
 	} else {
 		%>
@@ -355,7 +383,7 @@ sub save_post {
 			<%
 			$Response->End();
 	}
-	return($thread_num);
+	return($thread_num, $post_num);
 }
 
 
