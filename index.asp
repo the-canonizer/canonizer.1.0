@@ -103,12 +103,20 @@ function change_namespace(namespace) {
 </div>
 
 <div class="content_1">
-<h3>Description</h3>
-<p>For a more complete description of the Canonizer see the "What is
-the Canonizer" link in the Navigation section of the side bar.  For
-more information on how to canonize your point of view (POV) see the
-help link.</p>
-<br>
+
+<h3>Getting Started</h3>
+<p>To get started, just scroll down and find a topic you are passionat
+about.  It is like a survey, so select that camp you agree with, go to
+the camp page, and join the camp.  If what you believe isn't yet
+there, start a new camp so others that agree with you can join and
+help further develop and promote it.  For a more complete description
+of the Canonizer see the "What is the Canonizer" link in the
+Navigation section of the side bar.  For more information on how to
+canonize your point of view (POV) see the help link. For information
+on the camp structure, its purpose, and where to place your camp
+within the camp structure see <a
+href="http://canonizer.com/topic.asp/89/2">this camp</a>.
+</p><br>
 
 
 <h3>What do you believe?</h3>
@@ -122,28 +130,39 @@ comment no one will ever get to?  Our goal is to make huge steps
 forward in all these directions.
 
 </p> <br>
+<h3>Personal Canonized Values</h3> <p>To find out what someone's
+beliefs and values are, click on their ID to get to their personal
+canonized values page.  These personal pages have a list of all
+supported camps.  When you meet a new person, you can simply and
+easily share all you canonized values - compareing and contrasting
+them.  Using the 'as of' box on the side bar, you can find what
+people's canonized values were at any time in the past.  A powerful
+way to easily testify of what you believe in and hope for, in a
+colaberative way with all who share you beliefs.
+</p> <br>
 
 <h3>Canonized Science (concise and quantitative measures of consensus)</h3>
 <p>Are you researching an area of science with lots of competing
 theories, yet still no consensus on what theory will turn out right?
-Do you wonder just how accurate certain claims of consensus on such
-topics as global warming are?  Would you like to have some kind of
-quantitative measure to help know such?  Then get it canonized as has
-started with this very controversial scientific topic on the <a
-href="http://test.canonizer.com/topic.asp/23">Hard Problem of
-Consciousness</a>.</p>
-<br>
+Do you wonder just how accurate certain claims of 'scientific
+consensus' on such topics as global warming are?  Would you like to
+have some kind of quantitative measure to help know such?  Then get it
+canonized as has started with this very controversial scientific topic
+on the <a href="http://test.canonizer.com/topic.asp/23">Hard Problem
+of Consciousness</a>.
+</p><br>
 
-<h3>Online Petition System</h3>
+<h3>Way Better than a Traditional Petition</h3>
 <p>Do you have a grass roots effort trying to collect signatures on a
 petition?  Would an online version, with a way to sign camps in a
 reputable way help?  Do you want your effort to go viral?  Your
 petition in a canonized camp statement is a very easy and free way to
-do all this.</p>
-<br>
-
-
-
+do all this.  And of course, unlike traditional petitions, which can't
+change once the first person has signed, statements here continueally
+grow, progress, and adapt to the times.  Anyone can propose new
+changes and any camp member can object to any changes - preventing
+them from going live.
+<p><br>
 
 <h3>Canonized Feedback on Your Web Pages</h3>
 <p>Do you have thousands of useless comments for feedback on your web
@@ -153,8 +172,8 @@ quantitatively measured, or canonized on your web pages for free?  You
 can now create a topic in the canonizer for such, and then add a
 simple block of HTML to your web page to show the information on your
 page as is done here: <a
-href="http://home.comcast.net/~brent.allsop">http://home.comcast.net/~brent.allsop</a>.</p>
-<br>
+href="http://home.comcast.net/~brent.allsop">http://home.comcast.net/~brent.allsop</a>.
+</p><br>
 
 <h3>Canonized Reputations Building</h3> <p>Do you live in Nigeria, yet
 want to do business online?  Do you have a professional service or
