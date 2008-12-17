@@ -116,7 +116,7 @@ sub display_thread {
 	%>
 	<div class="main_content_container">
 
-	<p><a href="/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to <%=$camp_num==1 ? 'agreement' : 'camp'%> camp page</a></p>
+	<p><a href="/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to <%=$camp_num==1 ? 'agreement' : 'camp'%> page</a></p>
 
 	<p><a href="/forum.asp/<%=$topic_num%>/<%=$camp_num%>">Return to <%=$camp_num==1 ? 'topic' : 'camp'%> forum</a></p>
 
