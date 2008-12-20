@@ -104,6 +104,16 @@ function change_namespace(namespace) {
 
 <div class="content_1">
 
+<table>
+<tr><td><h3>Vote for canonizer.com at Advanta's ideablob</h3></td>
+<td>&nbsp</td>
+<td>
+<a href="http://ideablob.com/ideas/4087-Point-Of-View-Wiki">
+<img width=100 height=75 src="http://ideablob.com/ideas/4087-Point-Of-View-Wiki;button"
+target="_blank" alt="My Idea" /></a>
+</td></tr></table>
+<br>
+
 <h3>Getting Started</h3>
 <p>To get started, just scroll down and find a topic you are passionat
 about.  It is like a survey, so select that camp you agree with, go to
