@@ -7,7 +7,7 @@ sub display_page {
 	my $content_subs = $_[3];
 	my $tab_sub	 = $_[4];
 
-	my $copyright_info = 'Copyright Canonizer LLC 2006 - 2008';
+	my $copyright_info = 'Copyright Canonizer LLC 2006 - 2009';
 	my $support_email = 'support@canonizer.com'
 
 %>
