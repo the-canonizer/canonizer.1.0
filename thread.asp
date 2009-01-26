@@ -120,7 +120,7 @@ sub display_thread {
 
 	<p><a href="/forum.asp/<%=$topic_num%>/<%=$camp_num%>">Return to <%=$camp_num==1 ? 'topic' : 'camp'%> forum</a></p>
 
-	<p><a href="/secure/email_camp.asp/<%=$topic_num%>/<%=$camp_num%>/<%=$thread_num%>">New post to thread</a></p>
+	<p><a href="/secure/email_camp.asp/<%=$topic_num%>/<%=$camp_num%>/<%=$thread_num%>">Post new reply to thread</a></p>
 	<%
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
@@ -181,7 +181,7 @@ sub display_thread {
 
 		<p><a href="/forum.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp forum</a></p>
 
-		<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&camp_num=<%=$camp_num%>&thread_num=<%=$thread_num%>">New post to thread</a></p>
+		<p><a href="/secure/email_camp.asp?topic_num=<%=$topic_num%>&camp_num=<%=$camp_num%>&thread_num=<%=$thread_num%>">Post new reply to thread</a></p>
 
 		<%
 
