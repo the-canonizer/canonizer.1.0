@@ -168,7 +168,7 @@ such quantitatively is likely critical to any scientific progress in
 such fields.<p>
 
 <p>Canonizer.com has been specifically developed to be a social tool
-for experts to collaboratively developing concise descriptions of all
+for experts to collaboratively develop concise descriptions of all
 accepted theories, and quantitative measures of scientific consensus
 for each.  Scientific Consensus canonizers can be developed using
 topics like this one on <a href =
