@@ -157,7 +157,7 @@ colaberative way with all who share you beliefs.
 
 
 <h3>Canonized Science (concise and quantitative measures of
-consensus)</h3>
+scientific consensus)</h3>
 <p>Are you researching an area of science with lots of competing
 theories, like 18000+ publications documenting such, apparently no
 consensus on anything whatsoever?  We bet there is more consensus than
