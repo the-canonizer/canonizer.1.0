@@ -167,7 +167,7 @@ most experts agree on its just that nobody knows this.  And knowing
 such quantitatively is likely critical to any scientific progress in
 such fields.<p>
 
-<p>Canonizer.com has been specifically developed to be a social tool
+<p>Canonizer.com is beening specifically developed to be a social tool
 for experts to collaboratively develop concise descriptions of all
 accepted theories, and quantitative measures of scientific consensus
 for each.  Scientific Consensus canonizers can be developed using
