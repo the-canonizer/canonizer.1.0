@@ -156,28 +156,25 @@ colaberative way with all who share you beliefs.
 </p> <br>
 
 
-<h3>Canonized Science (concise and quantitative measures of
-scientific consensus)</h3>
-<p>Are you researching an area of science with lots of competing
-theories, like 18000+ publications documenting such, apparently no
-consensus on anything whatsoever?  We bet there is more consensus than
-you think, if someone would simply make some kind of effort to just
-measure such.  In fact, there could even be one very good theory that
-most experts agree on its just that nobody knows this.  And knowing
-such quantitatively is likely critical to any scientific progress in
-such fields.<p>
+<h3>Canonized Science<br>
+Concise and quantitative measures of scientific consensus</h3>
 
-<p>Canonizer.com is beening specifically developed to be a social tool
-for experts to collaboratively develop concise descriptions of all
-accepted theories, and quantitative measures of scientific consensus
-for each.  Scientific Consensus canonizers can be developed using
-topics like this one on <a href =
-"http://canonizer.com/topic.asp/81">Mind Experts</a>.  An example
-topic that is already showing some tentative evidence that there could
-be significant scientific consensus after all for a very good theory
-is this topic surveying <a
-href="http://test.canonizer.com/topic.asp/88">Theories of
-Conscoiusness</a>.</p><br>
+<p>Lots of people figure there is a 'scientific consensus' that man is
+causing global warming.  Yet <a href =
+"http://www.oism.org/pproject">Petition Projects like this one</a>
+cast doubt on such claims.  Most people assume that within the study
+of the mind, nobody agrees on much of anything.  The almost 20,000 and
+growing publications in <a href =
+"http://consc.net/mindpapers">Chalmers' MindPapers Bibliography</a>
+surely has something to do with this.  But has anyone ever attempted
+to measure how much agreement there is in any of all that?  As <a href
+= "http://canonizer.com/topic.asp/88/6">this camp</a> is already
+showing such assumptions that there is no consensus are clearly wrong.
+The many people so ignorant of what the <a href =
+"http://canonizer.com/topic.asp/81">experts</a> know and agree on in
+such fields is clearly holding those fields of study, and mankind,
+back.</p><br>
+
 
 <h3>Way Better than a Traditional Petition</h3>
 <p>Do you have a grass roots effort trying to collect signatures on a
