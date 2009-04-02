@@ -152,7 +152,7 @@ easily share all you canonized values - compareing and contrasting
 them.  Using the 'as of' box on the side bar, you can find what
 people's canonized values were at any time in the past.  A powerful
 way to easily testify of what you believe in and hope for, in a
-colaberative way with all who share you beliefs.
+collaborative way with all who share you beliefs.
 </p> <br>
 
 
