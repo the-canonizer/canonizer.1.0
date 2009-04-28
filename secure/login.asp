@@ -85,6 +85,9 @@ sub login_form {
 		<p>Sometimes simply going back to the main page and trying again resolves the problem.</p>
 
 		<p>You must have a browser that can store and return cookies in order to login and contribute to the Canonizer.</p>
+
+		<p>Please contact us at support@canonizer.com if this is a problem.  We would love to help work through whatever the problem might be.</p>
+
 		<a href="http://<%=func::get_host()%>/">return to canonizer</a>
 		<br>
 		<br>
@@ -112,7 +115,6 @@ sub login_form {
 	<%
 
 	}
-
 }
 
 
