@@ -148,7 +148,7 @@ forward in all these directions.
 beliefs and values are, click on their ID to get to their personal
 canonized values page.  These personal pages have a list of all
 supported camps.  When you meet a new person, you can simply and
-easily share all you canonized values - comparing and contrasting
+easily share all your canonized values - comparing and contrasting
 them.  Using the 'as of' box on the side bar, you can find what
 people's canonized values were at any time in the past.  A powerful
 way to easily testify of what you believe in and hope for, in a
