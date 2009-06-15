@@ -104,18 +104,6 @@ function change_namespace(namespace) {
 
 <div class="content_1">
 
-<table>
-<tr><td><h3>Vote for canonizer.com at Advanta's ideablob</h3>
-
-If we win $10K, we could contract some professional documentation services and do more promotion.
-
-</td>
-<td>&nbsp</td>
-<td>
-<a href="http://ideablob.com/ideas/4087-Point-Of-View-Wiki">
-<img width=100 height=75 src="http://ideablob.com/ideas/4087-Point-Of-View-Wiki;button"
-target="_blank" alt="My Idea" /></a>
-</td></tr></table>
 <br>
 
 <h3>Getting Started</h3>
