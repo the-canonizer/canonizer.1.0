@@ -590,7 +590,7 @@ sub support_form {
 sub make_js_support_object_str {
 	my $support_order_idx = $_[0];
 	my camp $camp         = $_[1];
-	my $header	      =  $_[2];
+	my $header	      = $_[2];
 	my $replacement_str   = $_[3];
 
 	my $ret_str = '';
