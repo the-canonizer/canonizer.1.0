@@ -455,16 +455,15 @@ if ($topic_data->{'short_statement'}) {
      <span id="title">Support Tree for "<%=$topic_data->{'camp'}->{camp_name}%>" Camp</span>
 
 </div>
-	
+
   <div class="content_1">
 
 	<p>Total Support for This Camp (including sub-camps): <%=$score%></p>
-	
+
 	<%
 	my %nick_names = func::get_nick_name_hash($Session->{'cid'}, $dbh);
 	$Response->Write($topic_data->{'camp'}->display_support_tree($topic_num, $camp_num, \%nick_names));
 	%>
-
 
 
 </div>
@@ -472,8 +471,6 @@ if ($topic_data->{'short_statement'}) {
 
      <div class="footer_1">
      <span id="buttons">
-     
-
 
      	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
