@@ -508,8 +508,8 @@ them.</p>
 
 </div>
  <div class="content_1">
-<p>Topic Name: <%=$topic_data->{'topic'}->{topic_name}%></p>
-<p>Name Space: <%=$topic_data->{'topic'}->{namespace}%></p>
+<p>Topic Name: <b><%=$topic_data->{'topic'}->{topic_name}%></b></p>
+<p>Name Space: <b><%=$topic_data->{'topic'}->{namespace}%></b></p>
 
     </div>
 
@@ -534,21 +534,24 @@ them.</p>
 <div class="section_container">
 <div class="header_1">
 
-
      <span id="title">Current Camp Record:</span>
-
 
 </div>
 
 <div class="content_1">
-<p>Camp Name: <%=$topic_data->{'camp'}->{camp_name}%> </p>
-<p>Title: <%=$topic_data->{'camp'}->{title}%></p>
-<p>Key Words: <%=$topic_data->{'camp'}->{key_words}%></p>
-<p>URL: <%=$topic_data->{'camp'}->{url}%></p>
+<p>Camp Name: <b><%= $topic_data->{'camp'}->{camp_name} %></b></p>
+<p>Title: <b><%= $topic_data->{'camp'}->{title} %></b></p>
+<p>Key Words: <b><%= $topic_data->{'camp'}->{key_words} %></b></p>
+<p>Related URL: <b><%= $topic_data->{'camp'}->{url} %></b></p>
+
+<p>Related Nick Name: <b><%= $topic_data->{'camp'}->{nick_name_id}                                  ?
+				func::get_nick_name($dbh, $topic_data->{'camp'}->{nick_name_id}, 1) :
+				''                                                                    %></b>
+
 	<%
 	if ($topic_data->{'camp'}->{parent_camp_num}) {
 		%>
-		<p>Parent Camp: <%=$topic_data->{'camp'}->{parent}->{camp_name}%></p>
+		<p>Parent Camp: <b><%=$topic_data->{'camp'}->{parent}->{camp_name}%></b></p>
 		<%
 	}
 	%>
@@ -556,7 +559,7 @@ them.</p>
 
      <div class="footer_1">
      <span id="buttons">
-     
+
 
 	<%
 	if (! $Request->Form('submit_edit')) {		# turn off in preview mode
@@ -564,13 +567,12 @@ them.</p>
 		<a href="http://<%=func::get_host()%>/manage.asp/<%=$topic_num%>/<%=$camp_num%>?class=camp">Manage/Edit This Camp</a>
 		<%
 	}
-	%>     
-     
+	%>
+
      </span>
      </div>
 
 </div>
-
 
 
 </div>
