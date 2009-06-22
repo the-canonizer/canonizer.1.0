@@ -396,17 +396,28 @@ are used and so on) make it identical.</p>
 <p><input type=string name=key_words value="<%=func::escape_double($record->{'key_words'})%>" maxlength=65 size=65></p>
 
 <hr>
-<p>URL:</p>
+<p>Related URL:</p>
 
-<p>Maximum 65 characters.  The /www/ name space is for canonized POV
-information about web sites.  This URL field is a place to formally
-specify such a link and is not required.  Normally, only the agreement
-statement of a topic is used to link an entire canoninzed reputation
-topic to any particular web page</p>
+<p>Maximum 65 characters.  This field is normally not used.  The /www/
+name space is for canonized POV information about web sites.  This URL
+field is a place to formally specify such a link and is not required.
+Normally, only the agreement statement of a topic is used to link an
+entire canoninzed reputation topic to any particular web page</p>
 
 <p><input type=string name=canon_url
-value="<%=func::escape_double($record->{'url'})%>" maxlength=65
+value="<%= func::escape_double($record->{url}) %>" maxlength=65
 size=65></p>
+
+<hr>
+<p>Related Nick Name:</p>
+
+<p>This field is normally not used.  It is for relating a nick
+name to a camp.  You can find the nick name id value in the URLs
+pointing to the nick name info page.</p>
+
+<p><input type=string name=nick_name_id
+value="<%= $record->{nick_name_id} %>" maxlength=4
+size=4></p>
 
 <%
 if ($camp_tree) { # if not then it is the agreement camp (no parent)
