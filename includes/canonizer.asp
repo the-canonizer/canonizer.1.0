@@ -44,7 +44,7 @@ function change_canonizer(new_canonizer) {
 
 	<h1>Canonizer</h1>
 
-	<p>Canonizer:</p>
+	<p>Canonizer algrorithm:</p>
 	<p><select class=bar name = canonizer onchange = javascript:change_canonizer(value)>
 
 	<%
