@@ -85,7 +85,7 @@ sub list_cid_support {
 
 	my $rs;
 	my $selstmt = "select * from person where cid = $list_cid";
-	my $sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
+	my $sth = $dbh->prepare($selstmt) or die "Failed to prepair $selstmt.\n";
 	$sth->execute() or die "Failed to execute $selstmt.\n";
 
 	if ($rs = $sth->fetchrow_hashref()) {
@@ -122,7 +122,7 @@ sub list_cid_support {
 
 		%>
 		<table>
-		<tr><td>Canonizer User: </td><td><%=$name_line%></td></tr>
+		<tr><td>Canonizer User: </td><td class="simple_bold"><%=$name_line%></td></tr>
 		<%
 
 		display_line($rs, $private_flags, 'email');
@@ -201,12 +201,46 @@ sub display_line {
 	my $private_flags = $_[1];
 	my $line_value    = $_[2];
 
+	my $print_value = $rs->{$line_value};
+	if ($line_value eq 'email') {
+		$print_value =~ s|\@| at |g;
+	}
+
 	if ((length($rs->{$line_value}) > 0) and ($private_flags !~ m|$line_value|)) {
 		%>
-		<tr><td><%=$line_value%>: </td><td><%=$rs->{$line_value}%></td></tr>
+		<tr><td><%= $line_value %>: </td><td class="simple_bold"><%= $print_value %></td></tr>
 		<%
 	}
 }
+
+
+sub display_mind_expert {
+	my $as_of_clause = $_[0];
+
+	my $topic_num = 81; # mind experts topic number;
+
+	my $selstmt = qq{
+select c.camp_num from camp c,
+       (select zc.camp_num, max(zc.go_live_time) as camp_max_glt from camp zc
+       	       where zc.topic_num=$topic_num and zc.nick_name_id=$nick_name_id and zc.objector is null $as_of_clause group by camp_num) z
+where c.topic_num=$topic_num and c.nick_name_id=$nick_name_id and c.go_live_time=z.camp_max_glt;
+};
+
+	my $sth = $dbh->prepare($selstmt) or die "Failed to prepair $selstmt.\n";
+	$sth->execute() or die "Failed to execute $selstmt.\n";
+
+	if ($rs = $sth->fetchrow_hashref()) {
+		my $camp_num = $rs->{'camp_num'};
+		%>
+		<li>This nick name is being ranked as a
+		<a href="http://<%=func::get_host()%>/topic.asp/<%= $topic_num %>/<%= $camp_num %>">
+		Mind Expert
+		</a> which is used to measure <a href="http://canonizer.com/topic.asp/53/11">
+		scientific consensus</a>.</li><br>
+		<%
+	}
+}
+
 
 sub list_nick_support {
 
@@ -235,7 +269,16 @@ sub list_nick_support {
 		<%
 	}
 	%>
-	<li>Nick name <%=$nick_name%> is supporting:</li>
+	<li>Nick name <b class="simple_bold"><%=$nick_name%></b>:</li>
+
+	<ul>
+		<%
+		display_mind_expert($as_of_clause);
+		%>
+
+		<li class="simple_bold">List of supported camps:</li>
+	</ul>
+
 	<%
 
 ###################################################################
@@ -273,8 +316,8 @@ select u.topic_num, u.camp_num, u.title, p.support_order, p.delegate_nick_name_i
 
 		(select t.topic_num, t.topic_name, t.namespace, t.go_live_time from topic t,
 			(select ts.topic_num, max(ts.go_live_time) as topic_max_glt from topic ts
-				where ts.namespace='$sel_namespace' and ts.objector is null $as_of_clause group by ts.topic_num) tz
-					where t.namespace='$sel_namespace' and t.topic_num = tz.topic_num and t.go_live_time = tz.topic_max_glt) uz
+				where ts.namespace=? and ts.objector is null $as_of_clause group by ts.topic_num) tz
+					where t.namespace=? and t.topic_num = tz.topic_num and t.go_live_time = tz.topic_max_glt) uz
 
 		where s.topic_num = cz.topic_num and s.camp_num=cz.camp_num and s.go_live_time = cz.camp_max_glt and s.topic_num=uz.topic_num) u
 
@@ -282,10 +325,8 @@ where u.topic_num = p.topic_num and ((u.camp_num = p.camp_num) or (u.camp_num = 
 (p.start < $as_of_time) and ((p.end = 0) or (p.end > $as_of_time))
 };
 
-print(STDERR "selstmt: $selstmt.\n");
-
 	$sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
-	$sth->execute() or die "Failed to execute $selstmt.\n";
+	$sth->execute($sel_namespace, $sel_namespace) or die "Failed to execute $selstmt.\n";
 	my %support_struct = ();
 	my $delegate_hash  = 0;
 	my $rs;
