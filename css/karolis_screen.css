@@ -41,6 +41,12 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	width: 12em;
 }
 
+
+.simple_bold
+{
+	font-weight: bold;
+}
+
 .error_message
 {
 	font-size: 120%;
