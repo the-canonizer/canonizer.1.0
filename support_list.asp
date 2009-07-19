@@ -4,6 +4,8 @@
 # main #
 ########
 
+use topic;
+
 
 my $nick_name_id = 0;
 my $list_cid = 0;
@@ -20,6 +22,12 @@ if ($Request->Form('nick_name_id')) {
 	$anonymous_nick = 0;
 }
 
+my $namespace = '';
+if ($Request->Form('namespace')) {
+	$namespace = $Request->Form('namespace');
+} elsif ($Request->QueryString('namespace')) {
+	$namespace = $Request->QueryString('namespace');
+}
 
 my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
@@ -110,6 +118,8 @@ sub list_cid_support {
 			$name_line = 'Name is private';
 		}
 
+		my $namespace_select_str = func::make_namespace_select_str($dbh, $namespace);
+
 		%>
 		<table>
 		<tr><td>Canonizer User: </td><td><%=$name_line%></td></tr>
@@ -126,6 +136,26 @@ sub list_cid_support {
 
 		%>
 		</table>
+
+		<script>
+		function change_namespace(namespace) {
+			if (namespace == 'general') {
+				namespace = '';
+			}
+			window.document.name_space_form.submit();
+		}
+		</script>
+
+		<br>
+
+		<form name="name_space_form" id="name_space_form">
+		Namespace: <%= $namespace_select_str %>
+		<input type=hidden name=nick_name_id value="<%= $nick_name_id %>">
+		<input type=hidden name=list_cid value="<%= $list_cid %>">
+		<input type=hidden name=anonymous_nick value="<%= $anonymous_nick %>">
+		</form>
+
+		<br>
 		<br>
 		<%
 
@@ -183,6 +213,11 @@ sub list_nick_support {
 	my $as_of_mode = $Session->{'as_of_mode'};
 	my $as_of_date = $Session->{'as_of_date'};
 
+	my $sel_namespace = $namespace;
+	if ($sel_namespace eq 'general') {
+	   $sel_namespace = '';
+	}
+
 	my $as_of_time = time;
 	my $as_of_clause = '';
 	if ($as_of_mode eq 'review') {
@@ -203,27 +238,51 @@ sub list_nick_support {
 	<li>Nick name <%=$nick_name%> is supporting:</li>
 	<%
 
+###################################################################
 # test version:
+#
 # select u.topic_num, u.camp_num, u.title, p.support_order, p.delegate_nick_name_id from support p, 
 # 
 # (select s.title, s.topic_num, s.camp_num from camp s,
-# (select topic_num, camp_num, max(go_live_time) as max_glt from camp where objector is null and go_live_time < 1193934040 group by topic_num, camp_num) t
-# where s.topic_num = t.topic_num and s.camp_num=t.camp_num and s.go_live_time = t.max_glt) u
+# 	(select topic_num, camp_num, max(go_live_time) as camp_max_glt from camp
+# 		where objector is null and go_live_time < 1222045100 group by topic_num, camp_num) cz,
+# 
+# 		(select t.topic_num, t.topic_name, t.namespace, t.go_live_time from topic t,
+# 			(select ts.topic_num, max(ts.go_live_time) as topic_max_glt from topic ts
+# 				where ts.namespace='/personal_attributes/' and ts.objector is null and ts.go_live_time < 1222045100 group by ts.topic_num) tz
+# 					where t.namespace='/personal_attributes/' and t.topic_num = tz.topic_num and t.go_live_time = tz.topic_max_glt) uz
+# 
+# 		where s.topic_num = cz.topic_num and s.camp_num=cz.camp_num and s.go_live_time = cz.camp_max_glt and s.topic_num=uz.topic_num) u
 # 
 # where u.topic_num = p.topic_num and ((u.camp_num = p.camp_num) or (u.camp_num = 1)) and p.nick_name_id = 1 and
-# (p.start < 1193934040) and ((p.end = 0) or (p.end > 1193934040)) 
+# (p.start < 1222045100) and ((p.end = 0) or (p.end > 1222045100))
+# 
+# Thu Nov 1 16:20:40 2007:   1193934040
+# Mon Sep 22 00:58:20 2008:  1222045100	right before mind experts created
+# Sun Jul 19 19:06:33 2009:  1248030393
+#
+###################################################################
 
 
-	my $selstmt = <<EOF;
+	my $selstmt = qq{
 select u.topic_num, u.camp_num, u.title, p.support_order, p.delegate_nick_name_id from support p, 
 
 (select s.title, s.topic_num, s.camp_num from camp s,
-(select topic_num, camp_num, max(go_live_time) as max_glt from camp where objector is null $as_of_clause group by topic_num, camp_num) t
-where s.topic_num = t.topic_num and s.camp_num=t.camp_num and s.go_live_time = t.max_glt) u
+	(select topic_num, camp_num, max(go_live_time) as camp_max_glt from camp
+		where objector is null $as_of_clause group by topic_num, camp_num) cz,
+
+		(select t.topic_num, t.topic_name, t.namespace, t.go_live_time from topic t,
+			(select ts.topic_num, max(ts.go_live_time) as topic_max_glt from topic ts
+				where ts.namespace='$sel_namespace' and ts.objector is null $as_of_clause group by ts.topic_num) tz
+					where t.namespace='$sel_namespace' and t.topic_num = tz.topic_num and t.go_live_time = tz.topic_max_glt) uz
+
+		where s.topic_num = cz.topic_num and s.camp_num=cz.camp_num and s.go_live_time = cz.camp_max_glt and s.topic_num=uz.topic_num) u
 
 where u.topic_num = p.topic_num and ((u.camp_num = p.camp_num) or (u.camp_num = 1)) and p.nick_name_id = $nick_name_id and
 (p.start < $as_of_time) and ((p.end = 0) or (p.end > $as_of_time))
-EOF
+};
+
+print(STDERR "selstmt: $selstmt.\n");
 
 	$sth = $dbh->prepare($selstmt) or die "Failed to preparair $selstmt.\n";
 	$sth->execute() or die "Failed to execute $selstmt.\n";

@@ -28,35 +28,6 @@ my $header = '<table><tr><td class="topic">Canonizer Main Page</td><td>&nbsp &nb
 # start subs #
 ##############
 
-sub make_namespace_select_str {
-	my $dbh           = $_[0];
-	my $cur_namespace = $_[1];
-
-	my $selstmt = 'select namespace from topic group by namespace order by namespace';
-
-	my $sth = $dbh->prepare($selstmt) || die "Failed to prepair $selstmt";
-	$sth->execute() || die "Failed to execute $selstmt";
-	my $rs;
-
-	my @namespaces = func::get_name_spaces($dbh);
-
-	if (length($cur_namespace) < 1) {
-		$cur_namespace = 'general';
-	}
-
-	my $namespace_select_str = "<select name=\"namespace\" onchange=\"javascript:change_namespace(value)\">\n";
-
-	my $namespace;
-	foreach $namespace (@namespaces) {
-		$namespace_select_str .= "\t<option value=\"$namespace\" " . (($namespace eq $cur_namespace) ? 'selected' : '') . ">$namespace</option>\n";
-	}
-
-	$namespace_select_str .= "</select>\n";
-
-	return($namespace_select_str);
-}
-
-
 sub canonized_list {
 
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
@@ -72,7 +43,7 @@ sub canonized_list {
 		$as_of_clause = 'and go_live_time < ' . time;
 	}
 
-	my $namespace_select_str = make_namespace_select_str($dbh, $namespace);
+	my $namespace_select_str = func::make_namespace_select_str($dbh, $namespace);
 
 	my $selstmt = "select topic_num, topic_name from topic where namespace = ? and objector is null $as_of_clause and go_live_time in (select max(go_live_time) from topic where objector is null $as_of_clause group by topic_num)";
 
