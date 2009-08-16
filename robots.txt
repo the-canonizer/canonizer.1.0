@@ -12,3 +12,4 @@ Disallow: /support_list.asp
 Disallow: /includes/
 Disallow: /images/
 Disallow: /secure/
+Disallow: /open_social/
