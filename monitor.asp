@@ -6,7 +6,7 @@ my $browser = LWP::UserAgent->new;
 
 my $only_x = 0;
 
-
+$Response->{Buffer} = 0;
 
 my @entries = (
 
