@@ -92,7 +92,7 @@ my $subject = '';
 
 my $subject_line = '';
 if ($Request->Form('canon_subject')) {
-	$subject = $Request->Form('canon_subject');
+	$subject = func::hex_decode($Request->Form('canon_subject'));
 	$subject_line = '<tr><td class="label">' . $topic_camp . ' Forum Thread:</td>' .
 			'<td class="camp">' . $subject    . "</td></tr>\n";
 } elsif ($thread_num) {
@@ -242,7 +242,7 @@ sub preview_post_page {
 	<h1><b>Preview Post</b></h1>
 
 	<form method=post>
-		<input type=hidden name=canon_subject value="<%=$subject%>">
+		<input type=hidden name=canon_subject value="<%=func::hex_encode($subject)%>">
 		<input type=hidden name=canon_sender  value="<%=$sender_nick_id%>,<%=$sender_nick_name%>">
 		<input type=hidden name=canon_message value="<%=func::hex_encode($message)%>">
 		<input type=submit name=edit_post value="Edit post">
