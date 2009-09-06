@@ -10,7 +10,7 @@ $Response->{Buffer} = 0;
 
 my @entries = (
 
-{'X'   => 0,
+{'X'   => 1,
  'url' => 'http://en.wikipedia.org/wiki/Qualia#Proponents_of_qualia',
  'str' => q{<p><a name="Proponents_of_qualia" id="Proponents_of_qualia"></a></p>
 <h2><span class="editsection">[<a href="/w/index.php?title=Qualia&amp;action=edit&amp;section=16" title="Edit section: Proponents of qualia">edit</a>]</span> <span class="mw-headline">Proponents of qualia</span></h2>
@@ -41,8 +41,9 @@ my @entries = (
 {'url' => 'http://en.wikipedia.org/wiki/Philosophy_of_mind',
  'str' => q {<li><a href="http://canonizer.com/topic.asp/88" class="external text" title="http://canonizer.com/topic.asp/88" rel="nofollow">Canonizer.com open survey topic on theories of consciousness</a>. Anyone can participate in the survey or .*canonize.*their beliefs. Expertise of participators is determined by a <a href="http://canonizer.com/topic.asp/81" class="external text" title="http://canonizer.com/topic.asp/81" rel="nofollow">Peer Ranking Process</a> that can be used to produce a quantitative measure of scientific consensus for each theory.</li>} },
 
-{'url' => 'http://psychology.wikia.com/wiki/Psychology_Wiki:Tasks_To_Do_List',
- 'str' => q{</li><li>For controversial topics, it would be great to know how much scientific consensus there is at any time for all sides of an issue.  <a href="http://canonizer.com" class="external text" title="http://canonizer.com" rel="nofollow">Canonizer.com</a> is being developed with the goal of measuring scientific consensus on such issues.  If survey topics have not yet been created for particular controversial issues, they can be created, and links to them added on related articles showing the current measure of scientific consensus on all sides of any issue.} },
+{'X' => 0,
+ 'url' => 'http://psychology.wikia.com/wiki/Psychology_Wiki:Tasks_To_Do_List',
+ 'str' => q{<li>For controversial topics, it would be great to know how much scientific consensus there is at any time for all sides of an issue.  <a class="external"  title="http://canonizer.com" href="http://psychology.wikia.com/index.php?title=Special:Outbound&amp;u=http%3A%2F%2Fcanonizer.com">Canonizer.com</a> is being developed with the goal of measuring scientific consensus on such issues.  If survey topics have not yet been created for particular controversial issues, they can be created, and links to them added on related articles showing the current measure of scientific consensus on all sides of any issue.} },
 
 {'X' => 0,
  'url' => 'http://psychology.wikia.com/wiki/Qualia#Scientific_Consensus_for_Qualia.3F',
@@ -57,7 +58,11 @@ my @entries = (
 <p>The debate for and against representative realism has likely been raging for as long as there have been philosophers.  How has the amount of consensus amongst experts for one side or the other changed over history?  Could a revolution be taking place and one side significantly breaking out in the lead amongst experts during the last few decades?
 </p><p>There is a tool being developed at <a class="external"  title="http://canonizer.com" href="http://psychology.wikia.com/index.php?title=Special:Outbound&amp;u=http%3A%2F%2Fcanonizer.com">canonizer.com</a> with the goal of rigorously measuring <a class="external"  title="http://canonizer.com/topic.asp/81" href="http://psychology.wikia.com/index.php?title=Special:Outbound&amp;u=http%3A%2F%2Fcanonizer.com%2Ftopic.asp%2F81">scientific consensus</a> going forward.  There is a new topic getting started on <a class="external"  title="http://canonizer.com/topic.asp/88/6" href="http://psychology.wikia.com/index.php?title=Special:Outbound&amp;u=http%3A%2F%2Fcanonizer.com%2Ftopic.asp%2F88%2F6">theories of consciousness</a>.  All experts and non experts are invited to quantitatively communicate to everyone what they currently think on this issue.  The more people that get involved, the more comprehensive the survey data will be.
 </p><p>Out of the gate the scientific consensus is clearly in the <a class="external"  title="http://canonizer.com/topic.asp/88/6" href="http://psychology.wikia.com/index.php?title=Special:Outbound&amp;u=http%3A%2F%2Fcanonizer.com%2Ftopic.asp%2F88%2F6">Consciousness is representational and real</a> camp with such distinguished supporters as <a class="external"  title="http://canonizer.com/topic.asp/81/4" href="http://psychology.wikia.com/index.php?title=Special:Outbound&amp;u=http%3A%2F%2Fcanonizer.com%2Ftopic.asp%2F81%2F4">Steven Lehar</a>, <a class="external"  title="http://canonizer.com/topic.asp/81/17" href="http://psychology.wikia.com/index.php?title=Special:Outbound&amp;u=http%3A%2F%2Fcanonizer.com%2Ftopic.asp%2F81%2F17">John Smythies</a> and a growing number of others.  But perhaps this early lead is just because supporters of some other more well accepted theory of consciousness haven't yet started supporting their ideas here?  
-</p><p>There is obviously always the possibility that demonstrable scientific results are about to be achieved that will convert everyone to the 'true' camp.  Surely such, the scientific discovery of what the mind truly is, would be amongst the greatest scientific achievements of all time.  Or maybe the camps that claim we will never know are the ones that are right} },
+</p><p>There is obviously always the possibility that demonstrable scientific results are about to be achieved that will convert everyone to the 'true' camp.  Surely such, the scientific discovery of what the mind truly is, would be amongst the greatest scientific achievements of all time.  Or maybe the camps that claim we will never know are the ones that are right} }
+
+);
+
+my @blank = (
 
 {'X' => 0,
  'url' => '',
@@ -73,7 +78,9 @@ my @entries = (
 </head>
 <body>
 
+<center>
 <h1>Web Monitor Page</h1>
+</center>
 
 <ul>
 <%
@@ -88,9 +95,9 @@ foreach my $entry (@entries) {
 
 	%>
 	<li>Checking URL: <a href="<%=$entry->{'url'}%>"><%=$entry->{'url'}%></a>
-	<hr>
+	<div style="border:solid; padding:10px; background-color: #CCCCCC">
 	<%=$entry->{'str'}%>
-	<hr>
+	</div>
 	<%
 
 	my $url = $entry->{'url'};
@@ -132,6 +139,12 @@ foreach my $entry (@entries) {
 
 }
 
+%>
+</ul>
+<hr>
+<center>
+<%
+
 if ($num_no_match) {
 	%>
 	<font size=8 color="red"><%=$num_no_match%> items didn't match!</font><br>
@@ -144,7 +157,8 @@ if ($num_no_match) {
 
 
 %>
-</ul>
+</center>
+<hr><hr>
 
 </body>
 </html>
