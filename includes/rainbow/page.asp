@@ -7,7 +7,7 @@ sub display_page {
 	my $content_subs = $_[3];
 	my $tab_sub	 = $_[4];
 
-	my $copyright_info = 'Copyright Canonizer LLC 2006 - 2009';
+	my $copyright_info = 'Copyright owned by the volunteers contributing to the system and its contents (2006 - 2009)';
 	my $support_email = 'support@canonizer.com'
 
 %>
@@ -74,7 +74,7 @@ foreach $sub (@$content_subs)
 
 <div id="footer">
      <h3><%=$copyright_info%></h3>
-     <h3>Comments: <a href = "mailto:<%=$support_email%>"><%=$support_email%></a></h3>
+     <h3>Comments and Questions: <a href = "mailto:<%=$support_email%>"><%=$support_email%></a></h3>
 </div>
 
 <%
