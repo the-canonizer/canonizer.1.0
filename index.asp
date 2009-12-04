@@ -126,13 +126,10 @@ of the mind, nobody agrees on much of anything.  The almost 20,000 and
 growing publications in <a href =
 "http://consc.net/mindpapers">Chalmers' MindPapers Bibliography</a>
 surely has something to do with this.  But has anyone ever attempted
-to measure how much agreement there is in any of all that?  As <a href
-= "http://canonizer.com/topic.asp/88/6">this camp</a> is already
-showing such assumptions that there is no consensus are clearly wrong.
-The many people so ignorant of what the <a href =
-"http://canonizer.com/topic.asp/81">experts</a> know and agree on in
-such fields is clearly holding those fields of study, and mankind,
-back.</p><br>
+to measure how much agreement there is in any of all that?  The <a
+href="http://canonizer.com/topic.asp/105">consciousness survey
+project</a> has as its proof of concept goal to see just how much
+consensus there is in these 20,000 publications.</p><br>
 
 
 <h3>Way Better than a Traditional Petition</h3>
