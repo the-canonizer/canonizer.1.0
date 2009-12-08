@@ -120,9 +120,10 @@ Concise and quantitative measures of scientific consensus</h3>
 
 <p>Lots of people figure there is a 'scientific consensus' that man is
 causing global warming.  Yet <a href =
-"http://www.oism.org/pproject">Petition Projects like this one</a>
-cast doubt on such claims.  Most people assume that within the study
-of the mind, nobody agrees on much of anything.  The almost 20,000 and
+"http://en.wikipedia.org/wiki/Scientists_opposing_global_warming">Wikipedia
+articles like this one</a> make one wonder just how much consensus
+there really is.  Most people assume that within the study of the
+mind, nobody agrees on much of anything.  The almost 20,000 and
 growing publications in <a href =
 "http://consc.net/mindpapers">Chalmers' MindPapers Bibliography</a>
 surely has something to do with this.  But has anyone ever attempted
@@ -130,7 +131,6 @@ to measure how much agreement there is in any of all that?  The <a
 href="http://canonizer.com/topic.asp/105">consciousness survey
 project</a> has as its proof of concept goal to see just how much
 consensus there is in these 20,000 publications.</p><br>
-
 
 <h3>Way Better than a Traditional Petition</h3>
 <p>Do you have a grass roots effort trying to collect signatures on a
