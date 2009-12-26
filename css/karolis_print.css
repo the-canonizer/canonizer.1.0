@@ -18,6 +18,26 @@ body
 	margin: 0;
 }
 
+.canonizer_question {
+	position: absolute;
+	visibility: hidden;
+	background-color: #fee;
+	border: 1px solid #000;
+	padding: 10px;
+	text-align: left;
+	right: 25px;
+	top: -50px;
+}
+
+.canonizer_question_title {
+	font-weight: bold;
+}
+
+.canonizer_question_hide {
+	font-weight: bold;
+}
+
+
 #container
 {
 	width: 100%;
@@ -39,6 +59,12 @@ body
 select.bar /* we only want to restrict select boxes on the side bar? */
 {
 	width: 12em;
+}
+
+
+.simple_bold
+{
+	font-weight: bold;
 }
 
 .error_message
