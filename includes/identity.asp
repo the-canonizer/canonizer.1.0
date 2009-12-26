@@ -8,6 +8,8 @@
 # 	0    Browsing as guest
 # 	1    Browsing as e-mail
 # 	2    Logged in as e-mail
+# Acccount Info Line
+#       1 , 2 Accont Info (link unless on page)
 # Login line:
 #       0	Login
 #       1	Login (can do different user, but no mention of this.)
@@ -42,6 +44,7 @@ sub guest_cookie_expire_time {
 sub identity {
 
 	my $script_name = $ENV{'SCRIPT_NAME'};
+	my $uri = $ENV{'REQUEST_URI'};
 
 	if ($ENV{'PATH_INFO'}) {
 		$script_name .= $ENV{'PATH_INFO'};
@@ -157,7 +160,21 @@ NO_CID:		my $gid = $Session->{'gid'};
 
 	<p><%=$mode_prompt%> <%=$logged_in_as%></p>
 
-	<% # login line:
+	<%
+	# account inf line:
+	if ($Session->{'cid'}) { # mode 1 or 2
+		if ($uri =~ '/secure/profile_') {
+			    %>
+			    <p id="selected">Account Info</p>
+			    <%
+		} else {
+			    %>
+			    <p><a href='https://<%=&func::get_host()%>/secure/profile_id.asp'>Account Info</a></p>
+			    <%
+		}
+	}
+
+	# login line:
 	if ($mode == 2) {
 		%>
 		<p><a href = "<%=$login_url%>">Login as different user</a>
