@@ -221,6 +221,12 @@ sub present_topic {
 	%>
 
 	<script language:javascript>
+
+	function setVisible(obj) {
+	    obj = document.getElementById(obj);
+	    obj.style.visibility = (obj.style.visibility == 'visible') ? 'hidden' : 'visible';
+	}
+
 	function change_long_short(val) {
 		var location_str = "/topic.asp/<%=$topic_num%>/<%=$camp_num%>";
 		if (val == 2) {
@@ -230,6 +236,7 @@ sub present_topic {
 		}
 		window.location = location_str;
 	}
+
 	</script>
 
 <div class="main_content_container">
@@ -237,7 +244,37 @@ sub present_topic {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Canonizer Sorted Camp Tree</span>
+    <div style="position: relative;">
+    <a href="" onclick="setVisible('canonizer_question_camp_tree');return false">
+	<img border="0" align="right" src="/images/question.jpg"></a>
+
+	<div class="canonizer_question"
+	    id="canonizer_question_camp_tree"
+	    style="width:350px; height:220px;" >
+
+	    <h1 class=canonizer_question_title align=center>Topic Camp Tree</h1>
+
+<p>This section is a table of contents for this topic. It is in
+outline or tree form, with supporting sub camps indented from the
+parent camp.  If you are in a sub camp, you are also counted in all
+parent camps including the agreement camp at the top.  The numbers are
+canonized scores derived from the people in the camps based on your
+currently selected canonizer on the side bar.  The camps are sorted
+according to these canonized scores.  Each entry is a link to the camp
+page which can contain a statement of belief.  The green line
+indicates the camp page you are currently on and the statement below
+is for that camp.</p>
+
+	<center>
+	    <a href="javascript:setVisible('canonizer_question_camp_tree')" class="canonizer_question_hide">
+	    Hide</a>
+	</center>
+
+	</div>
+
+    </div>
+
+    <span id="title">Canonizer Sorted Camp Tree</span>
 
 </div>
 
@@ -252,16 +289,6 @@ sub present_topic {
 
      <div class="footer_1">
      <span id="buttons">
-
-<p>Note: This section is a table of contents for this topic. It is in
-outline form, with supporting sub camps indented from the parent camp.
-If you are in a sub camp, you are also counted in all parent camps
-including the agreement camp at the top.  The numbers are canonized
-scores derived from the people in the camps based on your currently
-selected canonizer.  The camps are sorted according to these canonized
-scores.  Each entry is a link to the camp page which can contain a
-statement of belief.  The green link indicates the camp page you are
-currently on and the statement below is for that camp.</p>
 
      </span>
      </div>
@@ -452,7 +479,33 @@ if ($topic_data->{'short_statement'}) {
 <div class="section_container">
 <div class="header_1">
 
-     <span id="title">Support Tree for "<%=$topic_data->{'camp'}->{camp_name}%>" Camp</span>
+    <div style="position: relative;">
+    <a href="" onclick="setVisible('canonizer_question_support');return false">
+	<img border="0" align="right" src="/images/question.jpg"></a>
+
+	<div class="canonizer_question"
+	    id="canonizer_question_support"
+	    style="width:350px; height:180px;" >
+
+	    <h1 class=canonizer_question_title align=center>Camp Support</h1>
+
+<p>Supporters can delegate their support to others.  Direct supporters
+receive e-mail notifications of proposed camp changes, while delegated
+supporters dont.  People delegating their support to others are shown
+below and indented from their delegates in an outline form.  If a
+delegate changes camp, everyone delegating their support to them will
+change camps with them.</p>
+
+	<center>
+	    <a href="javascript:setVisible('canonizer_question_support')" class="canonizer_question_hide">
+	    Hide</a>
+	</center>
+
+	</div>
+
+    </div>
+
+    <span id="title">Support Tree for "<%=$topic_data->{'camp'}->{camp_name}%>" Camp</span>
 
 </div>
 
@@ -484,14 +537,6 @@ if ($topic_data->{'short_statement'}) {
 			<%
 		}
 		%>
-
-<p>Note: Supporters can delegate their support to others.  Direct
-supporters receive e-mail notifications of proposed camp changes,
-while for delegated supporters, such is not required.  People
-delegating their support to others are shown below and indented from
-their delegates in an outline form.  If your delegate changes camp,
-you and everyone with you as a delegate will also change camps with
-them.</p>
 
 		<%
 	}
