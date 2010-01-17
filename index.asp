@@ -78,16 +78,16 @@ function change_namespace(namespace) {
 <br>
 
 <h3>Getting Started</h3>
-<p>To get started, just scroll down and find a topic you are passionat
-about.  It is like a survey, so select that camp you agree with, go to
-the camp page, and join the camp.  If what you believe isn't yet
-there, start a new camp so others that agree with you can join and
-help further develop and promote it.  For a more complete description
-of the Canonizer see the "What is the Canonizer" link in the
-Navigation section of the side bar.  For more information on how to
-canonize your point of view (POV) see the help link. For information
-on the camp structure, its purpose, and where to place your camp
-within the camp structure see <a
+<p>To get started, just scroll down and find a topic you are
+passionate about.  It is like a survey, so select that camp you agree
+with, go to the camp page, and join the camp.  If what you believe
+isn't yet there, start a new camp so others that agree with you can
+join and help further develop and promote it.  For a more complete
+description of the Canonizer see the "What is the Canonizer" link in
+the Navigation section of the side bar.  For more information on how
+to canonize your point of view (POV) see the help link. For
+information on the camp structure, its purpose, and where to place
+your camp within the camp structure see <a
 href="http://canonizer.com/topic.asp/89/2">this camp</a>.
 </p><br>
 
