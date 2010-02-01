@@ -355,7 +355,10 @@ will be rejected and not go live.  All such differing POV can always
 be added to a supporting sub camp or competing sibling camp as a
 fork.</p>
 
-
+<p><font color='red'>Important: By default, camps with no support are
+filtered out.  So until you support a camp it will not show up in the
+lists, unless you set the filter on the side bar to 0 (no
+filter).</font></p>
 
 <div class="main_content_container">
 

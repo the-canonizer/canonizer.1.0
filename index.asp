@@ -195,7 +195,7 @@ Canonizer isn't yet what you'd like it to be.</p>
 
 <%
 
-	$Response->Write(topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}, $Session->{'canonizer'}));
+	$Response->Write(topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}, $Session->{'canonizer'}, $Session->{'filter'}));
 
 %>
 

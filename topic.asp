@@ -280,7 +280,7 @@ is for that camp.</p>
 
 <div class="camp_tree" id="camp_tree">
 	<%
-	$Response->Write($topic_data->{'camp'}->display_camp_tree($topic_data->{'topic'}->{topic_name}, $topic_num, 1)); # 1 -> no_active_link
+	$Response->Write($topic_data->{'camp'}->display_camp_tree($topic_data->{'topic'}->{topic_name}, $topic_num, 1, '', '', $Session->{'filter'})); # 1 -> no_active_link
 
 	my $score = func::c_num_format($topic_data->{'camp'}->{score});
 
@@ -371,7 +371,7 @@ if ($topic_data->{'short_statement'}) {
 					$sth->execute() || die "Failed to execute $selstmt";
 					my $canonize_list_str = 
 						'<div class="camp_tree" id="camp_tree">' . "\n" .
-						topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}, $Session->{'canonizer'}) . "\n" .
+						topic::canonized_list($dbh, $sth, $Session->{'as_of_mode'}, $Session->{'as_of_date'}, $Session->{'canonizer'}, $Session->{'filter'}) . "\n" .
 						"</div>\n";
 
 					$html_statement_short =~ s|$replace_str|$canonize_list_str|;
