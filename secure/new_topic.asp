@@ -170,6 +170,11 @@ objects to any proposed changes they will be rejected and not go live.
 All such differing POV can always be added to a forked topic.  The
 most supported topics will be the most popular.</p>
 
+<p><font color='red'>Important: By default, topics with no support are
+filtered out.  So until you support a topic it will not show up in the
+lists, unless you set the filter on the side bar to 0 (no
+filter).</font></p>
+
 <div class="main_content_container">
 
 <div class="section_container">
