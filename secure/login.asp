@@ -99,10 +99,8 @@ sub login_form {
 	<form method = post>
 	<input type = hidden name = destination value = "<%=$destination%>">
 
-	<p>E-Mail:</p>
-	<p><input type = text name = email value = "<%=$email%>" id = "email"></p>
-	<p>Password:</p>
-	<p><input type = password name = password value = "<%=$password%>"></p>
+	<p>E-Mail: <input type=text name=email value="<%=$email%>" id="email" size=50></p>
+	<p>Password: <input type = password name = password value = "<%=$password%>" size=30></p>
 	<p><input type = submit name = submit value = Login></p>
 	<p><a href = "https://<%=func::get_host()%>/secure/profile_id.asp?register=1">Register</a> if you haven't yet.</p>
 
