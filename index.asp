@@ -20,7 +20,7 @@ if ($Request->Form('namespace')) {
 
 
 my $title = 'Canonizer Main Page';
-my $header = '<table><tr><td class="topic">Canonizer Main Page</td><td>&nbsp &nbsp</td><td class="label">beta</td></tr></table>';
+my $header = '<table><tr><td class="topic">Canonizer Main Page</td><td>&nbsp &nbsp</td><td style="font-size: 70%">(This is a free open source beta system being developed by <a href="http://' . func::get_host() . '/topic.asp/4">volunteers</a>.<br>Please be patient with what we have so far and/or be willing to help.)</td></tr></table>';
 
 &display_page($title, $header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&canonized_list]);
 
@@ -78,17 +78,21 @@ function change_namespace(namespace) {
 <br>
 
 <h3>Getting Started</h3>
-<p>To get started, just scroll down and find a topic you are
-passionate about.  It is like a survey, so select that camp you agree
-with, go to the camp page, and join the camp.  If what you believe
-isn't yet there, start a new camp so others that agree with you can
-join and help further develop and promote it.  For a more complete
-description of the Canonizer see the "What is the Canonizer" link in
-the Navigation section of the side bar.  For more information on how
-to canonize your point of view (POV) see the help link. For
-information on the camp structure, its purpose, and where to place
-your camp within the camp structure see <a
-href="http://canonizer.com/topic.asp/89/2">this camp</a>.
+
+<p>This is a wiki system with added camp and survey capabilities.  To
+get started, just scroll down and find a topic you are passionate
+about.  Select the camp you agree with, go to the camp page, and join
+the camp (like checking a box on a survey or signing a petition which
+you can change at any time).  If what you believe isn't yet there,
+start a new camp so others that agree with you can join and help
+further develop and promote it.  For a more complete description of
+the Canonizer see the "What is the Canonizer" link in the Navigation
+section of the side bar.  For more information on how to canonize your
+point of view (POV) see the help link. For information on the camp
+structure, its purpose, and where to place your camp within the camp
+structure see <a href="http://canonizer.com/topic.asp/89/2">this
+camp</a>.
+
 </p><br>
 
 
@@ -167,11 +171,13 @@ http://test.canonizer.com/topic.asp/18">who is the best family
 dentist</a>.</p> <br>
 
 <h3>Canonizers Yahoo Group</h3>
+
 <p>canonizer.com is being developed by a grass roots group of
 volunteers.  We all communicate on this <a href =
 "http://finance.groups.yahoo.com/group/canonizers/">Canonizers Yahoo
 Group</a>.  Of course everyone is invited to join, especially if the
-Canonizer isn't yet what you'd like it to be.</p>
+Canonizer isn't yet what you'd like it to be.  For more info see <a
+href="http://<%=func::get_host()%>"/topic.asp/4">this topic</a>.</p>
 
 
 </div>
