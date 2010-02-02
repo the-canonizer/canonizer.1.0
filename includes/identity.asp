@@ -121,7 +121,7 @@ sub identity {
 				Value   => {
 					cid => $cid,
 				},
-				Expires => "Fri, 1 Jan 2010 00:00:00 GMT",
+				Expires => "Fri, 1 Jan 2020 00:00:00 GMT",
 				Domain  => 'canonizer.com',
 				Path    => '/'
 		};
