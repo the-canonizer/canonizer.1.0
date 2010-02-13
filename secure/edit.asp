@@ -356,9 +356,16 @@ be added to a supporting sub camp or competing sibling camp as a
 fork.</p>
 
 <p><font color='red'>Important: By default, camps with no support are
-filtered out.  So until you support a camp it will not show up in the
-lists, unless you set the filter on the side bar to 0 (no
-filter).</font></p>
+filtered out in camp lists.  So before creating a camp, it is
+suggested that you go back to the camp page and turn the filter on the
+side bar off (set it to zero) so your new camp will not be invisible
+till you have a chance to support it.  Having the filter turned off,
+also displays camps marked for recycle, or other abandoned or useless
+unsupported camps.  It is always better to recycle and clean up such,
+than to create an entirely new camp.  (And by doing so, you get a more
+prestigious lower camp id number!)  If you ever want to delete a camp,
+just get all support removed and change its name to recycle
+this.</font></p>
 
 <div class="main_content_container">
 
@@ -401,11 +408,12 @@ are used and so on) make it identical.</p>
 <hr>
 <p>Related URL:</p>
 
-<p>Maximum 65 characters.  This field is normally not used.  The /www/
-name space is for canonized POV information about web sites.  This URL
-field is a place to formally specify such a link and is not required.
-Normally, only the agreement statement of a topic is used to link an
-entire canoninzed reputation topic to any particular web page</p>
+<p>Maximum 65 characters.  This field is normally not used and should
+be left blank.  The /www/ name space is for canonized POV information
+about web sites.  This URL field is a place to formally specify such a
+link and is not required.  Normally, only the agreement statement of a
+topic is used to link an entire canoninzed reputation topic to any
+particular web page</p>
 
 <p><input type=string name=canon_url
 value="<%= func::escape_double($record->{url}) %>" maxlength=65
@@ -414,9 +422,10 @@ size=65></p>
 <hr>
 <p>Related Nick Name:</p>
 
-<p>This field is normally not used.  It is for relating a nick
-name to a camp.  You can find the nick name id value in the URLs
-pointing to the nick name info page.</p>
+<p>This field is normally not used and should be left blank.  It is
+for relating a nick name to a camp for things like ranking experts.
+You can find the nick name id value in the URLs pointing to the nick
+name info page.</p>
 
 <p><input type=string name=nick_name_id
 value="<%= $record->{nick_name_id} %>" maxlength=4
