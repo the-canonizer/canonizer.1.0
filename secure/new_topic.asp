@@ -171,9 +171,16 @@ All such differing POV can always be added to a forked topic.  The
 most supported topics will be the most popular.</p>
 
 <p><font color='red'>Important: By default, topics with no support are
-filtered out.  So until you support a topic it will not show up in the
-lists, unless you set the filter on the side bar to 0 (no
-filter).</font></p>
+filtered out in topic lists.  So before creating a camp, it is
+suggested that you go back to the main page and turn the filter on the
+side bar off (set it to zero) so your new topic will not be invisible
+till you have a chance to support it.  Having the filter turned off,
+also displays topics marked for recycle, or other abandoned or useless
+unsupported topics.  It is always better to recycle and clean up such,
+than to create an entirely new topic.  (And by doing so, you get a
+more prestigious lower topic id number!)  If you ever want to delete a
+topic, just get all support removed and change its name to recycle
+this.</font></p>
 
 <div class="main_content_container">
 
@@ -193,6 +200,9 @@ if (length($message) > 0) {
 	<hr>
 <%
 }
+
+my $namespace_select_str = func::make_namespace_select_str($dbh, $namespace);
+
 %>
 
 
@@ -208,17 +218,14 @@ maxlength=25 size=28 /></p>
 
 <p>Namespace:</p>
 
-<p>Leave this blank to get the default name space.  Unless you are
-aware of what you want to enter into this field, just leaving it blank
-is probably the correct choice.  Name spaces are to separate topics
-not of interest to the general population.  They are paths that begin
-with, are separated by, and end with '/'.  See the browse page for a
-list of all available name spaces that can be specified here.  Contact
-support to request a new name space.</p>
+<p>Most all topics should use the general name space.  Name spaces are
+for special purpose topics or to separate topics not of interest to
+the general population.  You can request new namespaces, such as for
+use by a particular organization, by contacting support.</p>
 
-<p><input type=string name=canon_namespace
-value="<%=func::escape_double($form_state{'namespace'})%>"
-maxlength=65 size=75></p>
+<p><%=$namespace_select_str%></p>
+
+<br>
 
 <hr>
 <%
@@ -242,9 +249,9 @@ maxlength=65 size=75></p>
 <p>URL:</p>
 
 <p>Maximum 65 characters.  This field is normally not used unless
-there is a specific web page or topic this particular topic is about.
-The /www/ name space is for canonized POV information about specific
-web sites.</p>
+there is a specific web page this particular topic is about.  The
+/www/ name space is for canonized POV information about specific web
+sites.</p>
 
 <p><input type=string name=canon_url
 value="<%=func::escape_double($form_state{'url'})%>" maxlength=256
