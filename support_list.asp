@@ -334,7 +334,7 @@ where u.topic_num = p.topic_num and ((u.camp_num = p.camp_num) or (u.camp_num = 
 	while ($rs = $sth->fetchrow_hashref()) {
 		$topic_num     = $rs->{'topic_num'};
 		my $camp_num = $rs->{'camp_num'};
-		if ($rs->{'delegate_nick_id'}) {
+		if ($rs->{'delegate_nick_name_id'}) {
 			$delegate_hash->{$topic_num} = $rs->{'support_order'};
 		} elsif ($camp_num == 1) {
 			$support_struct{$topic_num}->{'topic_title'} = $rs->{'title'};
