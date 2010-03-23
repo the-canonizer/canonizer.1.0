@@ -201,7 +201,7 @@ if (length($message) > 0) {
 <%
 }
 
-my $namespace_select_str = func::make_namespace_select_str($dbh, $namespace);
+my $namespace_select_str = func::make_namespace_select_str($dbh, $namespace, 1); # 1 -> no submit
 
 %>
 
