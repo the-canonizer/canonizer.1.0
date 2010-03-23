@@ -39,6 +39,24 @@ my $sth;
 my $rs;
 my $nick_name;
 
+my $name_space_displayed = 0;
+my $namespace_select_str = func::make_namespace_select_str($dbh, $namespace);
+
+$namespace_select_str .= qq{
+
+<script>
+function change_namespace(namespace) {
+	if (namespace == 'general') {
+		namespace = '';
+	}
+	window.document.name_space_form.submit();
+}
+</script>
+
+};
+
+
+
 if ($nick_name_id) {
 
 	$selstmt = 'select nick_name, owner_code, private from nick_name where nick_name_id = ' . $nick_name_id;
@@ -118,8 +136,6 @@ sub list_cid_support {
 			$name_line = 'Name is private';
 		}
 
-		my $namespace_select_str = func::make_namespace_select_str($dbh, $namespace);
-
 		%>
 		<table>
 		<tr><td>Canonizer User: </td><td class="simple_bold"><%=$name_line%></td></tr>
@@ -137,15 +153,6 @@ sub list_cid_support {
 		%>
 		</table>
 
-		<script>
-		function change_namespace(namespace) {
-			if (namespace == 'general') {
-				namespace = '';
-			}
-			window.document.name_space_form.submit();
-		}
-		</script>
-
 		<br>
 
 		<form name="name_space_form" id="name_space_form">
@@ -158,6 +165,8 @@ sub list_cid_support {
 		<br>
 		<br>
 		<%
+
+		$name_space_displayed = 1;
 
 		my %nick_name_hash = func::get_nick_name_hash($list_cid, $dbh);
 		my $tmp_nick_name_id; # stupid perl!
@@ -261,6 +270,13 @@ sub list_nick_support {
 		$as_of_clause = "and go_live_time < $as_of_time";
 	} else {
 		$as_of_clause = 'and go_live_time < ' . time;
+	}
+
+	if (! $name_space_displayed) {
+		%>	   
+		Namespace: <%= $namespace_select_str %>
+		<%
+		$name_space_displayed = 1;
 	}
 
 	if ($anonymous_nick) {
