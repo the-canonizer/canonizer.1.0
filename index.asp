@@ -177,7 +177,7 @@ volunteers.  We all communicate on this <a href =
 "http://finance.groups.yahoo.com/group/canonizers/">Canonizers Yahoo
 Group</a>.  Of course everyone is invited to join, especially if the
 Canonizer isn't yet what you'd like it to be.  For more info see <a
-href="http://<%=func::get_host()%>"/topic.asp/4">this topic</a>.</p>
+href="http://<%=func::get_host()%>/topic.asp/4">this topic</a>.</p>
 
 
 </div>
