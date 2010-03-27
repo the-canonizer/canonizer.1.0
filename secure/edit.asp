@@ -73,7 +73,7 @@ if ($Request->Form('submit_edit') eq 'Edit Statement') {	# edit command from top
 		$Response->End();
 	}
 	$record->{value} = func::hex_decode($record->{value});
-	$record->{note} = func::hex_decode($record->{note});
+	$record->{note}  = func::hex_decode($record->{note});
 } elsif ($Request->Form('submit_edit')) {
 
 	$record = new_form $class ($Request);
@@ -85,22 +85,26 @@ if ($Request->Form('submit_edit') eq 'Edit Statement') {	# edit command from top
 			$record->{value} = func::hex_decode($record->{value});
 			$record->{note} = func::hex_decode($record->{note});
 		}
-		$record->save($dbh, $Session->{'cid'});
-		my $any_record = $record;
-		my $url = 'http://' . func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
+		my $save_errors = $record->save($dbh, $Session->{'cid'});
+		if ($save_errors) {
+			report_save_errors($save_errors);
+		} else {
+			my $any_record = $record;
+			my $url = 'http://' . func::get_host() . '/manage.asp?class=' . $class . '&topic_num=' . $any_record->{topic_num};
 
-		if ($class eq 'camp' || $class eq 'statement') {
-			$url .= ('&camp_num=' . $any_record->{'camp_num'});
+			if ($class eq 'camp' || $class eq 'statement') {
+				$url .= ('&camp_num=' . $any_record->{'camp_num'});
+			}
+
+			if ($class eq 'statement' && $any_record->{'statement_size'}) {
+				$url .= ('&long=' . $any_record->{'statement_size'});
+			}
+
+			sleep(1); # or else it goes to the next page before the new data is live.
+
+			$Response->Redirect($url);
+			$Response->End();
 		}
-
-		if ($class eq 'statement' && $any_record->{'statement_size'}) {
-			$url .= ('&long=' . $any_record->{'statement_size'});
-		}
-
-		sleep(1); # or else it goes to the next page before the new data is live.
-
-		$Response->Redirect($url);
-		$Response->End();
 	}
 } elsif ($copy_record_id) {
 	$record = new_record_id $class ($dbh, $copy_record_id);
@@ -173,6 +177,9 @@ sub display_form {
 	if ($record->{camp_num}) {
 		$url .= '/' . $record->{camp_num};
 	}
+	if ($error_message) {
+		$error_message = "<h2><font color=\"red\">Error:</font></h2>\n" . $error_message;
+	}
 	%>
 	<p><a href="<%=$url%>">Return to camp (no change)</a></p>
 	<%
@@ -205,7 +212,11 @@ sub display_topic_form {
 
 	$namespace_select_str .= "</select>\n";
 
-
+	if ($error_message) {
+		%>
+		<%=$error_message%>
+		<%
+	} else {
 
 %>
 
@@ -228,6 +239,10 @@ objects to any proposed changes they will be rejected and not go live.
 All such differing POV can always be added to a forked topic.  The
 most supported topics will be the most popular.</p>
 
+<%
+	}
+%>
+
 <div class="main_content_container">
 
 <div class="section_container">
@@ -238,8 +253,6 @@ most supported topics will be the most popular.</p>
 </div>
 
 <div class="content_1">
-
-<%=$error_message%>
 
 <form method=post>
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
@@ -330,10 +343,13 @@ sub display_camp_form{
 		$camp_tree = new_tree camp ($dbh, $record->{topic_num}, 1);
 	}
 
-
+	if ($error_message) {
+		%>
+		<%=$error_message%>
+		<%
+	} else {
 
 %>
-
 
 <p>Anything about a camp, including its parent, can be changed at any
 time, by anyone.  So don't worry about making mistakes.  Just get any
@@ -367,6 +383,10 @@ prestigious lower camp id number!)  If you ever want to delete a camp,
 just get all support removed and change its name to recycle
 this.</font></p>
 
+<%
+	}
+%>
+
 <div class="main_content_container">
 
 <div class="section_container">
@@ -377,8 +397,6 @@ this.</font></p>
 </div>
 
 <div class="content_1">
-
-<%=$error_message%>
 
 <form method=post>
 <input type=hidden name=record_id value=<%=$copy_record_id%>>
@@ -529,6 +547,35 @@ sub display_statement_form {
 	}
 	</script>
 
+<%
+
+	if ($error_message) {
+		%>
+		<%=$error_message%>
+		<%
+	} else {
+
+%>
+
+	<p><font color=red><b>Caution:</b> Sessions time out after 20
+	minutes.  Because of this and other possible problems, if you
+	will be spending lots of time working on an edit, we recommend
+	that you do your work in a local word processer where you can
+	make periodic saves to avoid losing significant amounts of
+	work.  Then when you are completed, you can cut and past the
+	text back to this form with no risk of losing data.  If you do
+	get logged out, it will take you back to the login screen, and
+	will then go back to the edit screen without your edits.  If
+	this does happen, you can complete the re-loggin in and then
+	usually get back to the page with your edits with your
+	browser's back button where you can submit them a second
+	time. In general this is good practice for any web based
+	content submission system.</font></p>
+
+<%
+	}
+%>
+
         <div class="main_content_container">
 
 <div class="section_container">
@@ -548,21 +595,6 @@ sub display_statement_form {
 	<input type=hidden name=camp_num value=<%=$record->{'camp_num'}%>>
 	<input type=hidden name=statement_size value=<%=$record->{statement_size}%>>
 	<input type=hidden name=proposed value=<%=$record->{proposed}%>>
-
-	<p><font color=red><b>Caution:</b> Sessions time out after 20
-	minutes.  Because of this and other possible problems, if you
-	will be spending lots of time working on an edit, we recommend
-	that you do your work in a local word processer where you can
-	make periodic saves to avoid losing significant amounts of
-	work.  Then when you are completed, you can cut and past the
-	text back to this form with no risk of losing data.  If you do
-	get logged out, it will take you back to the login screen, and
-	will then go back to the edit screen without your edits.  If
-	this does happen, you can complete the re-loggin in and then
-	usually get back to the page with your edits with your
-	browser's back button where you can submit them a second
-	time. In general this is good practice for any web based
-	content submission system.</font></p>
 
 	<p>Statement: <span class="required_field">*</span></p>
 
@@ -650,7 +682,38 @@ sub print_parent_option {
 
 	my camp $child;
 	foreach $child (@{$camp_tree->{children}}) {
-		&print_parent_option($child, $selected, $current_camp_num, $indent);
+		&print_parent_option($child, $selected, $current_camp_num, $indent . '&nbsp; &nbsp;');
+	}
+}
+
+sub report_save_errors {
+	my $save_errors = $_[0];
+
+	if (!save_errors) {
+	   return;
+	}
+
+	if (ref($save_errors) eq "ARRAY") {
+
+		$error_message .= qq{
+<h2>It is invalid for one person to support multiple camps that have
+a parent child relationship.</h2> };
+
+		my $support_conflict;
+		foreach $support_conflict (@{$save_errors}) {
+			my $name   = $support_conflict->{'name'};
+			my $camp   = $support_conflict->{'camp'}->make_camp_path(1); # 1 -> links
+			my $parent = $support_conflict->{'parent'}->make_camp_path(1);
+			$error_message .= qq{
+<p>$name is supporting $camp and proposed new parent camp $parent.</p> };
+
+		}
+
+		$error_message .= qq{
+<p>These support conflicts must be removed before this camp move can
+be completed.</p> };
+	} else { # if not support_conflict array, then single string error.
+		$error_messsage .= $save_errors;
 	}
 }
 

@@ -581,6 +581,13 @@ sub support_form {
 		render_support();
 		</script>
 
+		<p>Note:It is possible to support more than one camp, as long
+		there is no parent child relationship between supported camps.  If you
+		support one camp your canonizer algorithm value is multiplied by 1.
+		If you support two camps, your top camp is multiplied by 0.5, your
+		second camp is multiplied by 0.25.  Each successive camp after that is
+		half again of the previous value.<p>
+
 		</div>
 		<%
 	}
