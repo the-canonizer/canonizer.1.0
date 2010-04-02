@@ -255,7 +255,11 @@ sub preview_post_page {
 	<p><a href="/forum.asp/<%=$topic_num%>/<%=$camp_num%>">Return to <%=$camp_num==1 ? 'topic' : 'camp'%> forum</a></p>
 
 	<center>
-	<h1><b>Preview Post</b></h1>
+	<h1><b>Preview post to the folowing recipients:</b></h1>
+
+	</center>
+	<p><%= $global_to_str %>
+	<center>
 
 	<form method=post>
 		<input type=hidden name=canon_subject value="<%=func::hex_encode($subject)%>">
@@ -332,10 +336,8 @@ Please report any abuse to support\@canonizer.com.
 		person::send_email_to_hash($dbh, \%support_hash, $subject, $message);
 		# person::send_email_to_cid($dbh, 1, $subject, $message); # for debugging.
 
-		my $to_str = get_to_str($dbh);
-
 		%>
-		<p>Mail successfully sent to the folowing direct supporters of this camp: <%=$to_str%>.</p>
+		<p>Mail successfully sent to the folowing direct supporters of this camp: <%=$global_to_str%>.</p>
 
 		<p><a href="<%=$message_url%>">See your new message in the forum thread page</a></p>
 
