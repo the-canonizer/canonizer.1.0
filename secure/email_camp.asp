@@ -81,7 +81,21 @@ my ($topic_name, $msg) = topic::get_name($dbh, $topic_num);
 
 
 
-my camp $tree = new_tree camp ($dbh, $topic_num, $camp_num);
+# get supporters:
+my camp $tree        = new_tree camp ($dbh, $topic_num, $camp_num);
+my camp $review_tree = new_tree camp ($dbh, $topic_num, $camp_num, 'review');
+my %support_hash = ();
+       $tree->get_support($dbh, \%support_hash);
+$review_tree->get_support($dbh, \%support_hash);
+if (!$support_hash{$Session->{'cid'}}) { # sender should get a copy.
+	$support_hash{$Session->{'cid'}} = 1;
+}
+if (!$support_hash{1}) { # and brent gets a copy, for now.
+	$support_hash{1} = 1;
+}
+my $global_to_str = get_to_str($dbh);
+
+
 
 my $topic_camp = 'Camp';
 if ($camp_num == 1) {
@@ -195,7 +209,9 @@ sub email_camp_form {
 		}
 		%>
 
-		<p>Send e-mail to all direct supporters of this camp (including all sub camps)</p>
+		<p>Send e-mail to the following direct supporters of this camp (and all sub camps)</p>
+
+		<p><%= $global_to_str %>
 
 		<p>Subject: <input type=string name=canon_subject maxlength=65 size=65 value="<%=func::escape_double($subject)%>" <%=$subject_disable_str%>></p>
 
@@ -265,7 +281,9 @@ sub preview_post_page {
 sub get_to_str {
 	my $to_str = '';
 	my %nick_hash = ();
-	$tree->get_support_nicks($dbh, \%nick_hash);
+	       $tree->get_support_nicks($dbh, \%nick_hash);
+	$review_tree->get_support_nicks($dbh, \%nick_hash);
+
 	foreach my $nick_name (keys %nick_hash) {
 		my $nick_name_id = $nick_hash{$nick_name};
 		$to_str .= "<a href=\"/support_list.asp?nick_name_id=$nick_name_id\">$nick_name</a>, ";
@@ -278,17 +296,6 @@ sub get_to_str {
 
 
 sub send_email_page {
-
-	my %support_hash = ();
-	$tree->get_support($dbh, \%support_hash);
-
-	if (!$support_hash{$Session->{'cid'}}) { # sender should get a copy.
-		$support_hash{$Session->{'cid'}} = 1;
-	}
-
-	if (!$support_hash{1}) { # and brent gets a copy, for now.
-		$support_hash{1} = 1;
-	}
 
 	my $sender_nick_name = $Request->Form('canon_sender');
 	$sender_nick_name =~ s|(\d*),||;
