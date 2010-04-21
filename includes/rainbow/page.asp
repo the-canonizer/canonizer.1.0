@@ -10,7 +10,20 @@ sub display_page {
 	my $url = "http://" . func::get_host() . "/topic.asp/4";
 
 	my $copyright_info = 'Copyright owned by the <a href="' . $url . '">volunteers contributing to the system</a> and its contents (2006 - 2010)';
-	my $support_email = 'support@canonizer.com'
+	my $support_email = 'support@canonizer.com';
+
+	my $not_main_warning = '';
+
+	my $not_main_file_name = $ENV{'DOCUMENT_ROOT'} . '/main_server';
+
+	if (! -e $not_main_file_name) {
+		$not_main_warning = qq{
+
+<h1><font color="red">WARNING: This is only the test server.  Any submissions will
+ocasionally be overwritten with data copied from the main server.</font></h1>
+
+		};
+	}
 
 %>
 
@@ -62,6 +75,8 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </div>
 
 <div id="main_content">
+
+<%= $not_main_warning %>
 
 <%
 foreach $sub (@$content_subs)
