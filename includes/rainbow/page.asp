@@ -20,7 +20,7 @@ sub display_page {
 		$not_main_warning = qq{
 
 <h1><font color="red">WARNING: This is only the test server.  Any submissions will
-ocasionally be overwritten with data copied from the main server.</font></h1>
+occasionally be overwritten with data copied from the main server.</font></h1>
 
 		};
 	}
