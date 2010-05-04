@@ -3,6 +3,11 @@
 use managed_record;
 use camp;
 
+if ($ENV{'HTTP_HOST'} eq 'www.canonizer.com') {
+	# don't belong on a test server so go here:
+	$Response->Redirect('http://canonizer.com');
+}
+
 my $path_info = $ENV{'PATH_INFO'};
 my $pi_namespace = '';
 if (length($path_info) > 0) {
