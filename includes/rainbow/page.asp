@@ -19,7 +19,7 @@ sub display_page {
 	if (! -e $not_main_file_name) {
 		$not_main_warning = qq{
 
-<h1><font color="red">WARNING: This is only the test server.  Any submissions will
+<h1><font color="red">WARNING: This is only a test server.  Any submissions will
 occasionally be overwritten with data copied from the main server.</font></h1>
 
 		};
