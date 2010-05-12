@@ -172,7 +172,7 @@ of testimonials?  Then you can get such canonized.  Nobody puts much
 creed in a collection of testimonials, but a canonized reputation is
 very reputable since it is an open system where both pro and con
 customers can contribute.  For an example, see this topic on <a href="
-http://test.canonizer.com/topic.asp/18">who is the best family
+http://canonizer.com/topic.asp/18">who is the best family
 dentist</a>.</p> <br>
 
 <h3>Canonizers Yahoo Group</h3>
