@@ -142,7 +142,7 @@ EOF
 		}
 
 		%>
-		<tr><td><%=$subject%><br><br><a href = "http://<%=func::get_host()%>/secure/email_camp.asp/<%=$topic_num%>/<%=$camp_num%>/<%=$thread_num%>">Post new reply to this thread.</a><%=$pagination%></td><td><%=$count%></td><td nowrap>First post: &nbsp; &nbsp; &nbsp;<a href="<%=$post_url%>"><%=$min_nick_name%><br>
+		<tr><td><%=$subject%><br><br><a href = "http://<%=func::get_host()%>/secure/email_camp.asp/<%=$topic_num%>/<%=$camp_num%>/<%=$thread_num%>">Post new reply to this thread.</a><%=$pagination%></td><td align=center><%=$count%></td><td nowrap>First post: &nbsp; &nbsp; &nbsp;<a href="<%=$post_url%>"><%=$min_nick_name%><br>
 				<%=func::to_local_time($min_time)%></a><%=$last_post_str%></td></tr>
 		<%
 	}
