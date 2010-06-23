@@ -146,7 +146,9 @@ experts <a href =
 Theory</a>.  As a growing number of leading experts 'canonize' their
 views on this theoretical field of science this theory continues to
 extend its <a href="http://canonizer.com/topic.asp/53/11">expert
-consensus</a> lead.</p><br>
+consensus</a> lead.  I clear scientific consensus would definitively
+indicate we are on the verge of what could become the greatest
+scientific revolution of all time.</p><br>
 
 <h3>Way Better than a Traditional Petition</h3>
 <p>Do you have a grass roots effort trying to collect signatures on a
