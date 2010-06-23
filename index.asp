@@ -139,7 +139,14 @@ surely has something to do with this.  But has anyone ever attempted
 to measure how much agreement there is in any of all that?  The <a
 href="http://canonizer.com/topic.asp/105">consciousness survey
 project</a> has as its proof of concept goal to see just how much
-consensus there is in these 20,000 publications.</p><br>
+consensus there is in these 20,000 publications.  Already there is a
+shocking amount of expert consensus for the recently named by the
+experts <a href =
+"http://canonizer.com/topic.asp/88/6">Representational Qualia
+Theory</a>.  As a growing number of leading experts 'canonize' their
+views on this theoretical field of science this theory continues to
+extend its <a href="http://canonizer.com/topic.asp/53/11">expert
+consensus</a> lead.</p><br>
 
 <h3>Way Better than a Traditional Petition</h3>
 <p>Do you have a grass roots effort trying to collect signatures on a
