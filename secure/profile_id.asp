@@ -616,7 +616,7 @@ sub profile_id {
     <td></td>
     <td><input type=checkbox name=canon_city_private <%=$form_state{'city_private'} ? 'checked' : ''%>></td></tr>
 
-<tr><td>State:</td>
+<tr><td>Region (state, province, etc):</td>
     <td>*</td>
     <td><input type=text name=canon_state value="<%=$form_state{'state'}%>"></td>
     <td></td>
