@@ -670,13 +670,22 @@ sub print_parent_option {
 		return();
 	}
 
+	my $camp_name;
+	if ($camp_tree->{camp_num} == 1) {
+	   	# put the topic_name in the camp name for agreement statement.
+	   	($camp_name) = camp::get_names($dbh, $camp_tree->{topic_num}, $camp_tree->{camp_num});
+		$camp_name .= " (Agreement)";
+	} else {
+		$camp_name = $camp_tree->{camp_name};
+	}
+
 	if ($num == $selected) {
 		%>
-		<option value=<%=$num%> selected><%=$indent . $camp_tree->{camp_name}%></option>
+		<option value=<%=$num%> selected><%=$indent . $camp_name%></option>
 		<%
 	} else {
 		%>
-		<option value=<%=$num%>><%=$indent . $camp_tree->{camp_name}%></option>
+		<option value=<%=$num%>><%=$indent . $camp_name%></option>
 		<%
 	}
 
