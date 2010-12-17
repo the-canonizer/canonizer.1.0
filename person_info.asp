@@ -49,7 +49,7 @@ sub nick_names {
 	my $dbh = &func::dbh_connect(1) || die "unable to connect to database";
 
 #	my $selstmt = 'select nick_name, nick_name_id from nick_name';
-	my $selstmt = 'select cid, first_name, middle_name, last_name, email, address_1, address_2, city, state, postal_code, country, birthday, gender from person';
+	my $selstmt = 'select cid, first_name, middle_name, last_name, email, address_1, address_2, city, state, postal_code, country, birthday, gender, join_time from person';
 
 	if ($nick_id) {
 		$selstmt .= " where nick_name_id = $nick_id";
@@ -66,7 +66,8 @@ sub nick_names {
 		# $selstmt = "select topic.name, support.name camp.delegate_id from suppo
 		%>
 		<li><%=$rs->{'first_name'} . ' ' . $rs->{'middle_name'} . ' ' . $rs->{'last_name'}%> [<%=$rs->{'cid'}%>] (<%=$rs->{'email'}%>)<br>
-		<%=$rs->{'address_1'} . ' ' . $rs->{'address_2'} . ' ' . $rs->{'city'} . ' ' . $rs->{'state'} . ' ' . $rs->{'postal_code'} . ' ' . $rs->{'contry'}%></li>
+		<%=$rs->{'address_1'} . ' ' . $rs->{'address_2'} . ' ' . $rs->{'city'} . ' ' . $rs->{'state'} . ' ' . $rs->{'postal_code'} . ' ' . $rs->{'contry'}%><br>
+		join_time: <%=func::to_local_time($rs->{'join_time'})%></li>
 		<ol>
 		<%
 		my %nick_name_hash = func::get_nick_name_hash($rs->{'cid'}, $dbh);
