@@ -184,16 +184,6 @@ customers can contribute.  For an example, see this topic on <a href="
 http://canonizer.com/topic.asp/18">who is the best family
 dentist</a>.</p> <br>
 
-<h3>Canonizers Yahoo Group</h3>
-
-<p>canonizer.com is being developed by a grass roots group of
-volunteers.  We all communicate on this <a href =
-"http://finance.groups.yahoo.com/group/canonizers/">Canonizers Yahoo
-Group</a>.  Of course everyone is invited to join, especially if the
-Canonizer isn't yet what you'd like it to be.  For more info see <a
-href="http://<%=func::get_host()%>/topic.asp/4">this topic</a>.</p>
-
-
 </div>
 
      <div class="footer_1">
