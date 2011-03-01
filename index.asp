@@ -82,36 +82,57 @@ function change_namespace(namespace) {
 
 <br>
 
-<h3>Getting Started</h3>
+<h3>What is canonizer.com?</h3>
 
-<p>This is a wiki system with added camp and survey capabilities.  To
-get started, just scroll down and find a topic you are passionate
-about.  Select the camp you agree with, go to the camp page, and join
-the camp (like checking a box on a survey or signing a petition which
-you can change at any time).  If what you believe isn't yet there,
-start a new camp so others that agree with you can join and help
-further develop and promote it.  For a more complete description of
-the Canonizer see the "What is the Canonizer" link in the Navigation
-section of the side bar.  For more information on how to canonize your
-point of view (POV) see the help link. For information on the camp
-structure, its purpose, and where to place your camp within the camp
-structure see <a href="http://canonizer.com/topic.asp/89/2">this
-camp</a>.
+<p>This is a consensus building open survey system designed to
+rigorusly measure moral expert or scientific consensus.  It is a wiki
+based system that eliminates edit wars by giving users the ability to
+create, join, and develop camps.  It is great at enabling experts to
+collaboratively develop concise descriptions of the best moral or
+scientific theories, in the most agreed on terminology.  It provides
+relative quantitative measures of expert, non expert... consensus for
+each.  Scientific data and better arguments eventually falsify
+incorrect theories.  You can definitively know a theory has been
+falsified to the degree the experts are abandoning the camps that
+represent them. </p>
 
-</p><br>
+<p>The camp tree structure and rules of operation, are set up to
+encourage as much consensus as possible on any controversial or still
+theoretical topic.  Most people think anti public sex education people
+don't agree on much of anything with pro public sex education people.
+Both camps believe the other camp is destroying their world.  But as
+you can see in the public sex education topic below, there is
+unanimous agreement by everyone that sex education is important.  They
+only differ in that some think it should be taught in a more private
+and personal way, while most others think public is ok.  Obviously,
+what everyone is arguing about is far less important than the real
+important issue - education.  This is typical of most everything
+today.  Any time there is agreement, the conversation stops, and
+people descend to ever less important areas till they find what they
+disagree on.  This is the level where all the conversation takes place
+in all the scientific journals, political forums, blogs, and most
+everywhere.  It's an eternal yes, no, yes, no, childish debate that
+most quickly tire of, and therefore fail to become informed about, if
+it is at all controversial. This is the obvious reason so many people
+are still so poorly morally informed. </p>
+
+<p>Canonizer.com's camp structure encourages people to find the most
+important issues, where most people can agree, so the emphasis can
+stay at that much more important educational, actionable,
+scientifically testable, law passing level.  The less important more
+disagreeable issues can be pushed out of the way to lower level less
+important sub camps.  It is possible to represent everyone's current
+POV definitively, efficiently, concisely quantitatively, and in real
+time with history. </p>
+
+<p>Filtering is flipped upside down.  Nothing is ever censored, and
+the rules ensure all points of view are valued and maintained.  (In
+other words, be wary of camps with little or no expert support)
+Individuals are given the ability to select any prioritizing and
+filtering canonization algorithm they wish.  In this way who the moral
+or scientific experts are can be determined by you. </p><br>
 
 
-<h3>What do you believe?</h3>
-<p>Tired of fighting edit wars on Wikis?  Want to know concisely and
-quantitatively how many people believe or value what?  Have you ever
-been dissatisfied with the choices on a particular belief survey?
-Tired of trying to digest thousands of testimonials or comments to get
-an idea of what a trusted majority of people think?  Don't want to
-waste your time adding the one thousand and first testimonial or
-comment no one will ever get to?  Our goal is to make huge steps
-forward in all these directions.
-
-</p> <br>
 <h3>Personal Canonized Values</h3> <p>To find out what someone's
 beliefs and values are, click on their ID to get to their personal
 canonized values page.  These personal pages have a list of all
@@ -120,37 +141,12 @@ easily share all your canonized values - comparing and contrasting
 them.  Using the 'as of' box on the side bar, you can find what
 people's canonized values were at any time in the past.  A powerful
 way to easily testify of what you believe in and hope for, in a
-collaborative way with all who share you beliefs.
-</p> <br>
+collaborative way with all who share you beliefs.  You can also create
+anonymous nick names and support camps anonymously if you wish. </p> <br>
 
 
-<h3>Canonized Science<br>
-Concise and quantitative measures of scientific consensus</h3>
+<h3>Eliminates problems of traditional petitions and surveys</h3>
 
-<p>Lots of people figure there is a 'scientific consensus' that man is
-causing global warming.  Yet <a href =
-"http://en.wikipedia.org/wiki/Scientists_opposing_global_warming">Wikipedia
-articles like this one</a> make one wonder just how much consensus
-there really is.  Most people assume that within the study of the
-mind, nobody agrees on much of anything.  The almost 20,000 and
-growing publications in <a href =
-"http://consc.net/mindpapers">Chalmers' MindPapers Bibliography</a>
-surely has something to do with this.  But has anyone ever attempted
-to measure how much agreement there is in any of all that?  The <a
-href="http://canonizer.com/topic.asp/105">consciousness survey
-project</a> has as its proof of concept goal to see just how much
-consensus there is in these 20,000 publications.  Already there is a
-shocking amount of expert consensus for the recently named by the
-experts <a href =
-"http://canonizer.com/topic.asp/88/6">Representational Qualia
-Theory</a>.  As a growing number of leading experts 'canonize' their
-views on this theoretical field of science this theory continues to
-extend its <a href="http://canonizer.com/topic.asp/53/11">expert
-consensus</a> lead.  A clear scientific consensus would definitively
-indicate we are on the verge of what could become the greatest
-scientific revolution of all time.</p><br>
-
-<h3>Way Better than a Traditional Petition</h3>
 <p>Do you have a grass roots effort trying to collect signatures on a
 petition?  Would an online version, with a way to sign camps in a
 reputable way help?  Do you want your effort to go viral?  Your
@@ -159,8 +155,9 @@ do all this.  And of course, unlike traditional petitions, which can't
 change once the first person has signed, statements here continueally
 grow, progress, and adapt to the times.  Anyone can propose new
 changes and any camp member can object to any changes - preventing
-them from going live.
-<p><br>
+them from going live.  In this case it can always be added to a
+competing sibling or supporting sub camp so you can find everyone that
+agrees with you.  <p><br>
 
 <h3>Canonized Feedback on Your Web Pages</h3>
 <p>Do you have thousands of useless comments for feedback on your web
