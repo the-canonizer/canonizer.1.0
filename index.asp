@@ -115,7 +115,8 @@ everywhere.  It's an eternal yes, no, yes, no, childish debate that
 blinds everyone to how much agreement there is on a great many
 important things.  Most quickly tire of this, and therefore fail to
 become informed. This is the obvious reason so many people are still
-so poorly informed on issues of such critical moral importance. </p>
+so poorly informed on issues of such increasingly critical moral
+importance. </p>
 
 <p>Canonizer.com's camp structure encourages people to find the most
 important issues, where most people can agree, so the emphasis can
