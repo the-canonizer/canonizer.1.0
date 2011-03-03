@@ -83,18 +83,18 @@ function change_namespace(namespace) {
 <br>
 
 <h3>What is canonizer.com?</h3>
-
+<br>
 <p>This is a consensus building open survey system designed to
-rigorusly measure moral expert or scientific consensus.  It is a wiki
+rigorously measure moral expert or scientific consensus.  It is a wiki
 based system that eliminates edit wars by giving users the ability to
-create, join, and develop camps.  It is great at enabling experts to
-collaboratively develop concise descriptions of the best moral or
+create, join, and develop camps.  It enables experts to control
+collaboratively developed concise descriptions of the best moral or
 scientific theories, in the most agreed on terminology.  It provides
 relative quantitative measures of expert, non expert... consensus for
 each.  Scientific data and better arguments eventually falsify
 incorrect theories.  You can definitively know a theory has been
 falsified to the degree the experts are abandoning the camps that
-represent them. </p>
+represent them and vice versa for good theories. </p>
 
 <p>The camp tree structure and rules of operation, are set up to
 encourage as much consensus as possible on any controversial or still
@@ -112,9 +112,10 @@ people descend to ever less important areas till they find what they
 disagree on.  This is the level where all the conversation takes place
 in all the scientific journals, political forums, blogs, and most
 everywhere.  It's an eternal yes, no, yes, no, childish debate that
-most quickly tire of, and therefore fail to become informed about, if
-it is at all controversial. This is the obvious reason so many people
-are still so poorly morally informed. </p>
+blinds everyone to how much agreement there is on a great many
+important things.  Most quickly tire of this, and therefore fail to
+become informed. This is the obvious reason so many people are still
+so poorly informed on issues of such critical moral importance. </p>
 
 <p>Canonizer.com's camp structure encourages people to find the most
 important issues, where most people can agree, so the emphasis can
@@ -122,7 +123,7 @@ stay at that much more important educational, actionable,
 scientifically testable, law passing level.  The less important more
 disagreeable issues can be pushed out of the way to lower level less
 important sub camps.  It is possible to represent everyone's current
-POV definitively, efficiently, concisely quantitatively, and in real
+POV definitively, efficiently, concisely, quantitatively, and in real
 time with history. </p>
 
 <p>Filtering is flipped upside down.  Nothing is ever censored, and
@@ -133,19 +134,21 @@ filtering canonization algorithm they wish.  In this way who the moral
 or scientific experts are can be determined by you. </p><br>
 
 
-<h3>Personal Canonized Values</h3> <p>To find out what someone's
-beliefs and values are, click on their ID to get to their personal
-canonized values page.  These personal pages have a list of all
-supported camps.  When you meet a new person, you can simply and
-easily share all your canonized values - comparing and contrasting
-them.  Using the 'as of' box on the side bar, you can find what
-people's canonized values were at any time in the past.  A powerful
-way to easily testify of what you believe in and hope for, in a
-collaborative way with all who share you beliefs.  You can also create
-anonymous nick names and support camps anonymously if you wish. </p> <br>
+<h3>Personal Canonized Values</h3><br>
+
+<p>To find out what someone's beliefs and values are, click on their
+ID to get to their personal canonized values page.  These personal
+pages have a list of all supported camps.  When you meet a new person,
+you can simply and easily share all your canonized values - comparing
+and contrasting them.  Using the 'as of' box on the side bar, you can
+find what people's canonized values were at any time in the past.  A
+powerful way to easily testify of what you believe in and hope for, in
+a collaborative way with all who share you beliefs.  You can also
+create anonymous nick names and support camps anonymously if you
+wish. </p> <br>
 
 
-<h3>Eliminates problems of traditional petitions and surveys</h3>
+<h3>Eliminates problems of traditional petitions and surveys</h3><br>
 
 <p>Do you have a grass roots effort trying to collect signatures on a
 petition?  Would an online version, with a way to sign camps in a
@@ -159,7 +162,7 @@ them from going live.  In this case it can always be added to a
 competing sibling or supporting sub camp so you can find everyone that
 agrees with you.  <p><br>
 
-<h3>Canonized Feedback on Your Web Pages</h3>
+<h3>Canonized Feedback on Your Web Pages</h3><br>
 <p>Do you have thousands of useless comments for feedback on your web
 pages from the masses about products, beliefs, or anything?  Would you
 like to get all the similar ones grouped, concisely stated,
@@ -170,14 +173,16 @@ page as is done here: <a
 href="http://home.comcast.net/~brent.allsop">http://home.comcast.net/~brent.allsop</a>.
 </p><br>
 
-<h3>Canonized Reputations Building</h3> <p>Do you live in Nigeria, yet
-want to do business online?  Do you have a professional service or
-product that is, in your POV, the best?  Do you have lots of happy
-customers willing to prove it?  Is everybody ignoring your collection
-of testimonials?  Then you can get such canonized.  Nobody puts much
-creed in a collection of testimonials, but a canonized reputation is
-very reputable since it is an open system where both pro and con
-customers can contribute.  For an example, see this topic on <a href="
+<h3>Canonized Reputations Building</h3><br>
+
+<p>Do you live in Nigeria, yet want to do business online?  Do you
+have a professional service or product that is, in your POV, the best?
+Do you have lots of happy customers willing to prove it?  Is everybody
+ignoring your collection of testimonials?  Then you can get such
+canonized.  Nobody puts much creed in a collection of testimonials,
+but a canonized reputation is very reputable since it is an open
+system where both pro and con customers can contribute.  For an
+example, see this topic on <a href="
 http://canonizer.com/topic.asp/18">who is the best family
 dentist</a>.</p> <br>
 
