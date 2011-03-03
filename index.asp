@@ -128,10 +128,11 @@ time with history. </p>
 
 <p>Filtering is flipped upside down.  Nothing is ever censored, and
 the rules ensure all points of view are valued and maintained.  (In
-other words, be wary of camps with little or no expert support)
-Individuals are given the ability to select any prioritizing and
-filtering canonization algorithm they wish.  In this way who the moral
-or scientific experts are can be determined by you. </p><br>
+other words, be wary of camps with little or no expert support, except
+as communication of what the current supporters believe.)  Individuals
+are given the ability to select any prioritizing and filtering
+canonization algorithm they wish.  In this way who the moral or
+scientific experts are can be determined by you. </p><br>
 
 
 <h3>Personal Canonized Values</h3><br>
