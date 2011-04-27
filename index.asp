@@ -127,13 +127,28 @@ important sub camps.  It is possible to represent everyone's current
 POV definitively, efficiently, concisely, quantitatively, and in real
 time with history. </p>
 
-<p>Filtering is flipped upside down.  Nothing is ever censored, and
-the rules ensure all points of view are valued and maintained.  (In
+<p>Filtering is flipped upside down. Nothing is ever censored, and the
+rules ensure all current points of view are valued and maintained. In
 other words, be wary of camps with little or no expert support, except
-as communication of what the current supporters believe.)  Individuals
-are given the ability to select any prioritizing and filtering
-canonization algorithm they wish.  In this way who the moral or
-scientific experts are can be determined by you. </p><br>
+as communication of what the current supporters believe and a
+quantitative measure of such.  As everyone knows, that which you
+measure, improves.  When examining the history of some of the more
+well developed camps, you can see that this improvement process has,
+and continues to increase, beyond even what the experts are normally
+able to see.  Experts tend to hear far more from those that disagree
+with them, than those that do agree, or those that have been convinced
+or educated by them.  This often leads to gross miss perceptions of
+reality by experts.  Canonizer.com is an effective way for experts to
+measure how educational / convincing, there work is amongst their
+peers, and the general population, and to find out where and why the
+general population may still not be keeping up.  It better reveals
+what might be required to more effectively falsify primitive camps and
+a quantittive measure of how such may or may not be working. </p>
+
+<p>Individuals are given the ability to select any prioritizing and
+filtering canonization algorithm they wish on the side bar. In this
+way who the moral or scientific experts are can be determined by
+you. </p><br>
 
 
 <h3>Personal Canonized Values</h3><br>
