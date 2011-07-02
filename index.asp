@@ -111,26 +111,27 @@ eventually falsify incorrect theories. You can definitively know a
 theory has been falsified to the degree the experts are abandoning the
 camps that represent them and vice versa for good theories.</p>
 
-<p>The camp tree structure and rules of operation, are set up to
-encourage as much consensus as possible on any controversial or still
-theoretical topic.  Most people think anti public sex education people
-don't agree on much of anything with pro public sex education people.
-Both camps believe the other camp is destroying their world.  But as
-you can see in the public sex education topic below, there is
-unanimous agreement by everyone that sex education is important.  They
-only differ in that some think it should be taught in a more private
-and personal way, while most others think public is ok.  Obviously,
-what everyone is arguing about is far less important than the real
-important issue - education.  This is typical of most everything
-today.  Any time there is agreement, the conversation stops, and
-people descend to ever less important areas till they find what they
-disagree on.  This is the level where all the conversation takes place
-in all the scientific journals, political forums, blogs, and most
-everywhere.  It's an eternal yes, no, yes, no, childish debate that
-blinds everyone to how much agreement there is on a great many
-important things.  Most quickly tire of this, and therefore fail to
-become informed. This is the obvious reason so many people are still
-so poorly informed on issues of such increasingly critical moral
+<p>The suporting sub camp tree structure and rules of operation, are
+set up to encourage as much consensus as possible on any controversial
+or still theoretical topic.  Most people think anti public sex
+education people don't agree on much of anything with pro public sex
+education people.  Both camps believe the other camp is destroying
+their world.  But as you can see in the public sex education topic
+below, there is unanimous agreement by everyone that sex education is
+important.  They only differ in that some think it should be taught in
+a more private and personal way, while most others think public is ok.
+Obviously, what everyone is arguing about is far less important than
+the real important issue - education.  This is typical of most
+everything today.  Any time there is agreement, the conversation
+stops, and people descend to ever less important areas till they find
+what they disagree on.  This is the level where all the conversation
+takes place in all the scientific journals, political forums, blogs,
+and most everywhere.  It's an eternal yes, no, yes, no, childish,
+destructive, debate that blinds everyone to how much agreement there
+is on a great many important things.  Most quickly tire of this, and
+therefore fail to become informed, especially of what others still
+value. This is the obvious reason so many people are still so poorly
+informed on issues of such increasingly critical moral
 importance. </p>
 
 <p>Canonizer.com's camp structure encourages people to find the most
@@ -142,28 +143,33 @@ important sub camps.  It is possible to represent everyone's current
 POV definitively, efficiently, concisely, quantitatively, and in real
 time with history. </p>
 
-<p>Filtering is flipped upside down. Nothing is ever censored, and the
-rules ensure all current points of view are valued and maintained. In
-other words, be wary of camps with little or no expert support, except
-as communication of what the current supporters believe and a
-quantitative measure of such.  As everyone knows, that which you
-measure, improves.  When examining the history of some of the more
-well developed camps, you can see that this improvement process has,
-and continues to increase, beyond even what the experts are normally
-able to see.  Experts tend to hear far more from those that disagree
-with them, than those that do agree, or those that have been convinced
-or educated by them.  This often leads to gross miss perceptions of
-reality by experts.  Canonizer.com is an effective way for experts to
-measure how educational / convincing, there work is amongst their
-peers, and the general population, and to find out where and why the
-general population may still not be keeping up.  It better reveals
-what might be required to more effectively falsify primitive camps and
-a quantittive measure of how such may or may not be working. </p>
+<p>As everyone knows, that which you measure, improves. When examining
+the history of some of the more well developed camps, you can see that
+this improvement process has, and continues to increase, beyond even
+what the experts are normally able to see. Experts tend to hear far
+more from those that disagree with them, than those that do agree, or
+those that have been convinced or educated by them. This often leads
+to gross miss perceptions of reality by experts. Canonizer.com is an
+effective way for experts to measure how educational / convincing,
+there work is amongst their peers, and the general population, and to
+find out where and why the general population may still not be keeping
+up. It better reveals what might be required to more effectively
+falsify primitive camps and a quantitative measure of how such may or
+may not be working.</p>
 
-<p>Individuals are given the ability to select any prioritizing and
-filtering canonization algorithm they wish on the side bar. In this
-way who the moral or scientific experts are can be determined by
-you. </p><br>
+<p>Filtering is flipped upside down. Nothing is ever censored on the
+way in, and the rules ensure all current points of view are valued and
+maintained. In other words, be wary of camps with little or no expert
+support, except as communication of what the current supporters
+believe and a quantitative measure of such.  Any filtering or
+prioritizing of camps is controlled by you, by selecting your
+preferred canonizor algorithm and filter settings on this side bar.
+Who the moral experts are, and what level of such expert consensus is
+required, can be determined by you.  If an algorithm you prefer
+doesn't exist yet, it can be proposed.  The goal is to have a
+completely customizable system for all.</p>
+
+<br>
 
 
 <h3>Personal Canonized Values</h3><br>
