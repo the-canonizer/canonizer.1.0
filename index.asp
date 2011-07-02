@@ -99,40 +99,49 @@ currently believes, and why; enabling everyone to know what is or
 would be required to falsify any primitive or faithless positions, and
 get them to be abandoned for better or more hopeful camps.  The best
 way to know if a new argument, or evidence is working or not, is to
-rigorously measure for such.</p>
+solicit and rigorously measure for such.</p>
 
 <p>This is a wiki based system that eliminates edit wars by giving
-users the ability to create, join, and develop camps. It enables
+users the ability to create, join, and develop camps.  It enables
 experts to control collaboratively developed concise descriptions of
 the best moral or scientific theories, in the most agreed on
-terminology. It provides relative quantitative measures of expert, non
-expert... consensus for each. Scientific data and better arguments
-eventually falsify incorrect theories. You can definitively know a
+terminology.  It provides relative quantitative measures of expert, non
+expert...  consensus for each.  Scientific data and better arguments
+eventually falsify primitive theories.  You can definitively know a
 theory has been falsified to the degree the experts are abandoning the
 camps that represent them and vice versa for good theories.</p>
 
-<p>The suporting sub camp tree structure and rules of operation, are
+<p>The supporting sub camp tree structure and rules of operation, are
 set up to encourage as much consensus as possible on any controversial
 or still theoretical topic.  Most people think anti public sex
 education people don't agree on much of anything with pro public sex
-education people.  Both camps believe the other camp is destroying
+education people.  It is a very hateful and destructive situation with
+both camps tending only to think that the other camp is destroying
 their world.  But as you can see in the public sex education topic
-below, there is unanimous agreement by everyone that sex education is
-important.  They only differ in that some think it should be taught in
-a more private and personal way, while most others think public is ok.
-Obviously, what everyone is arguing about is far less important than
-the real important issue - education.  This is typical of most
-everything today.  Any time there is agreement, the conversation
+below, it becomes immediately evident that there is unanimous
+agreement by everyone that sex education is important.  They only
+differ in that some think it should be taught in a more private and
+personal way, while others think public is ok.  Obviously, what
+everyone is arguing about is far less important than the real
+important issue that is often lost - education.  This is typical of
+most everything today.  Any time there is agreement, the conversation
 stops, and people descend to ever less important areas till they find
-what they disagree on.  This is the level where all the conversation
-takes place in all the scientific journals, political forums, blogs,
-and most everywhere.  It's an eternal yes, no, yes, no, childish,
-destructive, debate that blinds everyone to how much agreement there
-is on a great many important things.  Most quickly tire of this, and
-therefore fail to become informed, especially of what others still
-value. This is the obvious reason so many people are still so poorly
-informed on issues of such increasingly critical moral
-importance. </p>
+what they disagree on.  This is the level where all the hateful and
+destructive conversation takes place in all the scientific journals,
+political forums, blogs, and most everywhere.  It's an eternal yes,
+no, yes, no, childish, destructive, debate that blinds everyone to how
+much agreement there is on a great many important things.  Most
+quickly tire of all this censoring, and therefore fail to become
+informed, especially of what others still value.  This is likely why
+so many people are still so poorly informed on issues of such
+increasingly critical moral and scientific importance.  But when you
+turn this around and instead of trying to destroy and censure anyone
+different, you solicit for and seek to rigorously measure for such,
+and value what everyone still wants, it is much easier to work towards
+the goal of finding ways to get everyone what they want.  Some can
+obviosly easily be granted the ability to chose to be educated
+privately all without destroying what more social people also
+want.</p>
 
 <p>Canonizer.com's camp structure encourages people to find the most
 important issues, where most people can agree, so the emphasis can
@@ -143,23 +152,23 @@ important sub camps.  It is possible to represent everyone's current
 POV definitively, efficiently, concisely, quantitatively, and in real
 time with history. </p>
 
-<p>As everyone knows, that which you measure, improves. When examining
+<p>As everyone knows, that which you measure, improves.  When examining
 the history of some of the more well developed camps, you can see that
 this improvement process has, and continues to increase, beyond even
-what the experts are normally able to see. Experts tend to hear far
+what the experts are normally able to see.  Experts tend to hear far
 more from those that disagree with them, than those that do agree, or
-those that have been convinced or educated by them. This often leads
-to gross miss perceptions of reality by experts. Canonizer.com is an
+those that have been convinced or educated by them.  This often leads
+to gross miss perceptions of reality by experts.  Canonizer.com is an
 effective way for experts to measure how educational / convincing,
 there work is amongst their peers, and the general population, and to
 find out where and why the general population may still not be keeping
-up. It better reveals what might be required to more effectively
+up.  It better reveals what might be required to more effectively
 falsify primitive camps and a quantitative measure of how such may or
 may not be working.</p>
 
-<p>Filtering is flipped upside down. Nothing is ever censored on the
+<p>Filtering is flipped upside down.  Nothing is ever censored on the
 way in, and the rules ensure all current points of view are valued and
-maintained. In other words, be wary of camps with little or no expert
+maintained.  In other words, be wary of camps with little or no expert
 support, except as communication of what the current supporters
 believe and a quantitative measure of such.  Any filtering or
 prioritizing of camps is controlled by you, by selecting your
