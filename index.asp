@@ -84,17 +84,32 @@ function change_namespace(namespace) {
 
 <h3>What is canonizer.com?</h3>
 <br>
-<p>This is a consensus building open survey system designed to
-rigorously measure moral expert or scientific consensus.  It is a wiki
-based system that eliminates edit wars by giving users the ability to
-create, join, and develop camps.  It enables experts to control
-collaboratively developed concise descriptions of the best moral or
-scientific theories, in the most agreed on terminology.  It provides
-relative quantitative measures of expert, non expert... consensus for
-each.  Scientific data and better arguments eventually falsify
-incorrect theories.  You can definitively know a theory has been
-falsified to the degree the experts are abandoning the camps that
-represent them and vice versa for good theories. </p>
+
+<p>Canonizer.com is a consensus building open survey system designed
+to rigorously measure moral expert or scientific consensus.  Crowds
+socially negotiating to communicate concisely and quantitatively in
+this way significantly amplify the expert intelligence of the entire
+crowd far beyond what any individual could hope to achieve.  The
+resulting efficient state of the art representation of what everyone
+believes enables the entire crowd to be educated about and to approach
+this level of amplified wisdom.  A critical part of being able to
+increasing the moral expertise of any crowd should be based on
+soliciting, and quantitatively measuring for what everyone still
+currently believes, and why; enabling everyone to know what is or
+would be required to falsify any primitive or faithless positions, and
+get them to be abandoned for better or more hopeful camps.  The best
+way to know if a new argument, or evidence is working or not, is to
+rigorously measure for such.</p>
+
+<p>This is a wiki based system that eliminates edit wars by giving
+users the ability to create, join, and develop camps. It enables
+experts to control collaboratively developed concise descriptions of
+the best moral or scientific theories, in the most agreed on
+terminology. It provides relative quantitative measures of expert, non
+expert... consensus for each. Scientific data and better arguments
+eventually falsify incorrect theories. You can definitively know a
+theory has been falsified to the degree the experts are abandoning the
+camps that represent them and vice versa for good theories.</p>
 
 <p>The camp tree structure and rules of operation, are set up to
 encourage as much consensus as possible on any controversial or still
