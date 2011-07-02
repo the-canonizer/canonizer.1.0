@@ -139,7 +139,7 @@ turn this around and instead of trying to destroy and censure anyone
 different, you solicit for and seek to rigorously measure for such,
 and value what everyone still wants, it is much easier to work towards
 the goal of finding ways to get everyone what they want.  Some can
-obviosly easily be granted the ability to chose to be educated
+obviously easily be granted the ability to chose to be educated
 privately all without destroying what more social people also
 want.</p>
 
@@ -202,7 +202,7 @@ petition?  Would an online version, with a way to sign camps in a
 reputable way help?  Do you want your effort to go viral?  Your
 petition in a canonized camp statement is a very easy and free way to
 do all this.  And of course, unlike traditional petitions, which can't
-change once the first person has signed, statements here continueally
+change once the first person has signed, statements here continually
 grow, progress, and adapt to the times.  Anyone can propose new
 changes and any camp member can object to any changes - preventing
 them from going live.  In this case it can always be added to a
