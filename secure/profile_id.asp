@@ -1,5 +1,7 @@
 <%
 
+use bad_email;
+
 if(!$ENV{"HTTPS"}) {
 	my $qs = '';
 	if ($ENV{'QUERY_STRING'}) {
@@ -536,11 +538,22 @@ sub profile_id {
 		$pass_comment = '<br>(Only if changeing)';
 	}
 
+
+if (bad_email::is_bad_email($form_state{'email'})) {
+%>
+<h1><font color="red">
+
+NOTE: The e-mail adress <%= $form_state{'email'} %> has been deactivated.  
+Contact support@canonizer.com to fix this or if you have any questions.
+
+</font></h1>
+<%
+}
 %>
 
 <div class="main_content_container">
 
-<%=$message%>
+<%= $message %>
 <br>
 <br>
 
@@ -550,7 +563,7 @@ sub profile_id {
 
 <table>
 
-<tr><td colspan=3>Checks from advertisement revenue earned will be dispersed to this name and address</td><td>&nbsp; &nbsp;</td><td>Private</tr></tr>
+<tr><td colspan=3>Checks from any advertisement revenue earned will be dispersed to this name and address</td><td>&nbsp; &nbsp;</td><td>Private</tr></tr>
 
 <tr><td class=separator></td></tr>
 
