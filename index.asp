@@ -86,20 +86,24 @@ function change_namespace(namespace) {
 <br>
 
 <p>Canonizer.com is a consensus building open survey system designed
-to rigorously measure moral expert or scientific consensus.  Crowds
-socially negotiating to communicate concisely and quantitatively in
-this way significantly amplify the expert intelligence of the entire
-crowd far beyond what any individual could hope to achieve.  The
-resulting efficient state of the art representation of what everyone
-believes enables the entire crowd to be educated about and to approach
-this level of amplified wisdom.  A critical part of being able to
-increasing the moral expertise of any crowd should be based on
-soliciting, and quantitatively measuring for what everyone still
-currently believes, and why; enabling everyone to know what is or
-would be required to falsify any primitive or faithless positions, and
-get them to be abandoned for better or more hopeful camps.  The best
-way to know if a new argument, or evidence is working or not, is to
-solicit and rigorously measure for such.</p>
+to register and quantify the contemporary consensus on contentious
+issues that are in a state of flux.  This kind of exchange between
+experts and amateurs alike, results in a hierarchical map of key ideas
+and the connections between them, which can serve to highlight the
+pivotal issues between competing camps.  Instead of eternal bickering
+over disagreements, the crowd can instead focus on developing concise
+and quantitative representations of what everyone believes.  The
+resulting concise descriptions of the leading theories, and the
+quantitative measures of consensus does much more than just give
+everyone definitive access to the wisdom of any crowd.  It gives this
+wisdom memory.  It significantly amplifies it and the speed and
+efficiency with which it can be developed.  A critical purpose of
+Canonizer.com is to continually update this network of ideas, to
+reflect any ongoing changes in consensus, highlighting which ideas are
+currently growing, and which are shrinking in their consensus support
+as new scientific data and better arguments come in.  The best way to
+know whether a new argument, or evidence is being persuasive or not,
+is to solicit and rigorously measure the contemporary consensus.</p>
 
 <p>This is a wiki based system that eliminates edit wars by giving
 users the ability to create, join, and develop camps.  It enables
