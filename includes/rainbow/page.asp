@@ -9,7 +9,7 @@ sub display_page {
 
 	my $url = "http://" . func::get_host() . "/topic.asp/4";
 
-	my $copyright_info = 'Copyright owned by the <a href="' . $url . '">volunteers contributing to the system</a> and its contents (2006 - 2010)';
+	my $copyright_info = 'Copyright owned by the <a href="' . $url . '">volunteers contributing to the system</a> and its contents (2006 - 2011)';
 	my $support_email = 'support@canonizer.com';
 
 	my $not_main_warning = '';
