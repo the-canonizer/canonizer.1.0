@@ -557,20 +557,20 @@ sub display_statement_form {
 
 %>
 
-	<p><font color=red><b>Caution:</b> Sessions time out after 20
-	minutes.  Because of this and other possible problems, if you
-	will be spending lots of time working on an edit, we recommend
-	that you do your work in a local word processer where you can
-	make periodic saves to avoid losing significant amounts of
-	work.  Then when you are completed, you can cut and past the
-	text back to this form with no risk of losing data.  If you do
-	get logged out, it will take you back to the login screen, and
-	will then go back to the edit screen without your edits.  If
-	this does happen, you can complete the re-loggin in and then
-	usually get back to the page with your edits with your
-	browser's back button where you can submit them a second
-	time. In general this is good practice for any web based
-	content submission system.</font></p>
+<p><font color=red><b>Caution:</b> Sessions time out after 20 minutes
+of inactivity.  Because of this and other possible problems, if you
+will be spending lots of time working on an edit, without a periodic
+preview cycle to refresh the session, we recommend that you do your
+work in a local word processer where you can make periodic saves to
+avoid losing significant amounts of work.  Then when you are
+completed, you can cut and past the text back to this form with no
+risk of losing data.  If you do get logged out, it will take you back
+to the login screen, and will then go back to the edit screen without
+your edits.  If this does happen, you can complete the re-logging in
+and then usually get back to the page with your edits with your
+browser's back button where you can submit them a second time. In
+general this is good practice for any web based content submission
+system.</font></p>
 
 <%
 	}
