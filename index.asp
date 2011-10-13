@@ -80,6 +80,11 @@ function change_namespace(namespace) {
 
 <div class="content_1">
 
+<h2>News Flash:</h2>
+
+<p><a href="http://<%= func::get_host() %>/thread.asp/88/1/25">Scientific consensus continues to extend its dramatic lead amongst competing theories of consciousness.</a></p>
+
+
 <br>
 
 <h3>What is canonizer.com?</h3>
