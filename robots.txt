@@ -8,7 +8,6 @@ Disallow: /manage.asp
 Disallow: /nick_info.asp
 Disallow: /person_info.asp
 Disallow: /register.asp
-Disallow: /support_list.asp
 Disallow: /includes/
 Disallow: /images/
 Disallow: /secure/
