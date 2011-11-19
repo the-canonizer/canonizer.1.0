@@ -17,6 +17,9 @@ use statement;
 #		1	long only
 #		2	both long and short
 #
+#	?as_of_mode=[review|as_of] &as_of_date=yy%2Fmm%2Fdd
+#
+
 
 # print(STDERR 'If_Modified_Since: ', $Request->ServerVariables('HTTP_IF_MODIFIED_SINCE'), ".\n");
 
