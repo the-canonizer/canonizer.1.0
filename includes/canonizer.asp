@@ -57,7 +57,7 @@ function change_filter(new_filter) {
 
 	<h1>Canonizer</h1>
 
-	<p>Canonizer algrorithm:</p>
+	<p>Canonizer algorithm:</p>
 	<form name="canonizer_form" action="<%=$url%>" method="post">
 
 	<p><select class=bar name=canonizer onchange="javascript:change_canonizer(value)">
