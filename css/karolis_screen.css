@@ -226,7 +226,10 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	margin: 0 15px 20px 15px;
 	padding: 0;
 	font-weight: normal;
-	background: #ffffff url(../images/block_bg_1.png) bottom no-repeat right;
+	background-color: #ffffff;
+	background-image: url(../images/block_bg_1.png);
+	background-repeat:no-repeat;
+	background-position:right bottom;
 	border-bottom: 1px solid #76993A;
 }
 
@@ -283,7 +286,10 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	margin: 0 15px 20px 15px;
 	padding: 0;
 	font-weight: normal;
-	background: #ffffff url(../images/block_bg_2.png) bottom no-repeat right;
+	background-color: #ffffff;
+	background-image: url(../images/block_bg_2.png);
+	background-repeat:no-repeat;
+	background-position:right bottom;
 	border-bottom: 1px solid #6E458B;
 }
 
@@ -340,7 +346,10 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	margin: 0 15px 20px 15px;
 	padding: 0;
 	font-weight: normal;
-	background: #ffffff url(../images/block_bg_3.png) bottom no-repeat right;
+	background-color: #ffffff;
+	background-image: url(../images/block_bg_3.png);
+	background-repeat:no-repeat;
+	background-position:right bottom;
 	border-bottom: 1px solid #F49519;
 }
 
@@ -397,7 +406,10 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	margin: 0 15px 20px 15px;
 	padding: 0;
 	font-weight: normal;
-	background: #ffffff url(../images/block_bg_4.png) bottom no-repeat right;
+	background-color: #ffffff;
+	background-image: url(../images/block_bg_4.png);
+	background-repeat:no-repeat;
+	background-position:right bottom;
 	border-bottom: 1px solid #0051FF;
 }
 
@@ -454,7 +466,10 @@ select.bar /* we only want to restrict select boxes on the side bar? */
 	margin: 0 15px 20px 15px;
 	padding: 0;
 	font-weight: normal;
-	background: #ffffff url(../images/block_bg_5.png) bottom no-repeat right;
+	background-color: #ffffff;
+	background-image: url(../images/block_bg_5.png);
+	background-repeat:no-repeat;
+	background-position:right bottom;
 	border-bottom: 1px solid #28A000;
 }
 
