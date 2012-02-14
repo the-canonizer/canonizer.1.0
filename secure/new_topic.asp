@@ -207,36 +207,33 @@ my $namespace_select_str = func::make_namespace_select_str($dbh, $namespace, 1);
 
 
 <form method=post>
-<p>Name: <span class="required_field">*</span></p>
-<p>Maximum 25 characters.</p>
 
+<p>Topics and Camps have both a short name (25 chars max) and a longer
+title (65 chars max) The shorter version is used when small size is
+important.  Whenever possible, the two should be the same, or at least
+obvious to anyone that they are the same.  If the two are not
+obviously the same it will cause confusion.<p>
+
+<p><span class="required_field">*</span>Name (Maximum 25 characters):</p>
 <p><input type=string name=canon_topic_name
 value="<%=func::escape_double($form_state{'topic_name'})%>"
 maxlength=25 size=28 /></p>
+
+<p><span class="required_field">*</span>Title (Maximum 65 characters):</p>
+<p><input type=string name=canon_title value="<%=func::escape_double($form_state{'title'})%>" maxlength=65 size=75></p>
 
 <hr>
 
 <p>Namespace:</p>
 
-<p>Most all topics should use the general name space.  Name spaces are
-for special purpose topics or to separate topics not of interest to
-the general population.  You can request new namespaces, such as for
+<p>You should use the default 'general' names space unless you know
+you want your topic to be in a special name space for a special
+purpose.  You can request new special purpose namespaces, such as for
 use by a particular organization, by contacting support.</p>
 
 <p><%=$namespace_select_str%></p>
 
 <br>
-
-<hr>
-<%
-# <p>Agreement Camp Values:</p>
-#AKA: Comma separated - symbolic link created for each one.
-#<input type = string name = AKA maxlength = 255 size = 65>
-%>
-
-<p>Title: <span class="required_field">*</span></p>
-<p>Maximum 65 characters.</p>
-<p><input type=string name=canon_title value="<%=func::escape_double($form_state{'title'})%>" maxlength=65 size=75></p>
 
 <hr>
 
@@ -248,10 +245,10 @@ use by a particular organization, by contacting support.</p>
 
 <p>URL:</p>
 
-<p>Maximum 65 characters.  This field is normally not used unless
-there is a specific web page this particular topic is about.  The
-/www/ name space is for canonized POV information about specific web
-sites.</p>
+<p>Maximum 65 characters.  Leave this field blank unless you know what
+it is used for.  If this survey topic is about a specific web page you
+can make that link with this field.  The /www/ name space is for
+canonized POV information about specific web sites.</p>
 
 <p><input type=string name=canon_url
 value="<%=func::escape_double($form_state{'url'})%>" maxlength=256
