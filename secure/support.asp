@@ -443,9 +443,6 @@ sub support_form {
 		function render_support() {
 			var render_str = "";
 
-			render_str += "<br><br>\n";
-			render_str += "<center>\n";
-			render_str += "<form method=post>\n";
 			render_str += "  <input type=hidden name=topic_num value=<%=$topic_num%>>\n";
 			render_str += "  <input type=hidden name=camp_num value=<%=$camp_num%>>\n";
 			render_str += "  <table class=support_table>\n";
@@ -500,82 +497,25 @@ sub support_form {
 			%>
 			render_str += "  </select><br><br>\n";
 			render_str += "<input type=submit name=submit value=\"Commit Direct Support\">\n";
-			render_str += "</form>\n";
-			render_str += "</center>\n";
-			// alert(render_str);
-			document.getElementById("support_block").innerHTML = render_str;
-		}
-
-		function render_support_karolis_version() {
-			var render_str = "";
-			render_str += "\n";
-			render_str += "\n";
-			render_str += "<form method=post>\n";
-			render_str += "  <input type=hidden name=topic_num value=<%=$topic_num%>>\n";
-			render_str += "  <input type=hidden name=camp_num value=<%=$camp_num%>>\n";
-			render_str += "\n";
-			var idx;
-
-			for (idx = 0; idx < support_array.length; idx++) {
-				if (! support_array[idx]) {
-					alert('in: ' + idx);
-					// shouldn't happen, but bad data (i.e. related support.) has happened.
-					continue;
-				}
-
-				support_object = support_array[idx];
-				render_str += "\n";
-				render_str += "" + idx + "\n";
-				render_str += "" + support_object.camp_info + "\n";
-				if (support_array.length > 1) { // no move buttons if only supporting one.
-					if (idx < (support_array.length - 1)) {
-						render_str += "  <button onclick=move_down(" + idx + ")>v</button>";
-					} else {
-						render_str += "  ";
-					}
-					if (idx > 0) {
-						render_str += "  <button onclick=move_up(" + idx + ")>^</button>\n"; // the move buttons go here.
-					} else {
-						render_str += "  \n"; // the move buttons go here.
-					}
-				}
-				render_str += "Delete <input type=checkbox name=delete_" + idx + ">\n";
-				render_str += "\n";
-				render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.camp_num + ">\n";
-
-			}
-			render_str += "  \n";
-			render_str += "  \n";
-			render_str += "  Support Nick Name: ";
-			render_str += "  <select name=nick_name>";
-			<%
-			my $id;
-			foreach $id (sort {$a <=> $b} (keys %nick_names)) {
-				if ($id == -1) { # some day propegate the previous support nick selection?
-					%>
-					render_str += "<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%>\n";
-					<%
-				} else {
-					%>
-					render_str += "<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%>\n";
-					<%
-				}
-			}
-			%>
-			render_str += "</select>\n";
-			render_str += "<input type=submit name=submit value=\"Commit Direct Support\">\n";
-			render_str += "</form>\n";
-			render_str += "\n";
-			// alert(render_str);
-
 			document.getElementById("support_block").innerHTML = render_str;
 		}
 
 		</script>
 
+
 		<p><a href="http://<%=func::get_host()%>/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp (no change)</a></p>
 
+		<br>
+		<br>
+		<center>
+		<form mothod=post>
+
 		<span id = 'support_block'></span>
+
+		</form>
+		</center>
+
+
 
 		<script language=javascript>
 		render_support();
