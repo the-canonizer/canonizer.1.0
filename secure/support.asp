@@ -85,7 +85,7 @@ if ($camp->{error_message}) {
 
 if ($error_message) {
 	display_page('Support Errorr', 'Support Errorr', [\&identity, \&search, \&main_ctl], [\&error_page]);
-} elsif ($Request->Form('submit')) {
+} elsif ($Request->Form('submited')) {
 	# does not return if successful (rederects to topic.asp for original camp.)
 	save_support();
 } else {
@@ -100,7 +100,7 @@ sub delete_support {
 	# We don't want to do this.
 	# We want them to see the entire support list, and confirm they want to delete support.
 	%>
-	<p>This operation is not suported, use modify support instead.</p>
+	<p>This operation is not supported, use modify support instead.</p>
 	<%
 	$Response->End();
 
@@ -132,6 +132,8 @@ sub delete_support {
 
 sub save_support {
 
+	my $new_camps_string = "";
+
 	my $idx = 0;
 	my $del_idx = 0;
 	my $nick_name_id = $Request->Form('nick_name');
@@ -139,7 +141,7 @@ sub save_support {
 	my support $delegate_support = undef;
 	my %form_support_hash = ();
 	while ($support_camp_num = $Request->Form('support_' . $idx)) {
-		if (! $Request->Form('delete_' . $idx)) {
+		if ($Request->Form('delete_' . $idx) ne "1") {
 			if ($delegate_id) { # use delegate's primary (0 order) support
 				$delegate_support = $camp->{support_hash}->{$delegate_id}->[0];
 				if ($delegate_support) {
@@ -157,6 +159,7 @@ sub save_support {
 					return();
 				}
 			}
+			$new_camps_string .= 'http://' . func::get_host() . "/topic.asp/$topic_num/$support_camp_num\n";
 			$form_support_hash{$del_idx} = $support_camp_num;
 			$del_idx++;
 		}
@@ -217,9 +220,20 @@ sub save_support {
 		}
 	}
 
-	func::send_email("Adding support", "Nick name id $nick_name_id is adding support for topic $topic_num, camp: $camp_num.\nfrom support.asp.\n");
+	my $nick_name = func::get_nick_name($dbh, $nick_name_id, 1);
+	my $email_message = "$nick_name is ";
+	if ($delegate_support) {
+		$nick_name = func::get_nick_name($dbh, $delegate_id, 1);
+		$email_message .= "delegating their support to $nick_name.\n";
+	} else {
+		$email_message .= "is now directly supporting the folowing:\n";
+	}
+	$email_message .= $new_camps_string;
+	$email_message .= "\nfrom support.asp\n";
+
+	func::send_email("New support", $email_message);
 	sleep(1);
-        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num/$camp_num");
+        $Response->Redirect('http://' . func::get_host() . "/topic.asp/$topic_num/$camp->{camp_num}");
 	$Response->End();
 
 	%>
@@ -362,11 +376,11 @@ sub support_form {
 		foreach $id (sort {$a <=> $b} (keys %nick_names)) {
 			if ($id == -1) { # some day propegate the previous support nick selection?
 				%>
-				<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%>
+				<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%></option>
 				<%
 			} else {
 				%>
-				<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%>
+				<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%></option>
 				<%
 			}
 		}
@@ -374,14 +388,14 @@ sub support_form {
 		</select>
 		<br>
 		<br>
-		<input type=submit name=submit value="Commit Delegated Support">
+		<input type=submit name=submited value="Commit Delegated Support">
 		</form>
 		<%
 		# this is where we display both lists!! ? (after we check for delegate support to deref);
 
-	} else {		# new direct (may change order) suport
+	} else {		# new direct (may change order) support
 		%>
-		<script language=javascript>
+		<script type="text/javascript">
 
 		var support_array = new Array(0);
 		var support_object;
@@ -399,7 +413,7 @@ sub support_form {
 				if ($old_support) {
 					if ($camp->{camp_num} == $old_support->{camp_num}) { # modify support
 						$replacement_idx = $support_order_idx++;
-						$replacement_hdr = 'Modify Support';
+						$replacement_hdr = ''; # 'Modify Support: ';
 					} else {
 						$old_camp = $camp->{camp_tree_hash}->{$old_support->{camp_num}};
 						if ($camp->is_related($old_camp->{camp_num})) {
@@ -424,18 +438,25 @@ sub support_form {
 
 		%>
 
-		function move_up(idx) {
-			var temp_object = support_array[idx - 1];
-			support_array[idx - 1] = support_array[idx];
-			support_array[idx] = temp_object;
-			render_support();
-		}
 
+		// 1 = down in priority, -1 = up in priority
+		function move(dirrection, idx) {
 
-		function move_down(idx) {
-			var temp_object = support_array[idx + 1];
-			support_array[idx + 1] = support_array[idx];
+			var temp_object = support_array[idx + dirrection];
+			support_array[idx + dirrection] = support_array[idx];
 			support_array[idx] = temp_object;
+
+			var my_form = document.forms.support_form;
+			var move_code =
+				"temp_object = my_form.support_" + (idx + dirrection) + ".value;\n" +
+				"my_form.support_" + (idx + dirrection) + ".value = my_form.support_" + idx + ".value;\n" +
+				"my_form.support_" + idx + ".value = temp_object;\n" +
+
+				"temp_object = my_form.delete_"  + (idx + dirrection) + ".value;\n" +
+				"my_form.delete_"  + (idx + dirrection) + ".value = my_form.delete_"  + idx + ".value;\n" +
+				"my_form.delete_"  + idx + ".value = temp_object;\n";
+			eval(move_code);
+
 			render_support();
 		}
 
@@ -443,8 +464,6 @@ sub support_form {
 		function render_support() {
 			var render_str = "";
 
-			render_str += "  <input type=hidden name=topic_num value=<%=$topic_num%>>\n";
-			render_str += "  <input type=hidden name=camp_num value=<%=$camp_num%>>\n";
 			render_str += "  <table class=support_table>\n";
 
 			var idx;
@@ -461,63 +480,136 @@ sub support_form {
 				render_str += "  <td>" + idx + "</td>\n";
 				render_str += "  <td>" + support_object.camp_info + "</td>\n";
 				if (support_array.length > 1) { // no move buttons if only supporting one.
-					if (idx < (support_array.length - 1)) {
-						render_str += "  <td><button onclick=move_down(" + idx + ")>v</button></td>";
+					if (idx < (support_array.length - 1)) {        // 1 = down in priority;
+						render_str += "  <td><button onclick=\"move(1, " + idx + ")\">v</button></td>";
 					} else {
 						render_str += "  <td>&nbsp;</td>";
 					}
-					if (idx > 0) {
-						render_str += "  <td><button onclick=move_up(" + idx + ")>^</button></td>\n"; // the move buttons go here.
+					if (idx > 0) {                                //  -1 = up in priority;
+						render_str += "  <td><button onclick=\"move(-1, " + idx + ")\">^</button></td>\n"; // the move buttons go here.
 					} else {
 						render_str += "  <td>&nbsp;</td>\n"; // the move buttons go here.
 					}
 				}
-				render_str += "  <td align=center>Delete<br><input type=checkbox name=delete_" + idx + "></td>\n";
+				var deleted_str = "";
+				if (support_array[idx].deleted == 1) {
+					deleted_str = " checked ";
+				}
+				render_str += "  <td align=center>Delete<br>\n"
+				render_str += "<input type=checkbox name=delete_" + idx + deleted_str + " onclick=\"click_delete(" + idx + ")\"></td>\n";
 				render_str += "</tr>\n";
-				render_str += "<input type=hidden name=support_" + idx + " value=" + support_object.camp_num + ">\n";
-
 			}
 			render_str += "  </table>\n";
-			render_str += "  <br>\n";
-			render_str += "  Support Nick Name: ";
-			render_str += "  <select name=nick_name>";
-			<%
-			my $id;
-			foreach $id (sort {$a <=> $b} (keys %nick_names)) {
-				if ($id == -1) { # some day propegate the previous support nick selection?
-					%>
-					render_str += "<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%>\n";
-					<%
-				} else {
-					%>
-					render_str += "<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%>\n";
-					<%
-				}
-			}
-			%>
-			render_str += "  </select><br><br>\n";
-			render_str += "<input type=submit name=submit value=\"Commit Direct Support\">\n";
+
 			document.getElementById("support_block").innerHTML = render_str;
+		}
+
+
+		function click_delete(idx) {
+			var checkbox = document.getElementById("delete_" + idx);
+			if(support_array[idx].deleted == 1) {
+				support_array[idx].deleted = 0;
+				checkbox.value = 0;
+			} else {
+				support_array[idx].deleted = 1;
+				checkbox.value = 1;
+			}
+		}
+
+		function do_submit() {
+			var  my_form = document.forms.support_form;
+			my_form.method = "post";
+			my_form.submit();
 		}
 
 		</script>
 
+<span id=glipwad_div></span>
 
 		<p><a href="http://<%=func::get_host()%>/topic.asp/<%=$topic_num%>/<%=$camp_num%>">Return to camp (no change)</a></p>
 
 		<br>
 		<br>
+
 		<center>
-		<form mothod=post>
 
 		<span id = 'support_block'></span>
 
+		<form mothod=post name="support_form">
+		<input type=hidden name=submited value=1>
+		<input type=hidden name=topic_num value=<%=$topic_num%>>
+		<input type=hidden name=camp_num value=<%=$camp_num%>>
+
+		<%
+		my $idx;
+		my camp $old_camp;
+		my $support_order_idx = 0;
+		my $replacement_idx = -1;
+
+		foreach $old_support (@{$old_support_array_ref}) {
+			if ($old_support) {
+				my $camp_num = -1;
+				if ($camp->{camp_num} == $old_support->{camp_num}) { # modify support
+					$camp_num = $camp->{camp_num};
+					$replacement_idx = $support_order_idx;
+				} else {
+					$old_camp = $camp->{camp_tree_hash}->{$old_support->{camp_num}};
+					if ($camp->is_related($old_camp->{camp_num})) {
+						if ($replacement_idx == -1) {
+							$replacement_idx = $support_order_idx;
+							$camp_num = $camp->{camp_num};
+						} # else skip because we alrady have camp added.
+					} else {
+						$camp_num = $old_support->{camp_num};
+					}
+				}
+				if ($camp_num != -1) { # else skip
+					%>
+					<input type=hidden name=support_<%=$support_order_idx%> value=<%=$camp_num%>>
+					<input type=hidden name=delete_<%=$support_order_idx%> value=0 id=delete_<%=$support_order_idx%>>
+					<%
+					$support_order_idx++;
+				}
+			}
+		}
+		if ($replacement_idx == -1) { # must be a newly supported camp that did not match (so add on the end)
+			%>
+			<input type=hidden name=support_<%=$support_order_idx%> value=<%=$camp->{camp_num}%>>
+			<input type=hidden name=delete_<%=$support_order_idx%> value=0 id=delete_<%=$support_order_idx%>>
+			<%
+		}
+
+		%>
+
+		<br>
+		Support Nick Name:
+		<select name=nick_name>
+			<%
+			my $id;
+			foreach $id (sort {$a <=> $b} (keys %nick_names)) {
+				if ($id == -1) { # some day propegate the previous support nick selection?
+					%>
+					<option value=<%=$id%> selected><%=$nick_names{$id}->{'nick_name'}%></option>
+					<%
+				} else {
+					%>
+					<option value=<%=$id%>><%=$nick_names{$id}->{'nick_name'}%></option>
+					<%
+				}
+			}
+			%>
+		</select>
+		<br><br>
+
+		<button onclick="do_submit()">Commit Direct Support</button>
+
 		</form>
+
+		<br><br>
+
 		</center>
 
-
-
-		<script language=javascript>
+		<script type="text/javascript">
 		render_support();
 		</script>
 
@@ -549,6 +641,7 @@ sub make_js_support_object_str {
 	$ret_str .= "support_object = new Object();\n";
 	$ret_str .= "support_object.camp_num = $camp->{camp_num};\n";
 	$ret_str .= "support_object.camp_info = \"$camp_info\";\n";
+	$ret_str .= "support_object.deleted = 0;\n";
 	$ret_str .= "support_array[$support_order_idx] = support_object;\n";
 
 	return($ret_str);
