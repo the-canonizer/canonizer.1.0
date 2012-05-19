@@ -90,6 +90,12 @@ $review_tree->get_support($dbh, \%support_hash);
 if (!$support_hash{$Session->{'cid'}}) { # sender should get a copy.
 	$support_hash{$Session->{'cid'}} = 1;
 }
+
+# custom request from Mark Pharoah to only send forum e-mails for his camp.
+if ($support_hash{262} && ($topic_num == 88) && ($camp_num != 54)) {
+   delete $support_hash{262};
+}
+
 if (!$support_hash{1}) { # and brent gets a copy, for now.
 	$support_hash{1} = 1;
 }
