@@ -42,11 +42,11 @@ sub main_ctl {
 
 	if ($uri =~ m|^/topic\.asp/10|) {
 	    %>
-	    <p id="selected">What Is The Canonizer</p>
+	    <p id="selected">What Is Canonizer.com</p>
 	    <%
 	} else {
 	    %>
-	   <p><a href = 'http://<%=&func::get_host()%>/topic.asp/10'>What Is The Canonizer</a></p>
+	   <p><a href = 'http://<%=&func::get_host()%>/topic.asp/10'>What Is Canonizer.com</a></p>
 	    <%
 	}
 
