@@ -80,167 +80,18 @@ function change_namespace(namespace) {
 
 <div class="content_1">
 
-<h2>News Flash:</h2>
+<p>James Carroll authored a new Tech Report we intend on getting
+published:
+<ul>
+<li>
+<a
+href="http://canonizer.com/files/2012_amplifying_final.pdf"><font style="font-size:20px">Amplifying
+the Wisdom of the Crowd,</font><br>Building and Measuring for Expert and Moral
+Consensus</a>
+</li>
+<ul>
+</p>
 
-<p><a href="http://<%= func::get_host() %>/thread.asp/88/1/25">Scientific consensus continues to extend its dramatic lead amongst competing theories of consciousness.</a></p>
-
-
-<br>
-
-<h3>What is canonizer.com?</h3>
-<br>
-
-<p>Canonizer.com is a consensus building open survey system designed
-to register and quantify the contemporary consensus on contentious
-issues that are in a state of flux.  This kind of exchange between
-experts and amateurs alike, results in a hierarchical map of key ideas
-and the connections between them, which can serve to highlight the
-pivotal issues between competing camps.  Instead of eternal bickering
-over disagreements, the crowd can instead focus on developing concise
-and quantitative representations of what everyone believes.  The
-resulting concise descriptions of the leading theories, and the
-quantitative measures of consensus does much more than just give
-everyone definitive access to the wisdom of any crowd.  It gives this
-wisdom memory.  It significantly amplifies it and the speed and
-efficiency with which it can be developed.  A critical purpose of
-Canonizer.com is to continually update this network of ideas, to
-reflect any ongoing changes in consensus, highlighting which ideas are
-currently growing, and which are shrinking in their consensus support
-as new scientific data and better arguments come in.  The best way to
-know whether a new argument, or evidence is being persuasive or not,
-is to solicit and rigorously measure the contemporary consensus.</p>
-
-<p>This is a wiki based system that eliminates edit wars by giving
-users the ability to create, join, and develop camps.  It enables
-experts to control collaboratively developed concise descriptions of
-the best moral or scientific theories, in the most agreed on
-terminology.  It provides relative quantitative measures of expert, non
-expert...  consensus for each.  Scientific data and better arguments
-eventually falsify primitive theories.  You can definitively know a
-theory has been falsified to the degree the experts are abandoning the
-camps that represent them and vice versa for good theories.</p>
-
-<p>The supporting sub camp tree structure and rules of operation, are
-set up to encourage as much consensus as possible on any controversial
-or still theoretical topic.  Most people think anti public sex
-education people don't agree on much of anything with pro public sex
-education people.  It is a very hateful and destructive situation with
-both camps tending only to think that the other camp is destroying
-their world.  But as you can see in the public sex education topic
-below, it becomes immediately evident that there is unanimous
-agreement by everyone that sex education is important.  They only
-differ in that some think it should be taught in a more private and
-personal way, while others think public is ok.  Obviously, what
-everyone is arguing about is far less important than the real
-important issue that is often lost - education.  This is typical of
-most everything today.  Any time there is agreement, the conversation
-stops, and people descend to ever less important areas till they find
-what they disagree on.  This is the level where all the hateful and
-destructive conversation takes place in all the scientific journals,
-political forums, blogs, and most everywhere.  It's an eternal yes,
-no, yes, no, childish, destructive, debate that blinds everyone to how
-much agreement there is on a great many important things.  Most
-quickly tire of all this censoring, and therefore fail to become
-informed, especially of what others still value.  This is likely why
-so many people are still so poorly informed on issues of such
-increasingly critical moral and scientific importance.  But when you
-turn this around and instead of trying to destroy and censure anyone
-different, you solicit for and seek to rigorously measure for such,
-and value what everyone still wants, it is much easier to work towards
-the goal of finding ways to get everyone what they want.  Some can
-obviously easily be granted the ability to chose to be educated
-privately all without destroying what more social people also
-want.</p>
-
-<p>Canonizer.com's camp structure encourages people to find the most
-important issues, where most people can agree, so the emphasis can
-stay at that much more important educational, actionable,
-scientifically testable, law passing level.  The less important more
-disagreeable issues can be pushed out of the way to lower level less
-important sub camps.  It is possible to represent everyone's current
-POV definitively, efficiently, concisely, quantitatively, and in real
-time with history. </p>
-
-<p>As everyone knows, that which you measure, improves.  When examining
-the history of some of the more well developed camps, you can see that
-this improvement process has, and continues to increase, beyond even
-what the experts are normally able to see.  Experts tend to hear far
-more from those that disagree with them, than those that do agree, or
-those that have been convinced or educated by them.  This often leads
-to gross miss perceptions of reality by experts.  Canonizer.com is an
-effective way for experts to measure how educational / convincing,
-there work is amongst their peers, and the general population, and to
-find out where and why the general population may still not be keeping
-up.  It better reveals what might be required to more effectively
-falsify primitive camps and a quantitative measure of how such may or
-may not be working.</p>
-
-<p>Filtering is flipped upside down.  Nothing is ever censored on the
-way in, and the rules ensure all current points of view are valued and
-maintained.  In other words, be wary of camps with little or no expert
-support, except as communication of what the current supporters
-believe and a quantitative measure of such.  Any filtering or
-prioritizing of camps is controlled by you, by selecting your
-preferred canonizor algorithm and filter settings on this side bar.
-Who the moral experts are, and what level of such expert consensus is
-required, can be determined by you.  If an algorithm you prefer
-doesn't exist yet, it can be proposed.  The goal is to have a
-completely customizable system for all.</p>
-
-<br>
-
-
-<h3>Personal Canonized Values</h3><br>
-
-<p>To find out what someone's beliefs and values are, click on their
-ID to get to their personal canonized values page.  These personal
-pages have a list of all supported camps.  When you meet a new person,
-you can simply and easily share all your canonized values - comparing
-and contrasting them.  Using the 'as of' box on the side bar, you can
-find what people's canonized values were at any time in the past.  A
-powerful way to easily testify of what you believe in and hope for, in
-a collaborative way with all who share you beliefs.  You can also
-create anonymous nick names and support camps anonymously if you
-wish. </p> <br>
-
-
-<h3>Eliminates problems of traditional petitions and surveys</h3><br>
-
-<p>Do you have a grass roots effort trying to collect signatures on a
-petition?  Would an online version, with a way to sign camps in a
-reputable way help?  Do you want your effort to go viral?  Your
-petition in a canonized camp statement is a very easy and free way to
-do all this.  And of course, unlike traditional petitions, which can't
-change once the first person has signed, statements here continually
-grow, progress, and adapt to the times.  Anyone can propose new
-changes and any camp member can object to any changes - preventing
-them from going live.  In this case it can always be added to a
-competing sibling or supporting sub camp so you can find everyone that
-agrees with you.  <p><br>
-
-<h3>Canonized Feedback on Your Web Pages</h3><br>
-<p>Do you have thousands of useless comments for feedback on your web
-pages from the masses about products, beliefs, or anything?  Would you
-like to get all the similar ones grouped, concisely stated,
-quantitatively measured, or canonized on your web pages for free?  You
-can now create a topic in the canonizer for such, and then add a
-simple block of HTML to your web page to show the information on your
-page as is done here: <a
-href="http://home.comcast.net/~brent.allsop">http://home.comcast.net/~brent.allsop</a>.
-</p><br>
-
-<h3>Canonized Reputations Building</h3><br>
-
-<p>Do you live in Nigeria, yet want to do business online?  Do you
-have a professional service or product that is, in your POV, the best?
-Do you have lots of happy customers willing to prove it?  Is everybody
-ignoring your collection of testimonials?  Then you can get such
-canonized.  Nobody puts much creed in a collection of testimonials,
-but a canonized reputation is very reputable since it is an open
-system where both pro and con customers can contribute.  For an
-example, see this topic on <a href="
-http://canonizer.com/topic.asp/18">who is the best family
-dentist</a>.</p> <br>
 
 </div>
 
