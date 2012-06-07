@@ -31,10 +31,15 @@ print page_header($title);
 %>
 
 <div id="header">
-     <h1><%=$page_header%></h1>
+    <table width="100%">
+      <tr>
+        <td><h1><%=$page_header%></h1></td>
+	<td align=right><a href="/"><img border="0" src="/images/Canonizer_Logo_100x70.jpg"></a></td>
+      </tr>
+    </table>
 </div>
 
-<div id="block_tools">     
+<div id="block_tools">
 
 <%
 my $sub;
