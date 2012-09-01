@@ -94,8 +94,21 @@ foreach $sub (@$content_subs)
 <div class="clear_floats">&nbsp;</div>
 
 <div id="footer">
-     <h3><%=$copyright_info%></h3>
-     <h3>Comments and Questions: <a href = "mailto:<%=$support_email%>"><%=$support_email%></a></h3>
+<table width="100%">
+    <tr><td align="left">
+        <table>
+            <tr><td><h1>Sponsors:</h1></td>
+	    <td><a href="http://transfigurism.org">
+	    	<img src="http://transfigurism.org/assets/3/mta-thumb.png">
+		</a>
+	    </td>
+	</table>
+        <td>
+	    <h3><%=$copyright_info%></h3>
+	    <h3>Comments and Questions: <a href = "mailto:<%=$support_email%>"><%=$support_email%></a></h3>
+	</td>
+    </tr>
+</table>
 </div>
 
 <%
