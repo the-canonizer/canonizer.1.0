@@ -80,8 +80,33 @@ function change_namespace(namespace) {
 
 <div class="content_1">
 
-<p>James Carroll authored a new Tech Report we intend on getting
-published:
+<p> Canonizer.com is a system that exponentially amplifies the wisdom
+of the crowd by enabling still minority experts to build and measure
+for emerging expert moral and scientific consensus.  Leading minority
+experts can first find each other, and then build a concisely defined
+consensus in a consistent language by pushing lesser important
+disagreeable issues that inevitably emerge out of the way into lower
+sub camps.  Since anyone can contribute and everyone can choose who
+they think are the experts, it enables the emerging experts to have a
+concise and quantitative measure of what the primitive popular crowd
+still believes, so they can know, concisely and quantitatively, what
+kind of evidence is working and what isn't, with a focus on
+discovering what evidence would be required.  When an expert publishes
+a morally important paper, they need to know who and how many people
+agree, how many don't, and why.  The exponentially growing number of
+peer reviewed documents in any important theoretical field (We just
+blew past 20K documents in the field of consciousness) focuses on
+disagreements and prevents consensus.  It leads everyone to believe
+there is or may not be any emerging consensus.  Because of all this
+the still mistaken crowd tends to easily drown out any emerging
+minority experts.  This kind of a rigorous real time measurement
+process finally enables emerging minority expert opinion to be
+definitively heard by all above this still morally primitive bleating
+noise of the crowd at a measurably accelerating rate.</p>
+
+<p>That which you can measure, improves.</p>
+
+<p>James Carroll authored a new Tech Report we've submitted for presentation at the <a href = https://sites.google.com/site/psusociety2013/home> International Conference on Social Intelligence and Technology 2013</a>.
 <ul>
 <li>
 <a
