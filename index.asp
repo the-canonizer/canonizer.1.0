@@ -115,6 +115,11 @@ bleating noise of the crowd at a measurably accelerating rate.</p>
 
 <p>That which you can measure, improves.</p>
 
+<p>Knowing, concisely and quantitatively, everyone else who wants what
+you do, and what is still standing in your way, is the hardest part.
+Once you know enough people that want the same thing you do, it will
+just happen.</p>
+
 <p><b>James Carroll authored a new Tech Report we've submitted for presentation at the <a href = https://sites.google.com/site/psusociety2013/home> International Conference on Social Intelligence and Technology 2013</a>.
 <ul>
 <li>
