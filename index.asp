@@ -120,21 +120,25 @@ everyone afraid of such topics, preventing good communication.  This
 situation with no clear concise descriptions of the best scientific
 theories, leads everyone to believe there is or may not be any expert
 consensus.  In this environment the still mistaken crowd tends to
-easily drown out any emerging minority experts.  Knowing, concisely
-and quantitatively, what everyone currently believes, can eliminate
-all these communication prevention issues and fears.  Such can finally
-enable emerging expert minorities to make progress at being heard
-above the bleating noise of the crowd at a measurably accelerating
-rate.</p>
+easily drown out any emerging minority experts.  With Canonizer.com
+diversity is valued and drives the system forward, rather than
+destroying it.  Knowing concisely and quantitatively, what everyone
+currently believes, can eliminate all these communication prevention
+issues and fears - even making still 'religious' issues quite
+enjoyable for all.  Such can finally enable emerging expert minorities
+to make progress at being heard above the bleating noise of the crowd
+at a measurably accelerating rate.</p>
+
+
 
 <p>That which you can measure, improves.</p>
 
 <p>Knowing, concisely and quantitatively, everyone else who wants what
 you do, and what is still standing in your way, is the hardest part.
 Once you know enough people that want the same thing you do, it will
-just happen.<br>
+just happen.</p>
 
-<b>James Carroll authored a new Tech Report we've submitted for presentation at the <a href = https://sites.google.com/site/psusociety2013/home> International Conference on Social Intelligence and Technology 2013</a>.
+<p><b>James Carroll authored a new Tech Report we've submitted for presentation at the <a href = https://sites.google.com/site/psusociety2013/home> International Conference on Social Intelligence and Technology 2013</a>.
 <ul>
 <li>
 <a
