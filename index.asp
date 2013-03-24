@@ -80,20 +80,21 @@ function change_namespace(namespace) {
 
 <div class="content_1">
 
+
 <p>Canonizer.com solves the critical problems suffered by Wikipedia.
 It solves edit wars by providing contributors the ability to create
 and join camps and it provides a measure of information reliability by
-providing relative measures of user selectable expert consensus.
-Unlike other information sources, such as peer reviewed documents,
-where there is far too much information for any individual to fully
-comprehend (We just blew past 20K documents in the field of
-consciousness) this open survey system provides real time concise and
-quantitative descriptions of the current and emerging leading
-theories.  Theories being falsified by any new scientific data can be
-instantly measured to the degree experts abandon those theories for
-newer better ones.  The non repetitive, continually ratcheting up
-process significantly accelerates and amplifies the education and
-wisdom of the entire crowd.</p>
+providing relative measures of expert consensus.  Unlike other
+information sources, such as peer reviewed documents, where there is
+far too much information for any individual to fully comprehend (We
+just blew past 20K documents in the field of consciousness) this open
+survey system provides real time concise and quantitative descriptions
+of the current and emerging leading theories.  Theories that have been
+falsified by new scientific evidence are being instantly measured to
+the degree experts are abandoning those theories for newer better
+ones.  The non repetitive, continually ratcheting up process
+significantly accelerates and amplifies the education and wisdom of
+the entire crowd.</p>
 
 <p>Leading minority experts can first find each other, and then build
 a concisely defined consensus in a consistent language by pushing
@@ -101,35 +102,58 @@ lesser important disagreeable issues that inevitably emerge and are
 traditionally focused on, out of the way into lower sub camps.  This
 allows a consensus to be negotiated and built around and the focus to
 stay on the most important actionable issues.  Since anyone can
-contribute (even high school students have made significant
-contributions) and everyone can choose (selecting a canonizer
-algorithm) who they think are the experts, it enables the emerging
-experts to have a concise and quantitative measure of what the
-primitive popular crowd still believes, comparable to what the
+contribute (even high school students have become educated by making
+significant contributions) and everyone can choose (selecting a
+canonizer algorithm) who they think are the experts, it enables the
+emerging experts to have a concise and quantitative measure of what
+the primitive popular crowd still believes, comparable to what the
 emerging experts believe, so they can know, concisely and
 quantitatively, what kind of evidence is working and what isn't, with
 a focus on discovering what evidence would be required to convert
 more.</p>
 
-<p>When an expert publishes a morally important paper, possibly
-containing arguments that convince only the author, they need to know
-who and how many people agree, how many don't, and why.  In most all
-sources today, there tends to be infinitely repetitive and painful yes
-/ no assertions on all sides, on lesser important issues, all making
+<p>When an expert publishes an important paper, possibly containing
+arguments that convince only the author, they need to know who and how
+many people agree, how many don't, and why.  In most all sources
+today, there tends to be infinitely repetitive and painful yes / no
+assertions on all sides, on lesser important issues, all making
 everyone afraid of such topics, preventing good communication.  This
 situation with no clear concise descriptions of the best scientific
 theories, leads everyone to believe there is or may not be any expert
 consensus.  In this environment the still mistaken crowd tends to
-easily drown out any emerging minority experts.  With Canonizer.com
-diversity is valued and drives the system forward, rather than
-destroying it.  Knowing concisely and quantitatively, what everyone
-currently believes, can eliminate all these communication prevention
-issues and fears - even making still 'religious' issues quite
-enjoyable for all.  Such can finally enable emerging expert minorities
-to make progress at being heard above the bleating noise of the crowd
-at a measurably accelerating rate.</p>
+easily drown out any emerging minority experts.</p>
 
+<p>With Canonizer.com diversity is valued and drives the system
+forward, rather than destroying it.  Supporters of camps can object to
+any proposed changes they don't agree with, filtering can then be done
+by the reader who can select the kind of experts and canonization
+algorithm they choose to prioritize things.  In this way, knowing
+concisely and quantitatively what everyone currently believes, how the
+expert opinion still differs from the popular opinion, can eliminate
+all these communication prevention issues and fears - even making
+still 'religious' issues quite enjoyable for all.  Such can finally
+enable emerging expert minorities to make progress at being heard
+above the bleating noise of the crowd at a measurably accelerating
+rate.</p>
 
+<p>As a demonstration, the currently leading <a
+href="http://canonizer.com/topic.asp/88">"Theories of Mind and
+Consciousness survey topic</a> is now a collaboratively negotiated,
+concise, quantitative state of the art representation of now
+approaching 50 experts and hobbyists which has never before been
+possible.  This already includes, at various levels of participation,
+diverse experts such as, <a
+href="http://canonizer.com/topic.asp/88/17">Steven Lehar, <a
+href="http://canonizer.com/topic.asp/88/8">David Chalmers</a>, <a
+href="http://canonizer.com/topic.asp/88/21">Daniel Dennett</a>, and a
+growing number of others.  It is already indicating a surprising
+amount <a href="http://canonizer.com/topic.asp/88/6">(34 out of
+46)</a> of consensus.  Of course in order to make this map more
+comprehensive, requires the survey participation of all people
+including you, even if that is to say you are in a "we don't know yet"
+camp.  Our goal is to track all this in real time as ever more
+scientific evidence eventually falsifies and forces most all experts
+into the one camp representing the one best theory.</p>
 
 <p>That which you can measure, improves.</p>
 
