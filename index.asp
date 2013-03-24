@@ -138,7 +138,7 @@ rate.</p>
 
 <p>As a demonstration, the currently leading <a
 href="http://canonizer.com/topic.asp/88">"Theories of Mind and
-Consciousness survey topic</a> is now a collaboratively negotiated,
+Consciousness" survey topic</a> is now a collaboratively negotiated,
 concise, quantitative state of the art representation of now
 approaching 50 experts and hobbyists which has never before been
 possible.  This already includes, at various levels of participation,
