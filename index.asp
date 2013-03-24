@@ -138,17 +138,17 @@ rate.</p>
 
 <p>As a demonstration, the currently leading <a
 href="http://canonizer.com/topic.asp/88">"Theories of Mind and
-Consciousness" survey topic</a> is now a collaboratively negotiated,
-concise, quantitative state of the art representation of now
-approaching 50 experts and hobbyists which has never before been
-possible.  This already includes, at various levels of participation,
-diverse experts such as, <a
-href="http://canonizer.com/topic.asp/88/17">Steven Lehar, <a
+Consciousness"</a> survey topic is now a collaboratively negotiated,
+concise, quantitative state of the art representation of the working
+hypotheses of now approaching 50 experts and hobbyists.  This already
+includes, at various levels of participation, diverse experts such as,
+<a href="http://canonizer.com/topic.asp/88/17">Steven Lehar, <a
 href="http://canonizer.com/topic.asp/88/8">David Chalmers</a>, <a
 href="http://canonizer.com/topic.asp/88/21">Daniel Dennett</a>, and a
 growing number of others.  It is already indicating a surprising
 amount <a href="http://canonizer.com/topic.asp/88/6">(34 out of
-46)</a> of consensus.  Of course in order to make this map more
+46)</a> of consensus.  Nothing like this has ever been possible from a
+crowed this diverse.  Of course in order to make this map more
 comprehensive, requires the survey participation of all people
 including you, even if that is to say you are in a "we don't know yet"
 camp.  Our goal is to track all this in real time as ever more
