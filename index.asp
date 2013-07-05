@@ -99,9 +99,9 @@ the entire crowd.</p>
 
 <p>Many people jump to the false conclusion that the Goal of
 Canonizer.com is to measure 'truth' via popular consensus.  In fact,
-the goal is just the opposite.  Crowds tend behave in ignorant herding
-behavior, not unlike sheep.  Various 'camps' and religions have a
-strong desire and interest in anything that promotes what they
+the goal is just the opposite.  Crowds tend to behave in ignorant
+herding behavior, not unlike sheep.  Various 'camps' and religions
+have a strong desire and interest in anything that promotes what they
 believe.  They are highly motivated to dismiss or ignore anything that
 goes against their beliefs.  The goal of Canonizer.com is to enable
 the crowd more rapidly recognize when this is happening, making it
