@@ -155,10 +155,13 @@ rate.</p>
 href="http://canonizer.com/topic.asp/88">"Theories of Mind and
 Consciousness"</a> survey topic is now a collaboratively negotiated,
 concise, quantitative state of the art representation of the working
-hypotheses of now approaching 50 experts and hobbyists.  This already
-includes, at various levels of participation, diverse experts such as,
-<a href="http://canonizer.com/topic.asp/88/17">Steven Lehar, <a
-href="http://canonizer.com/topic.asp/88/8">David Chalmers</a>, <a
+hypotheses of now approaching 50 experts and hobbyists.  Building
+consensus in such fields is impossible.  Even attempts to agree on
+definitions, such as consciousness, can't be done.  This survey
+project is building more consensus than has ever been possible.  It
+already includes, at various levels of participation, diverse experts
+such as, <a href="http://canonizer.com/topic.asp/88/17">Steven Lehar,
+<a href="http://canonizer.com/topic.asp/88/8">David Chalmers</a>, <a
 href="http://canonizer.com/topic.asp/88/21">Daniel Dennett</a>, and a
 growing number of others.  It is already indicating a surprising
 amount <a href="http://canonizer.com/topic.asp/88/6">(34 out of
