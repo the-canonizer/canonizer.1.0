@@ -80,10 +80,11 @@ function change_namespace(namespace) {
 
 <div class="content_1">
 
-
-<p>Canonizer.com solves the critical problems suffered by Wikipedia.
-It solves edit wars by providing contributors the ability to create
-and join camps and it provides a measure of information reliability by
+<p>Canonizer.com is a consensus building system enabling people to
+build consensus where none has been possible before.  It is a wiki
+system that solves the critical problems suffered by Wikipedia.  It
+solves edit wars by providing contributors the ability to create and
+join camps and it provides a measure of information reliability by
 providing relative measures of expert consensus.  Unlike other
 information sources, such as peer reviewed documents, where there is
 far too much information for any individual to fully comprehend (We
@@ -95,6 +96,20 @@ the degree experts are abandoning those theories for newer better
 ones.  The non repetitive, continually ratcheting up process
 significantly accelerates and amplifies the education and wisdom of
 the entire crowd.</p>
+
+<p>Many people jump to the false conclusion that the Goal of
+Canonizer.com is to measure 'truth' via popular consensus.  In fact,
+the goal is just the opposite.  Crowds tend behave in ignorant herding
+behavior, not unlike sheep.  Various 'camps' and religions have a
+strong desire and interest in anything that promotes what they
+believe.  They are highly motivated to dismiss or ignore anything that
+goes against their beliefs.  The goal of Canonizer.com is to enable
+the crowd more rapidly recognize when this is happening, making it
+easier for them to measure for the quality of a good new theory they
+may want to pay attention to, even if it is counter to their currently
+preferred beliefs.  The bottom line being our goal is not to measure
+truth via popularity, but to enable emerging minority theories to be
+more rapidly herd above any such biased bleating of any herd.</p>
 
 <p>Leading minority experts can first find each other, and then build
 a concisely defined consensus in a consistent language by pushing
