@@ -173,7 +173,7 @@ camp.  Our goal is to track all this in real time as ever more
 scientific evidence eventually falsifies and forces most all experts
 into the one camp representing the one best theory.</p>
 
-<p>That which you can measure, improves.</p>
+<p>That which you can measure, improves and converts.</p>
 
 <p>Knowing, concisely and quantitatively, everyone else who wants what
 you do, and what is still standing in your way, is the hardest part.
