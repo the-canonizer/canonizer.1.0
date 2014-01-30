@@ -25,7 +25,7 @@ if ($Request->Form('namespace')) {
 
 
 my $title = 'Canonizer Main Page';
-my $header = '<table><tr><td class="topic">Canonizer Main Page</td><td>&nbsp &nbsp</td><td style="font-size: 70%">(This is a free open source beta system being developed by <a href="http://' . func::get_host() . '/topic.asp/4">volunteers</a>.<br>Please be patient with what we have so far and/or be willing to help.)</td></tr></table>';
+my $header = '<table><tr><td class="topic">Canonizer Main Page</td><td>&nbsp &nbsp</td><td style="font-size: 70%">(This is a free open source prototype being developed by <a href="http://' . func::get_host() . '/topic.asp/4">volunteers</a>.<br>Please be patient with what we have so far and/or be willing to help.)</td></tr></table>';
 
 &display_page($title, $header, [\&identity, \&canonizer, \&as_of, \&search, \&main_ctl], [\&canonized_list]);
 
