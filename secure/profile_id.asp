@@ -669,8 +669,9 @@ go "cryptographically public"</p>
 <p>Normally, nick names have public links back to their owners
 providing public access to relevant non private information about you.
 If you check the anonymous box for a nick name, no information tying
-that nick name to you will be provided.  Only the canonizers will know
-who owns them for canonization purposes.</p>
+that nick name to you will be provided.  Only the canonization
+algorithms will have access to this information for canonizatin
+purposes.</p>
 
 <table>
 <tr><td class=separator></td></tr>
