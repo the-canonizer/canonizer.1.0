@@ -649,12 +649,18 @@ Contact support@canonizer.com to fix this or if you have any questions.
 
 </table>
 
-<p>* These fields are not required to register and participate with
-the Canonizer.  However, if your contributions start earning monetary
-credits, we will not be able to pay you until you provide them.  Also,
-address or birthday based canonizers will not count your support if it
-is not provided.</p>
+<p><font color=red>*</font> These fields are required simply to help
+prevent dual identity sock puppet cheating.  No information provided
+will be used for anything else.  If you check the 'Private' box, this
+information will never be publicly displayed on any page.</p>
 
+<p>* These fields are not required to register and participate with
+the Canonizer.  In the future, there may be canonizer algorithms that
+require this info be provided, and there may be some financial reward
+offered for participating, so this info may be used for that purpose.
+For example, if you own Canonizer.com coins, we may use this
+information to contact you to distribute your shares if we go
+"cryptographically public"</p>
 
 <p>&nbsp;</p>
 
