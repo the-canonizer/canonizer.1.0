@@ -655,12 +655,12 @@ will be used for anything else.  If you check the 'Private' box, this
 information will never be publicly displayed on any page.</p>
 
 <p>* These fields are not required to register and participate with
-the Canonizer.  In the future, there may be canonizer algorithms that
+Canonizer.com.  In the future, there may be canonizer algorithms that
 require this info be provided, and there may be some financial reward
 offered for participating, so this info may be used for that purpose.
-For example, if you own Canonizer.com coins, we may use this
-information to contact you to distribute your shares if we go
-"cryptographically public"</p>
+For example, if you earn Canon Coins (shares in Canonizer.com), we may
+use this information to contact you for distributuion purposes if we
+go "cryptographically public"</p>
 
 <p>&nbsp;</p>
 
