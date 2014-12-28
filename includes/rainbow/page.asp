@@ -8,7 +8,7 @@ sub display_page {
 	my $tab_sub	 = $_[4];
 
 	my $url = "http://" . func::get_host() . "/topic.asp/4";
-	my $copyright_info = 'Copyright owned by the <a href="' . $url . '">volunteers contributing to the system</a> and its contents (2006 - 2013)';
+	my $copyright_info = 'Contributors and supporters control and own the copyright of all Canonizer.com material (2006 - 2015)';
 	my $support_email = 'support@canonizer.com';
 
 	my $not_main_warning = '';
@@ -105,7 +105,7 @@ foreach $sub (@$content_subs)
 	</table>
         <td>
 	    <h3><%=$copyright_info%></h3>
-	    <h3>Pattent: US 8,160,970 B2</h3>
+	    <h3>Pattent: <a href="http://www.google.com/patents/US8160970">US 8,160,970 B2</a></h3>
 	    <h3>Comments and Questions: <a href = "mailto:<%=$support_email%>"><%=$support_email%></a></h3>
 	</td>
     </tr>
